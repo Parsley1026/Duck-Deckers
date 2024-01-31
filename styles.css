@@ -1,0 +1,54 @@
+
+
+
+
+.logo{
+
+    width: 300px;
+    height: auto;
+    margin-left:800px;
+    margin-top:40px;
+    z-index: 1;
+}
+.loginTitle{
+
+    margin-left:850px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+.emailLogin{
+    margin-left:850px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+.passwordLogin{
+
+    margin-left:850px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+.loginButton{
+
+    margin-left:850px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+.signUpButton{
+
+    margin-left:850px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+.background{
+    position: absolute;
+    margin-left:0px;
+    margin-top:0px;
+    height:auto;
+    width:1400px;
+    z-index: 0;
+}
