@@ -3,52 +3,51 @@
 
 
 .logo{
-
-    width: 300px;
+    position: absolute;
+    width: 450px;
     height: auto;
     margin-left:800px;
     margin-top:40px;
-    z-index: 1;
+    z-index: 1; //the duck deckers logo
 }
-.loginTitle{
 
-    margin-left:850px;
-    width: 200px;
-    height: auto;
-    z-index: 1;
-}
 .emailLogin{
-    margin-left:850px;
+    position: absolute;
+    margin-left:860px;
+    margin-top:330px;
     width: 200px;
     height: auto;
     z-index: 1;
 }
 .passwordLogin{
-
-    margin-left:850px;
+    position: absolute;
+    margin-left:860px;
+    margin-top:370px;
     width: 200px;
     height: auto;
     z-index: 1;
 }
 .loginButton{
-
-    margin-left:850px;
+    position: absolute;
+    margin-left:860px;
+    margin-top:410px;
     width: 200px;
     height: auto;
     z-index: 1;
 }
 .signUpButton{
-
-    margin-left:850px;
+    position: absolute;
+    margin-left:860px;
+    margin-top:450px;
     width: 200px;
     height: auto;
     z-index: 1;
 }
 .background{
-
     margin-left:0px;
     margin-top:0px;
+    position: absolute;
     height:auto;
-    width:1400px;
+    width:3000px;
     z-index: 0;
 }
