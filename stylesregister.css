@@ -1,0 +1,68 @@
+body {
+    background-image: url(webpageImageAssets/greenBackground.jpg);
+    background-repeat: no-repeat;
+}
+.logo{
+    position: absolute;
+    width: 450px;
+    height: auto;
+    margin-left:800px;
+    margin-top:40px;
+    z-index: 1; //the duck deckers logo
+}
+.enterEmail{
+    position: absolute;
+    margin-left:860px;
+    margin-top:330px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+.enterPassword{
+    position: absolute;
+    margin-left:860px;
+    margin-top:370px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+.enterFName{
+    position: absolute;
+    margin-left:860px;
+    margin-top:410px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+.enterLName{
+    position: absolute;
+    margin-left:860px;
+    margin-top:450px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+.loginButton{
+    position: absolute;
+    margin-left:860px;
+    margin-top:490px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+.signUpButton{
+    position: absolute;
+    margin-left:860px;
+    margin-top:530px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+.background{
+    margin-left:0px;
+    margin-top:0px;
+    position: absolute;
+    height:auto;
+    width:100%;
+    z-index: 0;
+}
