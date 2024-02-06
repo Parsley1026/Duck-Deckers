@@ -10,6 +10,17 @@
     margin-top:40px;
     z-index: 1; //the duck deckers logo
 }
+.splash-text{
+    position: absolute;
+    width: 450px;
+    font-size: large;
+    font-family: "Cooper Black";
+    font-style: italic;
+    height: auto;
+    margin-left:1100px;
+    margin-top:40px;
+    z-index: 2;
+}
 
 .emailLogin{
     position: absolute;

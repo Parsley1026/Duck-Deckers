@@ -12,6 +12,9 @@
 
 <img class = "logo" src = "webpageImageAssets/duckdeckerslogo.png" alt = "game logo">
 
+  <div id = "splashtext" class = "splash-text"></div>
+
+
 <form id = "MainForm" class  = "w-25 m-4">
 
   <div class = "emailLogin">
@@ -76,6 +79,16 @@
             })
   }
   MainForm.addEventListener('submit', SignInUser);
+
+
+window.addEventListener('load',UpdateSplash); //I added splash text that updates everytime the page refreshes. feel free to add more quotes in the array below.
+
+function UpdateSplash(){
+  splash = splashTexts[Math.floor(Math.random() * splashTexts.length)];
+  document.getElementById('splashtext').innerHTML = splash;
+}
+var splash = "";
+const splashTexts = ["Heck yeah!", "Spiral out!", "I know the first three numbers!", "Made with JS!", "All hail Zickert!", "Fall off your horse!", "I refuse!"];
 
 
 
