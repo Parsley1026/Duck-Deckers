@@ -7,16 +7,21 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link rel="stylesheet" href="styleslogin.css">
 </head>
+
+
 <body>
+<img id = "loginBackground" src = "webpageImageAssets/greenBackground.jpg" alt = "background">
+</body>
 
 
-<img class = "logo" src = "webpageImageAssets/duckdeckerslogo.png" alt = "game logo">
-
-  <div id = "splashtext" class = "splash-text"></div>
 
 
-<form id = "MainForm" class  = "w-25 m-4">
+<div id = "splashtext" class = "splash-text"></div>
 
+
+<form id = "MainForm" class  = "loginForm">
+
+  <img class = "logo" src = "webpageImageAssets/duckdeckerslogo.png" alt = "game logo">
   <div class = "emailLogin">
     <input type = "email" class = "form-control" id = "emailInput" placeholder="Email">
     <label for = "emailInput">Email</label>
@@ -28,7 +33,6 @@
   <button type = "submit" class = "loginButton">Login</button>
   <a href="register.html">
     <button type="button" class="signUpButton">Sign Up</button></a>
-  <img class = "background" src = "webpageImageAssets/greenBackground.jpg" alt = "background">
 
 </form>
 
@@ -56,6 +60,9 @@
     appId: "1:499331695357:web:5d45713977c74c6bb1b494",
     measurementId: "G-FG9BK67MLF"
   }
+  var browserHeight = window.innerHeight;
+  var browserWidth = window.innerWidth;
+
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
@@ -88,7 +95,7 @@ function UpdateSplash(){
   document.getElementById('splashtext').innerHTML = splash;
 }
 var splash = "";
-const splashTexts = ["Heck yeah!", "Spiral out!", "I know the first three numbers!", "Made with JS!", "All hail Zickert!", "Fall off your horse!", "I refuse!"];
+const splashTexts = ["Heck yeah!", "Spiral out!", "Made with JS!", "All hail Zickert!", "Fall off your horse!", "I refuse!", "Zoo Wee Mama!"];
 
 
 
