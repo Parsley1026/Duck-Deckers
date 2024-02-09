@@ -3,15 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>Duck Deckers - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
+
+    <form id="MainForm" class="w-25 m-4">
+        <h2 class="mb-3">User Profile</h2>
+        <h2 id="firstName"></h2>
+        <h2 id="lastName"></h2>
+        <h2 id="city"></h2>
+
+        <form id="roomForm" class="w-25 m-4">
+            <div class = "codeControl">
+                <div class = "joinRoom">
+                    <div class="codeJoinEntry">
+                        <input type = "text" class = "form-control" id = "codeJoinInput" placeholder="Room Code">
+                        <label for = "codeJoinInput">Join Room</label>
+                    </div>
+                    <div class="codeJoinSubmit">
+                        <button id="codeJoinButton" type="button" class="btn btn-primary" style="float: right">Submit Room Code</button>
+                    </div>
+                </div>
+                <div class="createRoom">
+                    <div class="codeCreateEntry">
+                        <input type = "text" class = "form-control" id = "codeCreateInput" placeholder="Room Code">
+                        <label for = "codeCreateInput">Create Room</label>
+                    </div>
+                    <div class="codeCreateSubmit">
+                        <button id="codeCreateButton" type="button" class="btn btn-primary" style="float: right">Create Room</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <button id="signOutButton" type="button" class="btn btn-primary" style="float: right">Sign Out</button>
+
+    </form>
 
 </body>
 
 <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+    import { getDatabase, set, ref, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
@@ -38,6 +72,19 @@
     let fNameInput = document.getElementById('firstName'); //links with my h2 tags above
     let lNameInput = document.getElementById('lastName');
     let SignOutButton = document.getElementById('signOutButton');
+    let createRoomInput = document.getElementById('codeCreateInput');
+    let joinRoomInput = document.getElementById('codeJoinInput');
+    let createRoomButton = document.getElementById('codeCreateButton');
+    let joinRoomButton = document.getElementById('codeJoinButton');
+
+    //room creation method
+    let createRoom = evt => {
+        evt.preventDefault();
+        const roomCode = createRoomInput.value;
+        set(ref(db, 'rooms/' + roomCode), {
+            //in progress
+        })
+    }
 
     //create my signOut method
     let signOut = ()=>{
