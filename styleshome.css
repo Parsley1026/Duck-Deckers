@@ -1,4 +1,4 @@
-#goToShopButton{
+.goToShop{
     position: absolute;
-    margin-left: 1000px; /* this not working/ not affecting the button. SAD! */
+    margin-left: 500px; /* this not working/ not affecting the button. SAD! */
 }

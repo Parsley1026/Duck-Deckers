@@ -32,12 +32,14 @@
                     <div class="codeCreateSubmit">
                         <button id="codeCreateButton" type="button" class="btn btn-primary" style="float: right">Create Room</button>
                     </div>
-                    <div class="goToShop">
-                        <a href="shop.html">
-                            <button id="goToShopButton" type="button" class="btn btn-primary" style="float: right">Shop</button></a> <!--tHIS TAKES YOU TO THE SHOP PAGE.-->
-                    </div>
 
                 </div>
+                <div>
+                    <a href="shop.html">
+                        <button type="button" class="goToShop">Shop</button></a><!--tHIS TAKES YOU TO THE SHOP PAGE.-->
+                </div>
+
+
             </div>
         </form>
 
@@ -138,6 +140,7 @@
                 onValue(dbref, (snapshot) => {
                     let fNameData = snapshot.val().firstName;
                     let lNameData = snapshot.val().lastName;
+                    let creditData = snapshot.val().credits;
 
                     setTimeout(()=>{console.log("getting data");}, 1000); //1 second wait to fetch data
 

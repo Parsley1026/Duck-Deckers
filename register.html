@@ -75,10 +75,10 @@
             .then((credentials)=>{
                 set(ref(db, 'users/'+credentials.user.uid), {
                     firstName: FNameInput.value,
-                    lastName: LNameInput.value,
-                    currentRoom: null //not in a room when account is created
+                    lastName: LNameInput.value
+                    //add more values for gameplay later
                 })
-                setTimeout(()=> {window.location.href='home.html'}, 1000); //two second wait, so we can write data before switching pages
+                setTimeout(()=> {window.location.href='home.html'}, 2000); //two second wait, so we can write data before switching pages
             })
             .catch((error)=>{
                 alert(error.message); //pop up on the webpage
