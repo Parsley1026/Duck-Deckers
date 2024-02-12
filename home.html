@@ -50,7 +50,7 @@
 <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-    import { getDatabase, set, ref, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+    import { getDatabase, set, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
@@ -85,10 +85,43 @@
     //room creation method
     let createRoom = evt => {
         evt.preventDefault();
-        const roomCode = createRoomInput.value;
+        const roomCode = createRoomInput.value; //room code from user input
+        const userID = auth.currentUser.uid; //current userID
         set(ref(db, 'rooms/' + roomCode), {
-            //in progress
+            //states of buttons for testing
+            button1state: 0,
+            button2state: 0,
+            roomCreator: userID //define creator of room
         })
+        update(ref(db, 'users/' + userID), {
+            currentRoom: roomCode //set active room in current user's database
+        })
+            .then(() => {
+                setTimeout(()=> {window.location.href='room.html'}, 1000); //one second wait to create room
+            })
+            .catch((error)=>{
+                alert(error.message); //pop up on the webpage
+                console.log(error.code); //log the error code number
+                console.log(error.message); //logs the error message
+            })
+    }
+
+    //joinRoom method
+    let joinRoom = evt => {
+        evt.preventDefault();
+        const roomCode = joinRoomInput.value;
+        const userID = auth.currentUser.uid;
+        update(ref(db, 'users/' + userID), {
+            currentRoom: roomCode //set active room in current user's database
+        })
+            .then(() => {
+                setTimeout(() => {window.location.href='room.html'}, 1000); //one second wait to join room
+            })
+            .catch((error)=>{
+                alert(error.message); //pop up on the webpage
+                console.log(error.code); //log the error code number
+                console.log(error.message); //logs the error message
+            })
     }
 
     //create my signOut method
@@ -122,6 +155,10 @@
     window.addEventListener('load', getDataInfo);
     //when the Sign-Out button is clicked, run our function
     SignOutButton.addEventListener('click', signOut);
+    //when createRoom button clicked, create room
+    createRoomButton.addEventListener('click', createRoom);
+    //when joinRoom button clicked, attempt to join room
+    joinRoomButton.addEventListener('click', joinRoom);
 
 
 </script>
