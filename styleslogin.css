@@ -32,30 +32,29 @@
 #emailInput{
     position: absolute;
     width: 300px;
-    margin-left: 45vw;
-    margin-top: 450px;
-    z-index: 1;
+    margin-left: 50vw;
+    margin-top: 600px;
 }
 #passwordInput{
     position: absolute;
-    margin-left: 45vw;
-    margin-top:500px;
+    margin-left: 50vw;
+    margin-top:370px;
     width: 300px;
     height: auto;
     z-index: 1;
 }
 .loginButton{
     position: absolute;
-    margin-left: 45vw;
-    margin-top:550px;
+    margin-left: 50vw;
+    margin-top:410px;
     width: 300px;
     height: auto;
     z-index: 1;
 }
 .signUpButton{
     position: absolute;
-    margin-left: 45vw;
-    margin-top:600px;
+    margin-left: 50vw;
+    margin-top:450px;
     width: 300px;
     height: auto;
     z-index: 1;
