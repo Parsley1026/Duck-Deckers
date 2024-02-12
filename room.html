@@ -11,6 +11,9 @@
   <h2 id="roomCode"></h2>
   <h2 id="roomCreatorText"></h2>
 
+  <button id="button1" type="button" class="btn btn-primary" style="float: right">button1</button>
+  <button id="button2" type="button" class="btn btn-primary" style="float: right">button2</button>
+
 </form>
 
 </body>
@@ -44,6 +47,8 @@
   //grab all the data from the form
   let currentRoomTag = document.getElementById('roomCode'); //links with my h2 tags above
   let roomCreatorTag = document.getElementById('roomCreatorText');
+  let button1Input = document.getElementById('button1');//get button1
+  let button2Input = document.getElementById('button2');//get button2
 
   //create our getDataInfo function to get data from firebase
   let getDataInfo = () =>{
@@ -51,7 +56,7 @@
       if(user){
         const userID = user.uid;
         let currentRoomCode = null;
-        let roomCreatorData = "pepe";
+        let roomCreatorData = null;
         const dbref = ref(db, 'users/'+userID);
 
         onValue(dbref, (snapshot) => {
@@ -61,7 +66,7 @@
 
           currentRoomTag.innerText = currentRoomCode; //send data to h2 tag
 
-          if(true) {
+          if(currentRoomCode != null) {
             const dbrefroom = ref(db); //get ref of current room
 
             //get creator of room
@@ -88,6 +93,9 @@
 
   //on window load, grab and post data
   window.addEventListener('load', getDataInfo);
+  //on button1 press, send event
+  button1Input.addEventListener('click', button1Event);
+
 
 
 </script>
