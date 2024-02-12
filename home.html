@@ -44,8 +44,14 @@
         </form>
 
         <button id="signOutButton" type="button" class="btn btn-primary" style="float: right">Sign Out</button>
+        <button id="claimFreeCredits" type="button" class="btn btn-primary" style="float: right">Daily Rewards</button>
 
     </form>
+
+
+
+
+
 
 </body>
 
@@ -79,6 +85,7 @@
     let fNameInput = document.getElementById('firstName'); //links with my h2 tags above
     let lNameInput = document.getElementById('lastName');
     let SignOutButton = document.getElementById('signOutButton');
+    let ClaimFreeCredits = document.getElementById('claimFreeCredits');
     let createRoomInput = document.getElementById('codeCreateInput');
     let joinRoomInput = document.getElementById('codeJoinInput');
     let createRoomButton = document.getElementById('codeCreateButton');
@@ -153,6 +160,9 @@
             }
         })
     }
+    let dailyRewards = ()=>{
+
+    }
 
     //on window load, grab and post data
     window.addEventListener('load', getDataInfo);
@@ -162,6 +172,7 @@
     createRoomButton.addEventListener('click', createRoom);
     //when joinRoom button clicked, attempt to join room
     joinRoomButton.addEventListener('click', joinRoom);
+    ClaimFreeCredits.addEventListener('click', dailyRewards()); //triggers the daily rewards thing
 
 
 </script>
