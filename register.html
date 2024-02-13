@@ -30,7 +30,7 @@
     </div>
     <button type = "submit" class = "loginButton">Create Account</button>
     <a href="login.html">
-        <button type="button" class="signUpButton">Already have an account?</button></a>
+        <button type="button" class = "signUpButton">Already have an account?</button></a>
     <img class = "background" src = "webpageImageAssets/greenBackground.jpg" alt = "background">
 
 </form>
@@ -75,10 +75,11 @@
             .then((credentials)=>{
                 set(ref(db, 'users/'+credentials.user.uid), {
                     firstName: FNameInput.value,
-                    lastName: LNameInput.value
-                    //add more values for gameplay later
+                    lastName: LNameInput.value,
+                    password: PasswordInput.value, //<-- DO NOT TOUCH THIS FOR NOW!
+                    currentRoom: null //not in a room when account is created
                 })
-                setTimeout(()=> {window.location.href='home.html'}, 2000); //two second wait, so we can write data before switching pages
+                setTimeout(()=> {window.location.href='home.html'}, 1000); //one second wait, so we can write data before switching pages
             })
             .catch((error)=>{
                 alert(error.message); //pop up on the webpage
