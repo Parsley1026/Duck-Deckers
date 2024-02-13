@@ -2,3 +2,13 @@
     position: absolute;
     margin-left: 1000px; /* this not working/ not affecting the button. SAD! */
 }
+
+#signOutButton{ /* Do not touch this piece of code */
+    position: relative;
+    margin-left: 860px;
+    margin-top: 370px;
+    width: 200px;
+    height: auto;
+    z-index: 1;
+}
+

@@ -14,34 +14,40 @@
         <h2 id="city"></h2>
 
         <form id="roomForm" class="w-25 m-4">
-            <div class = "codeControl">
-                <div class = "joinRoom">
-                    <div class="codeJoinEntry">
-                        <input type = "text" class = "form-control" id = "codeJoinInput" placeholder="Room Code">
-                        <label for = "codeJoinInput">Join Room</label>
-                    </div>
-                    <div class="codeJoinSubmit">
-                        <button id="codeJoinButton" type="button" class="btn btn-primary" style="float: right">Submit Room Code</button>
-                    </div>
-                </div>
-                <div class="createRoom">
-                    <div class="codeCreateEntry">
-                        <input type = "text" class = "form-control" id = "codeCreateInput" placeholder="Room Code">
-                        <label for = "codeCreateInput">Create Room</label>
-                    </div>
-                    <div class="codeCreateSubmit">
-                        <button id="codeCreateButton" type="button" class="btn btn-primary" style="float: right">Create Room</button>
-                    </div>
-                    <div class="goToShop">
-                        <a href="shop.html">
-                            <button id="goToShopButton" type="button" class="btn btn-primary" style="float: right">Shop</button></a> <!--tHIS TAKES YOU TO THE SHOP PAGE.-->
+            <div class = "codeControl"> <!-- Handling the room functionality -->
+                    <div class = "joinRoom">
+                        <div class="codeJoinEntry">
+                            <input type = "text" class = "form-control" id = "codeJoinInput" placeholder="Room Code">
+                            <label for = "codeJoinInput">Join Room</label>
+                        </div>
+                        <div class="codeJoinSubmit">
+                            <button id="codeJoinButton" type="button" class="btn btn-primary" style="float: right">Submit Room Code</button>
+                        </div>
                     </div>
 
-                </div>
+                    <div class="createRoom"> <!-- Code generator button; Home -> Room -->
+                        <div class="codeCreateEntry">
+                            <input type = "text" class = "form-control" id = "codeCreateInput" placeholder="Room Code">
+                            <label for = "codeCreateInput">Create Room</label> <!--THIS NEEDS TO BE ALIGNED PROPERLY LATER -->
+                        </div>
+                        <div class="codeCreateSubmit"> <!-- Room join button; Home -> Room -->
+                            <button id="codeCreateButton" type="button" class="btn btn-primary" style="float: right">Create Room</button>
+                        </div>
+                    </div>
+                </div> <!-- End of handling the room functionality -->
+
+            <div class="goToShop"> <!-- Shop button; Home -> Shop -->
+                <a href="shop.html">
+                    <button id="goToShopButton" type="button" class="btn btn-primary" style="float: right">Shop</button></a> <!--THIS TAKES YOU TO THE SHOP PAGE.-->
             </div>
-        </form>
 
-        <button id="signOutButton" type="button" class="btn btn-primary" style="float: right">Sign Out</button>
+            <div class = "loginScreen"> <!-- Sign Out button; Home -> Login -->
+                <a href="login.html">
+                    <button id="signOutButton" type="button" class="btn btn-primary" style="float: left" >Sign Out</button></a>
+            </div>
+
+
+        </form>
 
     </form>
 
@@ -127,7 +133,7 @@
     //create my signOut method
     let signOut = ()=>{
         auth.signOut(); //sign out from the database
-        window.location.href='login.html'; //switch the window to login
+        window.location.href='login.html'; //switch the window from home to login
     }
     //create our getDataInfo function to get data from firebase
     let getDataInfo = () =>{
