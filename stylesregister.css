@@ -2,12 +2,12 @@ body {
     background-image: url(webpageImageAssets/greenBackground.jpg);
     background-repeat: no-repeat;
 }
-.logo{
+.RegisterDuck{
     position: absolute;
     width: 450px;
     height: auto;
-    margin-left:800px;
-    margin-top:40px;
+    margin-left:760px;
+    margin-top:60px;
     z-index: 1; //the duck deckers logo
 }
 .enterEmail{
