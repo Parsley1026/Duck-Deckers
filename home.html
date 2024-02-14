@@ -11,7 +11,8 @@
         <h2 class="mb-3">User Profile</h2>
         <h2 id="firstName"></h2>
         <h2 id="lastName"></h2>
-        <h2 id="city"></h2>
+        <h2 id="cash"></h2>
+        <h2 id="city"></h2> <!-- Pretty sure this is irrelevant -->
 
         <form id="roomForm" class="w-25 m-4">
             <div class = "codeControl"> <!-- Handling the room functionality -->
@@ -144,12 +145,14 @@
                 onValue(dbref, (snapshot) => {
                     let fNameData = snapshot.val().firstName;
                     let lNameData = snapshot.val().lastName;
-
+                    let cashData = snapshot.val().cash;
+                    
                     setTimeout(()=>{console.log("getting data");}, 1000); //1 second wait to fetch data
 
                     //now send data to h2 tags
                     fNameInput.innerText = 'First Name: ' + fNameData;
                     lNameInput.innerText = 'Last Name: ' + lNameData;
+                    cashInput.innerText = 'Cash: $' + cashData;
                 });
             } else{
                 console.log("Error getting user data");
