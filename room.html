@@ -21,7 +21,7 @@
 <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-  import { getDatabase, get, ref, onValue, child } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+  import { getDatabase, get, ref, onValue, child, update } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
@@ -50,12 +50,15 @@
   let button1Input = document.getElementById('button1');//get button1
   let button2Input = document.getElementById('button2');//get button2
 
+  //global variables
+  let currentRoomCode = null;
+  let roomReady = false;
+
   //create our getDataInfo function to get data from firebase
   let getDataInfo = () =>{
     onAuthStateChanged(auth, (user) => {
       if(user){
         const userID = user.uid;
-        let currentRoomCode = null;
         let roomCreatorData = null;
         const dbref = ref(db, 'users/'+userID);
 
@@ -77,6 +80,7 @@
                 setTimeout(() => {console.log("getting room data");}, 1000); //one second wait for room creator data
 
                 roomCreatorTag.innerText = roomCreatorData; //send data to h2 tag
+                roomReady = true; //room is ready for data transmission
               }
             });
           } else{
@@ -91,10 +95,51 @@
     })
   }
 
+  let getButtonState = () => {
+    if(roomReady) { //check if room is ready
+      const dbref = ref(db, 'rooms/' + currentRoomCode);
+      onValue(dbref, (snapshot) => { //detect changes in state of button1state
+        let buttonState = snapshot.val().button1state; //get button1state
+        setTimeout(() => {console.log("someone pressed a button");}, 50); //50 ms wait for data
+        console.log(buttonState + "pressed button1");
+      })
+    } else {return;} //room not ready, do nothing
+  }
+
+  let button1Event = evt => {
+    evt.preventDefault();
+    const userID = auth.currentUser.uid; //get uid of current user
+    update(ref(db, 'rooms/' + currentRoomCode), {
+      button1state: userID //set button1state to user id of who pressed
+    })
+            .catch((error) => {
+              alert(error.message); //pop up on the webpage
+              console.log(error.code); //log the error code number
+              console.log(error.message); //logs the error message
+            })
+  }
+
+  let button2Event = evt => {
+    evt.preventDefault();
+    const userID = auth.currentUser.uid; //get uid of current user
+    update(ref(db, 'rooms/' + currentRoomCode), {
+      button2state: userID //set button2state to user id of who pressed
+    })
+            .catch((error) => {
+              alert(error.message); //pop up on the webpage
+              console.log(error.code); //log the error code number
+              console.log(error.message); //logs the error message
+            })
+  }
+
   //on window load, grab and post data
   window.addEventListener('load', getDataInfo);
+  //detect button changes on window load
+  window.addEventListener('load', getButtonState);
   //on button1 press, send event
   button1Input.addEventListener('click', button1Event);
+  //on button2 press, send event
+  button2Input.addEventListener('click', button2Event);
 
 
 
