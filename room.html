@@ -81,6 +81,7 @@
 
                 roomCreatorTag.innerText = roomCreatorData; //send data to h2 tag
                 roomReady = true; //room is ready for data transmission
+                console.log("room is ready");
               }
             });
           } else{
@@ -96,14 +97,18 @@
   }
 
   let getButtonState = () => {
-    if(roomReady) { //check if room is ready
-      const dbref = ref(db, 'rooms/' + currentRoomCode);
-      onValue(dbref, (snapshot) => { //detect changes in state of button1state
-        let buttonState = snapshot.val().button1state; //get button1state
-        setTimeout(() => {console.log("someone pressed a button");}, 50); //50 ms wait for data
-        console.log(buttonState + "pressed button1");
-      })
-    } else {return;} //room not ready, do nothing
+    onAuthStateChanged(auth, (user) => {
+    if(user) {
+      if (roomReady) { //check if room is ready
+        const dbref = ref(db, 'rooms/' + currentRoomCode);
+        onValue(dbref, (snapshot) => { //detect changes in state of button1state
+          let buttonState = snapshot.val().button1state; //get button1state
+          setTimeout(() => {console.log("someone pressed a button");}, 500); //500 ms wait for data
+          console.log(buttonState + "pressed button1");
+        })
+      } else {} //room not ready, do nothing
+    }else{console.log("capture error");}
+  })
   }
 
   let button1Event = evt => {
