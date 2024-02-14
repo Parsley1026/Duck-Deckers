@@ -18,6 +18,9 @@
   <a href="home.html">
     <button id="shopToHomeButton" type="button" class="btn btn-primary" style="float: right">Back</button></a> <!--tHIS TAKES YOU BACK.-->
 </div>
+<div class = "redeemCash">
+    <button id="redeemCash" type="button" class="btn btn-primary" style="float: left">Redeem Cash</button></a>
+</div>
 
 
 
@@ -48,6 +51,7 @@
     const db = getDatabase();
     const auth = getAuth(app);
     let cashInput = document.getElementById('cash');
+    let cashRedeem = document.getElementById('redeemCash');
     let getDataInfo = () =>{
         onAuthStateChanged(auth, (user) => {
             if(user){
@@ -66,5 +70,9 @@
             }
         })
     }
+
+
     window.addEventListener('load', getDataInfo);
+    cashRedeem.addEventListener('click', addCash);
+
 </script>
