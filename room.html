@@ -13,6 +13,7 @@
 
   <button id="button1" type="button" class="btn btn-primary" style="float: right">button1</button>
   <button id="button2" type="button" class="btn btn-primary" style="float: right">button2</button>
+  <button id="quitButton" type="button" class="btn btn-primary" style="float: right">leave room</button>
 
 </form>
 
@@ -21,7 +22,7 @@
 <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-  import { getDatabase, get, ref, onValue, child, update } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+  import { getDatabase, get, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
@@ -49,6 +50,7 @@
   let roomCreatorTag = document.getElementById('roomCreatorText');
   let button1Input = document.getElementById('button1');//get button1
   let button2Input = document.getElementById('button2');//get button2
+  let quitButtonInput = document.getElementById('quitButton');//get quit button
 
   //global variables
   let currentRoomCode = null;
@@ -70,10 +72,10 @@
           currentRoomTag.innerText = currentRoomCode; //send data to h2 tag
 
           if(currentRoomCode != null) {
-            const dbrefroom = ref(db); //get ref of current room
+            const dbrefroom = ref(db, 'rooms/' + currentRoomCode); //get ref of current room
 
             //get creator of room
-            get(child(dbrefroom, 'rooms/'+currentRoomCode)).then((snapshot)=>{
+            get(dbrefroom).then((snapshot)=>{
               if(snapshot.exists) {
                 roomCreatorData = snapshot.val().roomCreator; //get room creator
 
@@ -128,19 +130,35 @@
             })
   }
 
-  //not a function, just detects changes in buttonState variables in firebase
-  let eventDetection = () =>{
-  if(roomReady){ //detects if room is ready
-    console.log("room is true, function is noticed"); //debug line to detect if function is used
-    const dbbutton1 = ref(db, 'rooms/' + currentRoomCode + '/button1state'); //reference button1state in current room
-    const dbbutton2 = ref(db, 'rooms/' + currentRoomCode + '/button2state'); //reference button2state in current room
-    onValue(dbbutton1, (data) => { //detect changes in button1state
-      console.log(data.val() + " pressed button 1!"); //print who pressed button 1 to console
-    });
-    onValue(dbbutton2, (data) => { //detect changes in button2state
-      console.log(data.val() + " pressed button 2!"); //print who pressed button 2 to console
-    });
-  }}
+  let eventDetection = () => { //detects changes in the buttonState in the room
+    if (roomReady) { //detects if room is ready
+      const dbbutton1 = ref(db, 'rooms/' + currentRoomCode + '/button1state'); //reference button1state in current room
+      const dbbutton2 = ref(db, 'rooms/' + currentRoomCode + '/button2state'); //reference button2state in current room
+      onValue(dbbutton1, (data) => { //detect changes in button1state
+        console.log(data.val() + " pressed button 1!"); //print who pressed button 1 to console
+      });
+      onValue(dbbutton2, (data) => { //detect changes in button2state
+        console.log(data.val() + " pressed button 2!"); //print who pressed button 2 to console
+      });
+    }
+  }
+
+  let quitButtonEvent = () => { //function that handles user wanting to leave room
+    if(confirm("Are you sure you want to leave?")) { //confirm that user actually wants to leave
+      const userID = auth.currentUser.uid; //get uid of current user
+      const dbrefuser = ref(db, 'users/' + userID); //get dbref of current user
+      const dbroomref = ref(db, 'rooms/' + currentRoomCode); //get database reference of current room
+      let roomCreator = null;
+      get(dbroomref).then((snapshot) => { //get uid of room creator
+        roomCreator = snapshot.val().roomCreator; //set roomCreator to uid of room creator
+      });
+      update(dbrefuser, {currentRoom: null}); //set current room of user back to null
+      if (roomCreator == userID.value) { //detect if person leaving is room creator
+        remove(dbroomref); //delete current room from database
+      }
+      setTimeout(() => {window.location.href = 'home.html'}, 500); //500 ms wait to send user back to home page
+    }
+  }
 
   //on window load, grab and post data
   window.addEventListener('load', getDataInfo);
@@ -148,6 +166,8 @@
   button1Input.addEventListener('click', button1Event);
   //on button2 press, send event
   button2Input.addEventListener('click', button2Event);
+  //on quitButton press, either delete room if creator, or leave room
+  quitButtonInput.addEventListener('click', quitButtonEvent);
 
 
 
