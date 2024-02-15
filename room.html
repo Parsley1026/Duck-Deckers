@@ -77,11 +77,17 @@
               if(snapshot.exists) {
                 roomCreatorData = snapshot.val().roomCreator; //get room creator
 
-                setTimeout(() => {console.log("getting room data");}, 1000); //one second wait for room creator data
+                setTimeout(() => {
+                  console.log("getting room data");
+                  roomReady = true;
+                  console.log("room is ready " + roomReady); //room is ready for data transmission
+                  setTimeout(() => {
+                    eventDetection(); //run eventDetection method every 50ms
+                  }, 50);
+                  }, 1000); //one second wait for room creator data
+
 
                 roomCreatorTag.innerText = roomCreatorData; //send data to h2 tag
-                roomReady = true; //room is ready for data transmission
-                console.log("room is ready");
               }
             });
           } else{
@@ -94,21 +100,6 @@
         console.log("Error getting user data");
       }
     })
-  }
-
-  let getButtonState = () => {
-    onAuthStateChanged(auth, (user) => {
-    if(user) {
-      if (roomReady) { //check if room is ready
-        const dbref = ref(db, 'rooms/' + currentRoomCode);
-        onValue(dbref, (snapshot) => { //detect changes in state of button1state
-          let buttonState = snapshot.val().button1state; //get button1state
-          setTimeout(() => {console.log("someone pressed a button");}, 500); //500 ms wait for data
-          console.log(buttonState + "pressed button1");
-        })
-      } else {} //room not ready, do nothing
-    }else{console.log("capture error");}
-  })
   }
 
   let button1Event = evt => {
@@ -137,10 +128,22 @@
             })
   }
 
+  //not a function, just detects changes in buttonState variables in firebase
+  let eventDetection = () =>{
+  if(roomReady){ //detects if room is ready
+    console.log("room is true, function is noticed"); //debug line to detect if function is used
+    const dbbutton1 = ref(db, 'rooms/' + currentRoomCode + '/button1state'); //reference button1state in current room
+    const dbbutton2 = ref(db, 'rooms/' + currentRoomCode + '/button2state'); //reference button2state in current room
+    onValue(dbbutton1, (data) => { //detect changes in button1state
+      console.log(data.val() + " pressed button 1!"); //print who pressed button 1 to console
+    });
+    onValue(dbbutton2, (data) => { //detect changes in button2state
+      console.log(data.val() + " pressed button 2!"); //print who pressed button 2 to console
+    });
+  }}
+
   //on window load, grab and post data
   window.addEventListener('load', getDataInfo);
-  //detect button changes on window load
-  window.addEventListener('load', getButtonState);
   //on button1 press, send event
   button1Input.addEventListener('click', button1Event);
   //on button2 press, send event
