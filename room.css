@@ -1,0 +1,9 @@
+.zone{
+    position: absolute;
+    top: 300px; /* Adjust as needed */
+    left: 300px;
+    height: 300px;
+    width: 150px;
+
+
+}

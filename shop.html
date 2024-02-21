@@ -30,6 +30,8 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
     import { getDatabase, set, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+    import { ref, runTransaction } from 'firebase/database';
+
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -70,9 +72,29 @@
             }
         })
     }
+    let addCash = (userID) => {
+        const userRef = ref(db, 'users/' + userID + '/cash');
+
+        // Run the transaction to update the cash value
+        runTransaction(userRef, (currentCash) => {
+            // If the currentCash is null, it means the cash node doesn't exist yet
+            // We'll initialize it with 0
+            if (currentCash === null) {
+                currentCash = 0;
+            }
+            // Update the cash value by adding 100
+            const newCash = currentCash + 100;
+            return newCash; // Return the updated cash value
+        }).then((transactionResult) => {
+            console.log('Cash updated successfully. New value: ', transactionResult.snapshot.val());
+        }).catch((error) => {
+            console.error('Transaction failed abnormally:', error);
+        });
+    };
+
 
 
     window.addEventListener('load', getDataInfo);
-    cashRedeem.addEventListener('click', addCash);
+    cashRedeem.addEventListener('click', addCash); //This is meant to occur when teh redeem cash button is clicked
 
 </script>
