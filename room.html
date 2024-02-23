@@ -151,6 +151,7 @@
       let roomCreator = null;
       get(dbroomref).then((snapshot) => { //get uid of room creator
         roomCreator = snapshot.val().roomCreator; //set roomCreator to uid of room creator
+        console.log(roomCreator);
       });
       update(dbrefuser, {currentRoom: null}); //set current room of user back to null
       if (roomCreator == userID.value) { //detect if person leaving is room creator

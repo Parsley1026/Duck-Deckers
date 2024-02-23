@@ -130,7 +130,7 @@
             return; //cancel function
         } else { //room code was entered, run function
             get(ref(db, 'rooms/' + roomCode)).then((snapshot) => { //check if room exists
-                if(snapshot.exists){
+                if(snapshot.exists()){
                     update(ref(db, 'users/' + userID), {
                         currentRoom: roomCode //set active room in current user's database
                     })
