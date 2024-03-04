@@ -45,7 +45,7 @@ let getDataInfo = () =>{
 }
 let addCash = () => {
     const userID = auth.currentUser.uid;
-    const userRef = ref(db, 'users/'+userID);
+    const userRef = ref(db, 'users/'+userID+'/cash');
 
     // Run the transaction to update the cash value
     runTransaction(userRef, (currentCash) => {
