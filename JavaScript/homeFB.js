@@ -98,8 +98,10 @@ let joinRoom = evt => {
 
 //create my signOut method
 let signOut = ()=>{
-    auth.signOut(); //sign out from the database
-    window.location.href='home.html'; //switch the window from home to login
+    if(confirm("Are you sure you want to sign out?")) {//make sure user wants to sign out
+        auth.signOut(); //sign out from the database
+        window.location.href = 'home.html'; //switch the window from home to login
+    }
 }
 //create our getDataInfo function to get data from firebase
 let getDataInfo = () =>{
