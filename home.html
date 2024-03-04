@@ -40,12 +40,12 @@
         </form>
 
         <div class="goToShop"> <!-- Shop button; Home -> Shop -->
-            <a href="../Shop/shop.html">
+            <a href="shop.html">
                 <button id="goToShopButton" type="button" class="btn btn-primary" style="float: right">Shop</button></a> <!--THIS TAKES YOU TO THE SHOP PAGE.-->
         </div>
 
         <div class = "loginScreen"> <!-- Sign Out button; Home -> Login -->
-            <a href="../Login/login.html">
+            <a href="login.html">
                 <button id="signOutButton" type="button" class="btn btn-primary" style="float: right">Sign Out</button></a>
         </div>
 
@@ -155,7 +155,7 @@
     //create my signOut method
     let signOut = ()=>{
         auth.signOut(); //sign out from the database
-        window.location.href='login.html'; //switch the window from home to login
+        window.location.href='home.html'; //switch the window from home to login
     }
     //create our getDataInfo function to get data from firebase
     let getDataInfo = () =>{
