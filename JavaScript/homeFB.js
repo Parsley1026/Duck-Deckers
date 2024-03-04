@@ -89,7 +89,7 @@ let joinRoom = evt => {
                         console.log(error.message); //logs the error message
                     })
             } else {//room doesn't exist, return error
-                alert("Invalid room code entered, please try again");//alert user
+                alert("Invalid room code entered, please try again. \n Hint: Use your eyes.");//alert user
                 return;//cancel function
             }
         });
