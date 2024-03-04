@@ -130,7 +130,7 @@
             return; //cancel function
         } else { //room code was entered, run function
             get(ref(db, 'rooms/' + roomCode)).then((snapshot) => { //check if room exists
-                if(snapshot.exists){
+                if(snapshot.exists()){
                     update(ref(db, 'users/' + userID), {
                         currentRoom: roomCode //set active room in current user's database
                     })
@@ -155,7 +155,7 @@
     //create my signOut method
     let signOut = ()=>{
         auth.signOut(); //sign out from the database
-        window.location.href='login.html'; //switch the window from home to login
+        window.location.href='home.html'; //switch the window from home to login
     }
     //create our getDataInfo function to get data from firebase
     let getDataInfo = () =>{
