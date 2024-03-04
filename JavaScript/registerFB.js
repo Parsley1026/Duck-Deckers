@@ -35,12 +35,12 @@ let RegisterUser = evt =>{
     evt.preventDefault(); //takes care of our promise
     createUserWithEmailAndPassword(auth, EmailInput.value, PasswordInput.value)
         .then((credentials)=>{
-            const initialCash = 100; //Setting the initial cash a user will start with
             set(ref(db, 'users/'+credentials.user.uid), {
                 firstName: FNameInput.value,
                 lastName: LNameInput.value,
                 currentRoom: null, //not in a room when account is created
-                cash: initialCash
+                cash: 100, //starting user cash
+                ducks: 0 //starting user ducks
             })
             setTimeout(()=> {window.location.href='home.html'}, 1000); //one second wait, so we can write data before switching pages
         })

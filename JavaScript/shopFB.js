@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+import { getDatabase, ref, onValue, runTransaction, get } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 //import { ref, runTransaction } from 'firebase/database';
 
@@ -23,20 +23,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase();
 const auth = getAuth(app);
-let cashInput = document.getElementById('cash');
-let cashRedeem = document.getElementById('redeemCash');
+
+let cashTag = document.getElementById('cash');
+let duckTag = document.getElementById('ducks');
+let cashButton = document.getElementById('redeemCash');
+let duckButton = document.getElementById('buyDuck');
+
 let getDataInfo = () =>{
     onAuthStateChanged(auth, (user) => {
         if(user){
             const userID = user.uid;
             const dbref = ref(db, 'users/'+userID);
             onValue(dbref, (snapshot) => {
+                //get user data
                 let cashData = snapshot.val().cash;
-
-                setTimeout(()=>{console.log("getting data");}, 500); //500ms wait to fetch data
+                let duckData = snapshot.val().ducks;
 
                 //now send data to h2 tags
-                cashInput.innerText = 'Cash: $' + cashData;
+                cashTag.innerText = 'Cash: $' + cashData;
+                duckTag.innerText = 'Ducks: ' + duckData;
             });
         } else{
             console.log("Error getting user data");
@@ -55,16 +60,42 @@ let addCash = () => {
             currentCash = 0;
         }
         // Update the cash value by adding 100
-        const newCash = currentCash + 100;
-        return newCash; // Return the updated cash value
+        return currentCash + 100;
     }).then((transactionResult) => {
         console.log('Cash updated successfully. New value: ', transactionResult.snapshot.val());
     }).catch((error) => {
         console.error('Transaction failed abnormally:', error);
     });
-};
+}
+
+let buyDuck = () => {//function to buy a duck, costs $1000
+    const userID = auth.currentUser.uid; //get uid of current user
+    const dbref = ref(db, 'users/'+userID); //get dbref of current user
+    let currentCash = null
+    get(dbref).then((snapshot) => { //get current cash of user
+        currentCash = snapshot.val().cash;
+    });
+    setTimeout(() => {
+        if (currentCash >= 1000) {
+            const refCash = ref(db, 'users/' + userID + '/cash'); //ref of current user's cash
+            runTransaction(refCash, (CCash) => { //remove $1000 from user cash account
+                return CCash - 1000;
+            });
+            const refDuck = ref(db, 'users/' + userID + '/ducks'); //ref of current user's ducks
+            runTransaction(refDuck, (currentDucks) => {
+                if (currentDucks == null) {
+                    currentDucks = 0;
+                } //if currentDucks is null, node doesn't exist yet, so create it
+                return currentDucks + 1; //add 1 duck to user's duck count
+            })
+        } else {
+            alert("You do not have enough cash to purchase this!");
+        }
+    }, 5); //5 ms wait for data fetch
+}
 
 
 
-window.addEventListener('load', getDataInfo);
-cashRedeem.addEventListener('click', addCash); //This is meant to occur when teh redeem cash button is clicked
+window.addEventListener('load', getDataInfo); //on page load, get current cash of user
+cashButton.addEventListener('click', addCash); //when cash button pressed, add $100 to user account
+duckButton.addEventListener('click', buyDuck); //when duck button pressed, attempt to buy a duck
