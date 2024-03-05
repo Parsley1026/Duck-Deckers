@@ -39,7 +39,7 @@ let getDataInfo = () =>{
                 let cashData = snapshot.val().cash;
                 let duckData = snapshot.val().ducks;
 
-                //now send data to h2 tags
+                //now send data to h2 tags displays on the shop page
                 cashTag.innerText = 'Cash: $' + cashData;
                 duckTag.innerText = 'Ducks: ' + duckData;
             });
