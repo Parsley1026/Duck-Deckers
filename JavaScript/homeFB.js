@@ -54,7 +54,7 @@ let createRoom = evt => {
             .then(() => {
                 setTimeout(() => {
                     window.location.href = 'room.html'
-                }, 1000); //one second wait to create room
+                }, 250); //250ms wait to create room
             })
             .catch((error) => {
                 alert(error.message); //pop up on the webpage
@@ -81,7 +81,7 @@ let joinRoom = evt => {
                     .then(() => {
                         setTimeout(() => {
                             window.location.href = 'room.html'
-                        }, 1000); //one second wait to join room
+                        }, 250); //250ms wait to join room
                     })
                     .catch((error) => {
                         alert(error.message); //pop up on the webpage
@@ -98,8 +98,10 @@ let joinRoom = evt => {
 
 //create my signOut method
 let signOut = ()=>{
-    auth.signOut(); //sign out from the database
-    window.location.href='home.html'; //switch the window from home to login
+    if(confirm("Are you sure you want to sign out?")) {//make sure user wants to sign out
+        auth.signOut(); //sign out from the database
+        window.location.href = 'home.html'; //switch the window from home to login
+    }
 }
 //create our getDataInfo function to get data from firebase
 let getDataInfo = () =>{
@@ -111,8 +113,6 @@ let getDataInfo = () =>{
                 let fNameData = snapshot.val().firstName;
                 let lNameData = snapshot.val().lastName;
                 let cashData = snapshot.val().cash;
-
-                setTimeout(()=>{console.log("getting data");}, 1000); //1 second wait to fetch data
 
                 //now send data to h2 tags
                 fNameInput.innerText = 'First Name: ' + fNameData;
