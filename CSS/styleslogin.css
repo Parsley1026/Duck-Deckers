@@ -8,6 +8,10 @@
     margin: 0px;
 }
 
+.center{
+    margin: auto;
+    width: 50%;
+}
 
 .logo{
     position: absolute;
