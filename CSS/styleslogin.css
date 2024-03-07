@@ -2,12 +2,11 @@
 
 #loginBackground{
     position: absolute;
-    height:auto;
+    height: 100vh;
     width: 100vw;
     z-index: 0;
     margin: 0px;
 }
-
 
 .logo{
     position: absolute;
@@ -15,7 +14,7 @@
     height: auto;
     margin-left: 35vw;
     margin-top:40px;
-    z-index: 1; //the duck deckers logo
+    z-index: 1;
 }
 .splash-text{
     position: absolute;
