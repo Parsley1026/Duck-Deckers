@@ -133,3 +133,4 @@ SignOutButton.addEventListener('click', signOut);
 createRoomButton.addEventListener('click', createRoom);
 //when joinRoom button clicked, attempt to join room
 joinRoomButton.addEventListener('click', joinRoom);
+
