@@ -100,10 +100,8 @@ let joinRoom = evt => {
 let signOut = () =>{
     if(confirm("Are you sure you want to sign out?") == true) {//make sure user wants to sign out
         auth.signOut(); //sign out from the database
-        alert("signed out");
         window.location.href = 'login.html'; //switch to login page
     } else {
-        alert("signout hit");
         return;
     }
 }
