@@ -11,3 +11,10 @@
     width: 200px;
 }
 
+#homeBackground{
+    position: absolute;
+    height: 97vh;
+    width: 100vw;
+    z-index: -1;
+    margin:auto;
+}
