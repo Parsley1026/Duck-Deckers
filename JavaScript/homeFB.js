@@ -100,9 +100,8 @@ let joinRoom = evt => {
 let signOut = () =>{
     if(confirm("Are you sure you want to sign out?") == true) {//make sure user wants to sign out
         auth.signOut(); //sign out from the database
-        setTimeout(() => {
-            window.location.href = 'login.html'
-        }, 100); //100ms wait to join room
+        alert("signed out");
+        window.location.href = 'login.html'; //switch to login page
     } else {
         alert("signout hit");
         return;
