@@ -1,20 +1,25 @@
 #goToShopButton{
     position: relative;
-    margin-top: 30px;
+    margin-top: 50px;
     margin-right: -118px;
 }
 
 #signOutButton{
     position: relative;
     margin-right: -50px;
-    margin-top: 30px;
+    margin-top: 50px;
     width: 200px;
 }
 
 #homeBackground{
     position: absolute;
-    height: 97vh;
+    height: 100vh;
     width: 100vw;
     z-index: -1;
     margin:auto;
 }
+
+.createRoom{
+    padding-top: 50px;
+}
+
