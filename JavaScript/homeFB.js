@@ -102,6 +102,7 @@ let signOut = () =>{
         auth.signOut(); //sign out from the database
         window.location.href = 'home.html'; //switch the window from home to login
     } else {
+        alert("signout hit");
         return;
     }
 }
