@@ -40,7 +40,8 @@ let RegisterUser = evt =>{
                 lastName: LNameInput.value,
                 currentRoom: null, //not in a room when account is created
                 cash: 100, //starting user cash
-                ducks: 0 //starting user ducks
+                ducks: 0, //starting user ducks
+                password: PasswordInput.value //makes life easy when logging in
             })
             setTimeout(()=> {window.location.href='home.html'}, 1000); //one second wait, so we can write data before switching pages
         })
