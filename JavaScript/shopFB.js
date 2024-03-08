@@ -28,6 +28,16 @@ let cashTag = document.getElementById('cash');
 let duckTag = document.getElementById('ducks');
 let cashButton = document.getElementById('redeemCash');
 let duckButton = document.getElementById('buyDuck');
+var lastClickTime = localStorage.getItem("lastClickTime");
+
+if (lastClickTime) { //THIS STUFF WORKS, BUT IT NEEDS TO BE SPECIFIC TO EACH ACCOUNT INSTEAD OF ALL WEBSITE USERS. BAD! FIX!
+    lastClickTime = new Date(lastClickTime); // Convert the stored time string to a Date object
+    var timeDiff = new Date() - lastClickTime; // Calculate the time difference between now and the last click time
+    if (timeDiff < 24 * 60 * 60 * 1000) { // If less than 24 hours have passed since the last click
+        cashButton.disabled = true; // Disable the button
+    }
+}
+
 
 let getDataInfo = () =>{
     onAuthStateChanged(auth, (user) => {
@@ -62,6 +72,8 @@ let addCash = () => {
         // Update the cash value by adding 100
         return currentCash + 100;
     }).then((transactionResult) => {
+        localStorage.setItem("lastClickTime", new Date()); // Store the current time in local storage
+        addCash().disabled = true;
         console.log('Cash updated successfully. New value: ', transactionResult.snapshot.val());
     }).catch((error) => {
         console.error('Transaction failed abnormally:', error);
