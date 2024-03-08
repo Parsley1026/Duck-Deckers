@@ -98,7 +98,7 @@ let joinRoom = evt => {
 
 //create my signOut method
 let signOut = ()=>{
-    if(confirm("Are you sure you want to sign out?")) {//make sure user wants to sign out
+    if(confirm("Are you sure you want to sign out?") == true) {//make sure user wants to sign out
         auth.signOut(); //sign out from the database
         window.location.href = 'home.html'; //switch the window from home to login
     } else {
