@@ -2,3 +2,19 @@
     text-align: center;
     transform: translateY(5px);
 }
+#dragTest {
+    position: absolute;
+    z-index: 9;
+    background-color: #f1f1f1;
+    border: 1px solid #d3d3d3;
+    text-align: center;
+    width: auto;
+    height: 100px;
+}
+#dragTest2 {
+    position: absolute;
+    z-index: 9;
+    text-align: center;
+    width: 100px;
+    height: 50px;
+}
