@@ -153,5 +153,16 @@ let buyDuck = () => {//function to buy a duck, costs $1000
 
 
 window.addEventListener('load', getDataInfo); //on page load, get current cash of user
-cashButton.addEventListener('click', addCash); //when cash button pressed, add $100 to user account
+cashButton.addEventListener("click", function() {
+    // Store the current time in local storage
+    localStorage.setItem("lastClickTime", new Date());
+    addCash();
+    // Disable the button
+    cashButton.disabled = true;
+
+    // Enable the button after 24 hours
+    setTimeout(function() {
+        cashButton.disabled = false;
+    }, 24 * 60 * 60 * 1000);
+});
 duckButton.addEventListener('click', buyDuck); //when duck button pressed, attempt to buy a duck
