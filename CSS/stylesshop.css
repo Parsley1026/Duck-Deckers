@@ -2,7 +2,7 @@
     text-align: center;
     transform: translateY(5px);
 }
-#dragTest {
+.testcard {
     position: absolute;
     z-index: 9;
     background-color: #f1f1f1;
@@ -11,10 +11,10 @@
     width: auto;
     height: 100px;
 }
-#dragTest2 {
+.shopDuck {
     position: absolute;
     z-index: 9;
     text-align: center;
-    width: 100px;
-    height: 50px;
+    width: 500px;
+    height: auto;
 }
