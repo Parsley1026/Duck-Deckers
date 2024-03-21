@@ -1,0 +1,1 @@
+export const card = {name: "comedy", number: 0};
