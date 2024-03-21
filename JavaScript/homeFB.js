@@ -40,7 +40,6 @@ let createRoom = evt => {
     const userID = auth.currentUser.uid; //current userID
     if(roomCode == ""){//check if anything is entered in room code, otherwise, return error to user
         alert("Please enter a room code"); //alert user
-        return; //abort function
     } else {//room code was entered, execute code
         set(ref(db, 'rooms/' + roomCode), {
             //states of buttons for testing
@@ -71,7 +70,6 @@ let joinRoom = evt => {
     const userID = auth.currentUser.uid;
     if(roomCode == ""){//check if room code was entered by user, otherwise, return error to user
         alert("Please enter a room code"); //notify user
-        return; //cancel function
     } else { //room code was entered, run function
         get(ref(db, 'rooms/' + roomCode)).then((snapshot) => { //check if room exists
             if(snapshot.exists()){
@@ -89,8 +87,7 @@ let joinRoom = evt => {
                         console.log(error.message); //logs the error message
                     })
             } else {//room doesn't exist, return error
-                alert("Invalid room code entered, please try again. \n Hint: Use your eyes.");//alert user
-                return;//cancel function
+                alert("Invalid room code entered, please try again.");//alert user
             }
         });
     }
