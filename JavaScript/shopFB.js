@@ -119,5 +119,5 @@ let buyDuck = () => {//function to buy a duck, costs $1000
 
 
 window.addEventListener('load', getDataInfo); //on page load, get current cash of user
-cashButton.addEventListener('click', addCash); //when cash button pressed, add $100 to user account
+cashButton.addEventListener('click', addCash); //when cash button pressed, add $200 to user account
 duckButton.addEventListener('click', buyDuck); //when duck button pressed, attempt to buy a duck
