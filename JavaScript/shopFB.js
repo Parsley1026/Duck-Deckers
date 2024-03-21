@@ -78,8 +78,8 @@ let addCash = () => {
             if (currentCash === null) {
                 currentCash = 0;
             }
-            // Update the cash value by adding 100
-            return currentCash + 100;
+            // Update the cash value by adding 200
+            return currentCash + 200;
         }).then((transactionResult) => {
             console.log('Cash updated successfully. New value: ', transactionResult.snapshot.val());
         }).catch((error) => {
