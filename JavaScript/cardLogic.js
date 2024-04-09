@@ -1,72 +1,46 @@
-//THIS FILE HANDLES MOVING CARDS AND SUCH
-const position = { x: 0, y: 0 }
-interact('.draggable').draggable({
-    listeners: {
-        start (event) {
-            console.log(event.type, event.target)
-        },
-        move (event) {
-            position.x += event.dx
-            position.y += event.dy
 
-            event.target.style.transform =
-                `translate(${position.x}px, ${position.y}px)`
-        },
+
+let card = document.getElementById("dragTest");
+let card2 = document.getElementById("card2");
+let dropZone1 = document.getElementById("dropZone");
+let dropZone2 = document.getElementById("dropZone2");
+let selected = false;
+let lockedIn = false;
+
+let select = () => { //when the card is clicked. this needs to be scaled so multiple cards can use this function
+    if(!selected){ //if it ISN'T selected
+        card.style.border = '7px solid red' //put a red indicator around the card
+        selected = true; //the card is now selected
+        if(lockedIn){ //if the card is already in a tile
+            alert("Who do you want to attack") //this is where you can choose to attack cards
+        }
+    }else { //if it IS selected
+        card.style.border = '0px solid red' //take away the indicator
+        selected = false; //it is now not selected
     }
-})
-interact('.rectangle')
-    .dropzone({
-        ondrop: function (event) { //when dropped into
-
-
-        }
-    })
-    .on('dropactivate', function (event) {
-        event.target.classList.add('drop-activated')
-    })
-
-// Enable draggability for the rectangle
-interact('.draggable')
-    .draggable({
-        modifiers: [
-            interact.modifiers.snap({
-                targets: [
-                    interact.createSnapGrid({ x: 10, y: 10 })
-                ],
-                range: Infinity,
-                relativePoints: [{ x: 0, y: 0 }]
-            }),
-            interact.modifiers.restrictRect({
-                restriction: 'parent'
-            })
-        ],
-        inertia: true,
-        autoScroll: true,
-        onmove: dragMoveListener,
-    });
-
-// Enable dropzone functionality
-interact('.rectangle')
-    .dropzone({
-        overlap: 0.5,
-        ondropactivate: function (event) {
-            event.target.classList.add('drop-activated');
-        },
-        ondropdeactivate: function (event) {
-            event.target.classList.remove('drop-activated');
-        }
-    });
-
-function dragMoveListener(event) {
-    let target = event.target;
-
-    target.style.transform = `translate(${event.dx}px, ${event.dy}px)`;
-
-    let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-    let y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-    target.style.webkitTransform = target.style.transform = `translate(${x}px, ${y}px)`;
-
-    target.setAttribute('data-x', x);
-    target.setAttribute('data-y', y);
 }
+function move(zone) { //clicking on specific zones/tiles will pass in different paramters
+    if (selected && !lockedIn) { //if the card is selected and not yet in a zone
+        let dropZone;
+        if (zone === 1) {
+            dropZone = dropZone1; //designates the zone based on the passed parameter
+        } else if (zone === 2) {
+            dropZone = dropZone2;
+        }
+        if (dropZone) {
+            card.style.left = dropZone.getBoundingClientRect().left + 'px'; //put the card in the zone
+            card.style.top = dropZone.getBoundingClientRect().top + 'px';
+            lockedIn = true; //it is now locked in
+            selected = false; //deselect the card
+            card.style.border = '0px solid red' //remove indicator
+        }
+    }
+}
+
+
+
+
+card.addEventListener('click', select); // when the card is clicked. again, this needs to be able to support multiple cards somehow
+
+dropZone1.addEventListener('click', () => move(1));
+dropZone2.addEventListener('click', () => move(2));

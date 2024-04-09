@@ -132,4 +132,5 @@ cashButton.addEventListener("click", function() {
         cashButton.disabled = false;
     }, 24 * 60 * 60 * 1000);
 });
+
 duckButton.addEventListener('click', buyDuck); //when duck button pressed, attempt to buy a duck

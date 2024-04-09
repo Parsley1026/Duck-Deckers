@@ -2,6 +2,12 @@
     text-align: center;
     transform: translateY(5px);
 }
+
+#dragTest{
+    position: absolute;
+    left: 10px;
+
+}
 .testcard {
     position: absolute;
     z-index: 9;
@@ -11,6 +17,7 @@
     width: auto;
     height: 100px;
 }
+
 .shopDuck {
     position: absolute;
     z-index: 9;
@@ -20,8 +27,9 @@
 }
 
 .rectangle {
-    width: 700px;
-    height: 800px;
+    width:  300px ;
+    height: 500px;
     background-color: #3498db;
     border: 2px solid #2980b9;
+
 }
