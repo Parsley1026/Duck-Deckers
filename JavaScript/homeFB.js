@@ -1,5 +1,5 @@
 //import test function
-import { card } from "./cardTesting.js";
+import { Card } from "./card.js";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
@@ -37,12 +37,23 @@ let joinRoomButton = document.getElementById('codeJoinButton');
 let cashInput = document.getElementById('cash');
 
 let testButton = document.getElementById('testButton');
+let getButton = document.getElementById('getCardButton');
 
 let testObject = () => {
     const userID = auth.currentUser.uid;
+    const testCard = new Card("Test", 50);
     set(ref(db, 'users/'+userID+'/cards'), {
-        cardObject: card
+        cardObject: testCard
     });
+}
+
+let getCard = () => {
+    const userID = auth.currentUser.uid;
+    onValue(ref(db, 'users/'+userID+'/cards'), (snapshot) => {
+        let testCard = new Card();
+        testCard = snapshot.val().cardObject;
+        console.log(testCard.toString());
+    })
 }
 
 //room creation method
@@ -144,4 +155,5 @@ createRoomButton.addEventListener('click', createRoom);
 joinRoomButton.addEventListener('click', joinRoom);
 
 testButton.addEventListener('click', testObject);
+getButton.addEventListener('click', getCard);
 
