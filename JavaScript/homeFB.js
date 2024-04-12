@@ -53,6 +53,7 @@ let getCard = () => {
         let testCard = new Card();
         testCard = snapshot.val().cardObject;
         console.log(testCard.toString());
+        alert(testCard.toString());
     })
 }
 
