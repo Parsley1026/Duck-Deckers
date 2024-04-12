@@ -13,6 +13,7 @@
     width: 650px;
     height: auto;
     margin-left: 50vw;
+    margin-top: 80px
     transform: translate(-50%, 0%);
     z-index: 1;
 }
