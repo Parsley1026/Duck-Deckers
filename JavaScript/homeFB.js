@@ -1,3 +1,6 @@
+//import test function
+import { Card } from "./card.js";
+
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getDatabase, set, ref, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
@@ -33,6 +36,26 @@ let createRoomButton = document.getElementById('codeCreateButton');
 let joinRoomButton = document.getElementById('codeJoinButton');
 let cashInput = document.getElementById('cash');
 
+let testButton = document.getElementById('testButton');
+let getButton = document.getElementById('getCardButton');
+
+let testObject = () => {
+    const userID = auth.currentUser.uid;
+    const testCard = new Card("Test", 50);
+    set(ref(db, 'users/'+userID+'/cards'), {
+        cardObject: testCard
+    });
+}
+
+let getCard = () => {
+    const userID = auth.currentUser.uid;
+    onValue(ref(db, 'users/'+userID+'/cards'), (snapshot) => {
+        let testCard = new Card();
+        testCard = snapshot.val().cardObject;
+        console.log(testCard.toString());
+    })
+}
+
 //room creation method
 let createRoom = evt => {
     evt.preventDefault();
@@ -40,7 +63,6 @@ let createRoom = evt => {
     const userID = auth.currentUser.uid; //current userID
     if(roomCode == ""){//check if anything is entered in room code, otherwise, return error to user
         alert("Please enter a room code"); //alert user
-        return; //abort function
     } else {//room code was entered, execute code
         set(ref(db, 'rooms/' + roomCode), {
             //states of buttons for testing
@@ -71,7 +93,6 @@ let joinRoom = evt => {
     const userID = auth.currentUser.uid;
     if(roomCode == ""){//check if room code was entered by user, otherwise, return error to user
         alert("Please enter a room code"); //notify user
-        return; //cancel function
     } else { //room code was entered, run function
         get(ref(db, 'rooms/' + roomCode)).then((snapshot) => { //check if room exists
             if(snapshot.exists()){
@@ -89,8 +110,7 @@ let joinRoom = evt => {
                         console.log(error.message); //logs the error message
                     })
             } else {//room doesn't exist, return error
-                alert("Invalid room code entered, please try again. \n Hint: Use your eyes.");//alert user
-                return;//cancel function
+                alert("Invalid room code entered, please try again.");//alert user
             }
         });
     }
@@ -100,10 +120,8 @@ let joinRoom = evt => {
 let signOut = () =>{
     if(confirm("Are you sure you want to sign out?") == true) {//make sure user wants to sign out
         auth.signOut(); //sign out from the database
-        window.location.href = 'login.html'; //switch to login page
-    } else {
-        return;
-    }
+        window.location.href = 'login.html'; //switch the window from home to login
+    } else {}
 }
 //create our getDataInfo function to get data from firebase
 let getDataInfo = () =>{
@@ -135,4 +153,7 @@ SignOutButton.addEventListener('click', signOut);
 createRoomButton.addEventListener('click', createRoom);
 //when joinRoom button clicked, attempt to join room
 joinRoomButton.addEventListener('click', joinRoom);
+
+testButton.addEventListener('click', testObject);
+getButton.addEventListener('click', getCard);
 

@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getDatabase, ref, onValue, runTransaction, get } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
-//import { ref, runTransaction } from 'firebase/database';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -30,6 +29,7 @@ let cashButton = document.getElementById('redeemCash');
 let duckButton = document.getElementById('buyDuck');
 
 let getDataInfo = () =>{
+    let timeEntered = new Date(); //get date page was entered
     onAuthStateChanged(auth, (user) => {
         if(user){
             const userID = user.uid;
@@ -38,10 +38,15 @@ let getDataInfo = () =>{
                 //get user data
                 let cashData = snapshot.val().cash;
                 let duckData = snapshot.val().ducks;
+                let timeToDaily = snapshot.val().nextDailyRedeemTime;
 
                 //now send data to h2 tags displays on the shop page
                 cashTag.innerText = 'Cash: $' + cashData;
                 duckTag.innerText = 'Ducks: ' + duckData;
+
+                if(timeEntered.getTime() < timeToDaily){ //if the current time is before the daily time, disable the button
+                    cashButton.disabled = true;
+                }
             });
         } else{
             console.log("Error getting user data");
@@ -49,23 +54,40 @@ let getDataInfo = () =>{
     })
 }
 let addCash = () => {
+    let timeClicked = new Date(); //get date button was clicked
     const userID = auth.currentUser.uid;
     const userRef = ref(db, 'users/'+userID+'/cash');
 
-    // Run the transaction to update the cash value
-    runTransaction(userRef, (currentCash) => {
-        // If the currentCash is null, it means the cash node doesn't exist yet
-        // We'll initialize it with 0
-        if (currentCash === null) {
-            currentCash = 0;
+    runTransaction(ref(db, 'users/'+userID+'/nextDailyRedeemTime'), (timeToRedeem) => { //run transaction to get time when next cash redeem may occur
+        if(timeToRedeem === null) { //if node doesn't exist, create it with current time + 24 hours
+            timeToRedeem = timeClicked; //set timeToRedeem to current time
+            return timeToRedeem.setTime(timeClicked.getTime()+(24*60*60*1000)); //return time plus 24 hours
+        } else if(timeClicked.getTime() > timeToRedeem){ //check if the current time is past the time for next redeem in firebase
+            cashButton.disabled = true; //disable cash button
+            return timeClicked.getTime() + (24*60*60*1000); //set time in firebase to 24 hours from the time button was clicked
+        } else {
+            cashButton.disabled = true;
+            alert("It has not been 24 hours since last redemption, please wait " + (Math.round((timeToRedeem - timeClicked.getTime())/(1000*60*60))) + " hours!");
+            throw new Error("It has not been 24 hours since last redemption, please wait " + (Math.round((timeToRedeem - timeClicked.getTime())/(1000*60*60))) + " hours!");
         }
-        // Update the cash value by adding 100
-        return currentCash + 100;
-    }).then((transactionResult) => {
-        console.log('Cash updated successfully. New value: ', transactionResult.snapshot.val());
-    }).catch((error) => {
-        console.error('Transaction failed abnormally:', error);
-    });
+    }).then(() => { //if time check is successful, add cash
+        // Run the transaction to update the cash value
+        runTransaction(userRef, (currentCash) => {
+            // If the currentCash is null, it means the cash node doesn't exist yet
+            // We'll initialize it with 0
+            if (currentCash === null) {
+                currentCash = 0;
+            }
+            // Update the cash value by adding 200
+            return currentCash + 200;
+        }).then((transactionResult) => {
+            console.log('Cash updated successfully. New value: ', transactionResult.snapshot.val());
+        }).catch((error) => {
+            console.error('Transaction failed abnormally:', error);
+        });
+    }).catch((error) => { //if time check fails return error
+        console.error('Time check failed: ', error);
+    })
 }
 
 let buyDuck = () => {//function to buy a duck, costs $1000
@@ -97,5 +119,5 @@ let buyDuck = () => {//function to buy a duck, costs $1000
 
 
 window.addEventListener('load', getDataInfo); //on page load, get current cash of user
-cashButton.addEventListener('click', addCash); //when cash button pressed, add $100 to user account
+cashButton.addEventListener('click', addCash); //when cash button pressed, add $200 to user account
 duckButton.addEventListener('click', buyDuck); //when duck button pressed, attempt to buy a duck

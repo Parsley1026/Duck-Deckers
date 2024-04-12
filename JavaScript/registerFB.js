@@ -39,10 +39,10 @@ let RegisterUser = evt =>{
                 firstName: FNameInput.value,
                 lastName: LNameInput.value,
                 currentRoom: null, //not in a room when account is created
-                cash: 100, //starting user cash
+                cash: 2000, //starting user cash
                 ducks: 0 //starting user ducks
             })
-            setTimeout(()=> {window.location.href='home.html'}, 1000); //one second wait, so we can write data before switching pages
+            setTimeout(()=> {window.location.href='home.html'}, 250); //250ms wait, so we can write data before switching pages
         })
         .catch((error)=>{
             alert(error.message); //pop up on the webpage
