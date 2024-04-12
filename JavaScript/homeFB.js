@@ -36,26 +36,6 @@ let createRoomButton = document.getElementById('codeCreateButton');
 let joinRoomButton = document.getElementById('codeJoinButton');
 let cashInput = document.getElementById('cash');
 
-let testButton = document.getElementById('testButton');
-let getButton = document.getElementById('getCardButton');
-
-let testObject = () => {
-    const userID = auth.currentUser.uid;
-    const testCard = new Card("Test", 50);
-    set(ref(db, 'users/'+userID+'/cards'), {
-        cardObject: testCard
-    });
-}
-
-let getCard = () => {
-    const userID = auth.currentUser.uid;
-    onValue(ref(db, 'users/'+userID+'/cards'), (snapshot) => {
-        let testCard = new Card();
-        Object.assign(testCard, snapshot.val().cardObject);
-        console.log(testCard.toString());
-    })
-}
-
 //room creation method
 let createRoom = evt => {
     evt.preventDefault();
@@ -153,7 +133,3 @@ SignOutButton.addEventListener('click', signOut);
 createRoomButton.addEventListener('click', createRoom);
 //when joinRoom button clicked, attempt to join room
 joinRoomButton.addEventListener('click', joinRoom);
-
-testButton.addEventListener('click', testObject);
-getButton.addEventListener('click', getCard);
-
