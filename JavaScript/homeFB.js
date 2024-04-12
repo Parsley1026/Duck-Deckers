@@ -50,7 +50,8 @@ let testObject = () => {
 let getCard = () => {
     const userID = auth.currentUser.uid;
     onValue(ref(db, 'users/'+userID+'/cards'), (snapshot) => {
-        let testCard = snapshot.val().toString();
+        let testCard = new Card();
+        Object.assign(testCard, snapshot.val().cardObject);
         console.log(testCard.toString());
     })
 }
