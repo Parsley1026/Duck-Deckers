@@ -1,5 +1,5 @@
 //import test function
-import { Card } from "./card.js";
+import { Card, Duck, Land, Spell } from "./card.js";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
