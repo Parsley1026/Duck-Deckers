@@ -95,17 +95,8 @@ let button1Event = evt => {
         })
 }
 
-let button2Event = evt => {
-    evt.preventDefault();
-    const userID = auth.currentUser.uid; //get uid of current user
-    update(ref(db, 'rooms/' + currentRoomCode), {
-        button2state: userID //set button2state to user id of who pressed
-    })
-        .catch((error) => {
-            alert(error.message); //pop up on the webpage
-            console.log(error.code); //log the error code number
-            console.log(error.message); //logs the error message
-        })
+let button2Event = () => {
+    set(ref(db, 'test/'))
 }
 
 let eventDetection = () => { //detects changes in the buttonState in the room
