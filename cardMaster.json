@@ -1,0 +1,28 @@
+{
+  "0" :{
+    "name": "Duck",
+    "type": 0,
+    "cost": 1,
+    "effect": null,
+    "damage": 2,
+    "health": 2
+  },
+  "1" : {
+    "name": "Snowball",
+    "type": 1,
+    "cost": 1,
+    "effect": [0, 1]
+  },
+  "2" : {
+    "name": "Duckium",
+    "type": 1,
+    "cost": 1,
+    "effect": [7, 1]
+  },
+  "3" : {
+    "name": "Soup",
+    "type": 1,
+    "cost": 1,
+    "effect": [[1, 4], [2, 1]]
+  }
+}

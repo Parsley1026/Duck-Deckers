@@ -1,3 +1,6 @@
+//import test function
+import { Card, Duck, Land, Spell } from "./card.js";
+
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getDatabase, set, ref, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
@@ -40,7 +43,6 @@ let createRoom = evt => {
     const userID = auth.currentUser.uid; //current userID
     if(roomCode == ""){//check if anything is entered in room code, otherwise, return error to user
         alert("Please enter a room code"); //alert user
-        return; //abort function
     } else {//room code was entered, execute code
         set(ref(db, 'rooms/' + roomCode), {
             //states of buttons for testing
@@ -71,7 +73,6 @@ let joinRoom = evt => {
     const userID = auth.currentUser.uid;
     if(roomCode == ""){//check if room code was entered by user, otherwise, return error to user
         alert("Please enter a room code"); //notify user
-        return; //cancel function
     } else { //room code was entered, run function
         get(ref(db, 'rooms/' + roomCode)).then((snapshot) => { //check if room exists
             if(snapshot.exists()){
@@ -89,19 +90,18 @@ let joinRoom = evt => {
                         console.log(error.message); //logs the error message
                     })
             } else {//room doesn't exist, return error
-                alert("Invalid room code entered, please try again. \n Hint: Use your eyes.");//alert user
-                return;//cancel function
+                alert("Invalid room code entered, please try again.");//alert user
             }
         });
     }
 }
 
 //create my signOut method
-let signOut = ()=>{
-    if(confirm("Are you sure you want to sign out?")) {//make sure user wants to sign out
+let signOut = () =>{
+    if(confirm("Are you sure you want to sign out?") == true) {//make sure user wants to sign out
         auth.signOut(); //sign out from the database
-        window.location.href = 'home.html'; //switch the window from home to login
-    }
+        window.location.href = 'login.html'; //switch the window from home to login
+    } else {}
 }
 //create our getDataInfo function to get data from firebase
 let getDataInfo = () =>{
@@ -133,4 +133,3 @@ SignOutButton.addEventListener('click', signOut);
 createRoomButton.addEventListener('click', createRoom);
 //when joinRoom button clicked, attempt to join room
 joinRoomButton.addEventListener('click', joinRoom);
-

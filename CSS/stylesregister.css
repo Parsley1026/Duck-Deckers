@@ -6,9 +6,9 @@ body {
     position: absolute;
     width: 450px;
     height: auto;
-    margin-left:760px;
-    margin-top:60px;
-    z-index: 1; //the duck deckers logo
+    margin-left: 745px;
+    margin-top: 50px;
+    z-index: 1;
 }
 .enterEmail{
     position: absolute;
@@ -60,8 +60,8 @@ body {
 }
 .background{
     position: absolute;
-    height: auto;
+    height: 100vh;
     width: 100vw;
-    z-index: 0;
-    margin: 0px;
+    z-index: 1;
+    margin:auto;
 }
