@@ -1,3 +1,6 @@
+import { Duck, Spell, Land } from "./card.js";
+import { createCard } from "./cardCreation.js";
+
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getDatabase, get, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
@@ -82,17 +85,9 @@ let getDataInfo = () =>{
     })
 }
 
-let button1Event = evt => {
-    evt.preventDefault();
-    const userID = auth.currentUser.uid; //get uid of current user
-    update(ref(db, 'rooms/' + currentRoomCode), {
-        button1state: userID //set button1state to user id of who pressed
-    })
-        .catch((error) => {
-            alert(error.message); //pop up on the webpage
-            console.log(error.code); //log the error code number
-            console.log(error.message); //logs the error message
-        })
+let button1Event = () => {
+    let card = createCard(0);
+    console.log(card.toString());
 }
 
 let button2Event = evt => {
