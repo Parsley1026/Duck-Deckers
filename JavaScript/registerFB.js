@@ -41,6 +41,7 @@ let RegisterUser = evt =>{
                 currentRoom: null, //not in a room when account is created
                 cash: 2000, //starting user cash
                 ducks: 0 //starting user ducks
+
             })
             setTimeout(()=> {window.location.href='home.html'}, 250); //250ms wait, so we can write data before switching pages
         })
