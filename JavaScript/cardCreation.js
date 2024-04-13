@@ -11,7 +11,6 @@ export function createCard(id) { //create a card from cardMaster.json based on i
                     data[keys[id]].name,
                     data[keys[id]].cost,
                     data[keys[id]].effect,
-                    data[keys[id]].strength,
                     data[keys[id]].damage,
                     data[keys[id]].health
                 );
@@ -22,7 +21,6 @@ export function createCard(id) { //create a card from cardMaster.json based on i
                     data[keys[id]].name,
                     data[keys[id]].cost,
                     data[keys[id]].effect,
-                    data[keys[id]].strength
                 );
                 break;
             case 2: //card type 2 is a land, so create land
@@ -31,7 +29,6 @@ export function createCard(id) { //create a card from cardMaster.json based on i
                     data[keys[id]].name,
                     data[keys[id]].cost,
                     data[keys[id]].effect,
-                    data[keys[id]].strength
                 );
                 break;
         }

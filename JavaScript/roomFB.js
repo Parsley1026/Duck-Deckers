@@ -86,7 +86,7 @@ let getDataInfo = () =>{
 }
 
 let button1Event = () => {
-    let card = createCard(0);
+    let card = createCard(parseInt(prompt("Enter card id:")));
     console.log(card.toString());
 }
 
