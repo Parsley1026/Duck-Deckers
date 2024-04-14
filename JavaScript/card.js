@@ -68,7 +68,7 @@ export class Spell extends Card { //identified as card type 1
             4: destroy
             5: awaken (un-tap)
             6: wipe (destroy land)
-            7: buff
+            7: buff (negative number buffs just attack)
             8: Buff for one round and then kill
             9: manquacken project (EFFECT IS IN HAND)
             10: damage all foes
