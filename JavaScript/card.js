@@ -75,6 +75,7 @@ export class Spell extends Card { //identified as card type 1
             9: manquacken project (EFFECT IS IN HAND)
             10: damage all foes
             11: destroy foes with attack # or less
+            12: income on play
          */
     }
 
