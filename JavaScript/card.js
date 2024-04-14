@@ -19,7 +19,7 @@ export class Duck extends Card { //identified as card type 0
                 (for cards with multiple effects, type #'s into one line)
                 Example for card with freeze 1 and heal 4, effect var would be [[0, 1], [1, 4]]
             0: Income (on tap)
-            1: adjacent buff (passive)
+            1: adjacent buff on play
             2: damage on play
             3: Get rare or above duck
             4: on death damage
@@ -50,6 +50,10 @@ export class Duck extends Card { //identified as card type 0
             retString += `\ndamage: ${this.damage}\nhealth: ${this.health}`;
             return retString;
         }
+    }
+
+    attack(enemyCard){
+        enemyCard.health -= this.damage;
     }
 
 }

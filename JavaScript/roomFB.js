@@ -29,10 +29,10 @@ let roomCreatorTag = document.getElementById('roomCreatorText');
 let quitButtonInput = document.getElementById('quitButton');//get quit button
 
 //global variables
-export let currentRoomCode = null;
-export let roomCreator = null;
-export let userID = null;
-export let roomReady = false;
+let currentRoomCode = null;
+let roomCreator = null;
+let userID = null;
+let roomReady = false;
 
 //create our getDataInfo function to get data from firebase
 let getDataInfo = () =>{
