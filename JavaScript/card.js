@@ -31,6 +31,7 @@ export class Duck extends Card { //identified as card type 0
             10: trample
             11: untapped on play
             12: mail duck
+            13: discard upon play
          */
         this.damage = damage;
         this.health = health;
