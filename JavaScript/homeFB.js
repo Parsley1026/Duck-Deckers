@@ -49,13 +49,33 @@ let createRoom = evt => {
             currentPlayers: {
                 player1: {
                     uid: userID,
+                    name: auth.currentUser.displayName,
                     health: 20,
-                    emeralds: 1
+                    emeralds: 1,
+                    hand: {
+                        0: null,
+                        1: null,
+                        2: null,
+                        3: null,
+                        4: null,
+                        5: null,
+                        6: null
+                    }
                 },
                 player2: {
                     uid: null,
+                    name: null,
                     health: 20,
-                    emeralds: 1
+                    emeralds: 1,
+                    hand: {
+                        0: null,
+                        1: null,
+                        2: null,
+                        3: null,
+                        4: null,
+                        5: null,
+                        6: null
+                    }
                 }
             },
             boardPositions: {
@@ -125,6 +145,12 @@ let joinRoom = evt => {
                     update(ref(db, 'users/' + userID), {
                         currentRoom: roomCode //set active room in current user's database
                     })
+                        .then(() => {
+                            update(ref(db, 'rooms/' + roomCode +'/currentPlayers/player2'), {
+                                uid: userID,
+                                name: auth.currentUser.displayName
+                            });
+                        })
                         .then(() => {
                             setTimeout(() => {
                                 window.location.href = 'room.html'

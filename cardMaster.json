@@ -29,6 +29,8 @@
     "name": "Money Duck",
     "type": 0,
     "cost": 1,
-    "effect":
+    "effect": [0, 1],
+    "damage": 0,
+    "health": 1
   }
 }

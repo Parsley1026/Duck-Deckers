@@ -26,8 +26,6 @@ const auth = getAuth(app);
 //grab all the data from the form
 let currentRoomTag = document.getElementById('roomCode'); //links with my h2 tags above
 let roomCreatorTag = document.getElementById('roomCreatorText');
-let button1Input = document.getElementById('button1');//get button1
-let button2Input = document.getElementById('button2');//get button2
 let quitButtonInput = document.getElementById('quitButton');//get quit button
 
 //global variables
@@ -62,7 +60,7 @@ let getDataInfo = () =>{
                                 setTimeout(() => {
                                     eventDetection(); //run eventDetection method every 50ms
                                 }, 50);
-                            }, 1000); //one second wait for room creator data
+                            }, 500); //500ms wait for room creator data
 
 
                             roomCreatorTag.innerText = roomCreatorData; //send data to h2 tag
@@ -80,11 +78,6 @@ let getDataInfo = () =>{
     })
 }
 
-let eventDetection = () => { //detects changes in the buttonState in the room
-    if (roomReady) { //detects if room is ready
-
-    }
-}
 
 let quitButtonEvent = () => { //function that handles user wanting to leave room
     if(confirm("Are you sure you want to leave?")) { //confirm that user actually wants to leave
@@ -97,6 +90,10 @@ let quitButtonEvent = () => { //function that handles user wanting to leave room
             console.log(roomCreator);
         });
         update(dbrefuser, {currentRoom: null}); //set current room of user back to null
+        update(ref(db, 'rooms/' + currentRoomCode + '/currentPlayers/player2'), {
+            uid: null,
+            name: null
+        })
         setTimeout(() => {
             if (roomCreator == userID) { //detect if person leaving is room creator
                 remove(dbroomref); //delete current room from database
