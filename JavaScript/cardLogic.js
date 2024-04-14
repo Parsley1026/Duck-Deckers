@@ -1,7 +1,6 @@
 
 
 let card = document.getElementById("dragTest");
-let card2 = document.getElementById("card2");
 let dropZone1 = document.getElementById("dropZone");
 let dropZone2 = document.getElementById("dropZone2");
 let selected = false;
@@ -19,7 +18,7 @@ let select = () => { //when the card is clicked. this needs to be scaled so mult
         selected = false; //it is now not selected
     }
 }
-function move(zone) { //clicking on specific zones/tiles will pass in different paramters
+function move(zone) { //clicking on specific zones/tiles will pass in different parameters
     if (selected && !lockedIn) { //if the card is selected and not yet in a zone
         let dropZone;
         if (zone === 1) {

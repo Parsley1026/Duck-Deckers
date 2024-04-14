@@ -17,13 +17,11 @@ const firebaseConfig = {
     appId: "1:499331695357:web:5d45713977c74c6bb1b494",
     measurementId: "G-FG9BK67MLF"
 }
-var browserHeight = window.innerHeight;
-var browserWidth = window.innerWidth;
+
 
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(); //get db reference
 const auth = getAuth(app); // grab auth from firebase
 let EmailInput = document.getElementById('emailInput'); //grabs info off the page
 let PasswordInput = document.getElementById('passwordInput');
