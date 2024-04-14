@@ -21,7 +21,7 @@ export class Duck extends Card { //identified as card type 0
             0: Income (on tap)
             1: adjacent buff (passive)
             2: damage on play
-            3: random card (maybe)
+            3: Get rare or above duck
             4: on death damage
             5: income on duck play
             6: discount spell (passive)
