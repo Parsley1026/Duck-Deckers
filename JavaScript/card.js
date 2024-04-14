@@ -4,7 +4,7 @@ export class Card {
         this.name = name;
         this.cost = cost;
     }
-
+//wiener
     toString() {
         return "id: " + this.id +
             "\nname: " + this.name +
