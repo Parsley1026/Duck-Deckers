@@ -159,5 +159,68 @@
     "name": "Earthquack",
     "type": 1,
     "cost": 5,
-    "effect": [[3, 2
+    "effect": [[10, 2], [4, 1]]
+  },
+  "23": {
+    "name": "Burger Duck",
+    "type": 0,
+    "cost": 4,
+    "effect": [8, 2],
+    "damage": 2,
+    "health": 2
+  },
+  "24": {
+    "name": "Bomber",
+    "type": 0,
+    "cost": 5,
+    "effect": [9, 2],
+    "damage": 4,
+    "health": 1
+  },
+  "25": {
+    "name": "Laser Duck",
+    "type": 0,
+    "cost": 5,
+    "effect": [10, 1],
+    "damage": 5,
+    "health": 5
+  },
+  "26": {
+    "name": "Duckium-277",
+    "type": 1,
+    "cost": 5,
+    "effect": [8, 5],
+  },
+  "27": {
+    "name": "The Thin White Duck",
+    "type": 0,
+    "cost": 7,
+    "effect": [11, 1],
+    "damage": 5,
+    "health": 3
+  },
+  "28": {
+    "name": "TBD"
+  },
+  "29": {
+    "name": "TBD"
+  },
+  "30": {
+    "name": "TBD"
+  },
+  "31": {
+    "name": "TBD"
+  }, 
+  "32": {
+    "name": "TBD"
+  },
+  "33": {
+    "name": "Manquackhand Project",
+    "type": 1,
+    "cost": 12,
+    "effect": [9, 1]
+  },
+  "34": {
+    "name": "TBD"
+  }
 }
