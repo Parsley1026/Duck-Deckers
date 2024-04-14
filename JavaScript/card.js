@@ -71,6 +71,7 @@ export class Spell extends Card { //identified as card type 1
             7: buff
             8: Buff for one round and then kill
             9: manquacken project (EFFECT IS IN HAND)
+            10: damage all foes
          */
     }
 
