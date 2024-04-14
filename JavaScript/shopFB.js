@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebas
 import { getDatabase, ref, onValue, runTransaction, get } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,10 +24,28 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase();
 const auth = getAuth(app);
 
+
+
+
+
+
+
 let cashTag = document.getElementById('cash');
 let duckTag = document.getElementById('ducks');
 let cashButton = document.getElementById('redeemCash');
 let duckButton = document.getElementById('buyDuck');
+var lastClickTime = localStorage.getItem("lastClickTime");
+
+if (lastClickTime) { //THIS STUFF WORKS, BUT IT NEEDS TO BE SPECIFIC TO EACH ACCOUNT INSTEAD OF ALL WEBSITE USERS. BAD! FIX!
+    lastClickTime = new Date(lastClickTime); // Convert the stored time string to a Date object
+    var timeDiff = new Date() - lastClickTime; // Calculate the time difference between now and the last click time
+    if (timeDiff < 24 * 60 * 60 * 1000) { // If less than 24 hours have passed since the last click
+        cashButton.disabled = true; // Disable the button
+    }
+}
+//ALL THIS SHIT IS FOR TEST PURPOSES. THIS IS HOW TO DRAG AND DROP PNGS. AWESOME. I NEED TO DO SOME TINKERING TO MAKE CARDS SNAP INTO PLACE
+//ETC ETC. GOOD START. I COPIED AND PASTED THIS FROM ETHAN'S LINK FYI.
+// Make the DIV element draggable:
 
 let getDataInfo = () =>{
     let timeEntered = new Date(); //get date page was entered
@@ -119,5 +138,7 @@ let buyDuck = () => {//function to buy a duck, costs $1000
 
 
 window.addEventListener('load', getDataInfo); //on page load, get current cash of user
+
 cashButton.addEventListener('click', addCash); //when cash button pressed, add $200 to user account
+
 duckButton.addEventListener('click', buyDuck); //when duck button pressed, attempt to buy a duck

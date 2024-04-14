@@ -4,7 +4,6 @@
     "type": 0,
     "cost": 1,
     "effect": null,
-    "strength": null,
     "damage": 2,
     "health": 2
   },
@@ -12,7 +11,26 @@
     "name": "Snowball",
     "type": 1,
     "cost": 1,
-    "effect": 0,
-    "strength": 1
+    "effect": [0, 1]
+  },
+  "2" : {
+    "name": "Duckium",
+    "type": 1,
+    "cost": 1,
+    "effect": [7, 1]
+  },
+  "3" : {
+    "name": "Soup",
+    "type": 1,
+    "cost": 1,
+    "effect": [[1, 4], [2, 1]]
+  },
+  "4": {
+    "name": "Money Duck",
+    "type": 0,
+    "cost": 1,
+    "effect": [0, 1],
+    "damage": 0,
+    "health": 1
   }
 }
