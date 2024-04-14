@@ -1,6 +1,3 @@
-import { Duck, Spell, Land } from "./card.js";
-import { createCard } from "./cardCreation.js";
-
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getDatabase, get, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
@@ -29,8 +26,6 @@ const auth = getAuth(app);
 //grab all the data from the form
 let currentRoomTag = document.getElementById('roomCode'); //links with my h2 tags above
 let roomCreatorTag = document.getElementById('roomCreatorText');
-let button1Input = document.getElementById('button1');//get button1
-let button2Input = document.getElementById('button2');//get button2
 let quitButtonInput = document.getElementById('quitButton');//get quit button
 
 //global variables
@@ -47,8 +42,6 @@ let getDataInfo = () =>{
 
             onValue(dbref, (snapshot) => {
                 currentRoomCode = snapshot.val().currentRoom; //get current room code
-
-                setTimeout(()=>{console.log("getting data");}, 1000); // one second wait to get data
 
                 currentRoomTag.innerText = currentRoomCode; //send data to h2 tag
 
@@ -67,7 +60,7 @@ let getDataInfo = () =>{
                                 setTimeout(() => {
                                     eventDetection(); //run eventDetection method every 50ms
                                 }, 50);
-                            }, 1000); //one second wait for room creator data
+                            }, 500); //500ms wait for room creator data
 
 
                             roomCreatorTag.innerText = roomCreatorData; //send data to h2 tag
@@ -85,36 +78,6 @@ let getDataInfo = () =>{
     })
 }
 
-let button1Event = () => {
-    let card = createCard(parseInt(prompt("Enter card id:")));
-    console.log(card.toString());
-}
-
-let button2Event = evt => {
-    evt.preventDefault();
-    const userID = auth.currentUser.uid; //get uid of current user
-    update(ref(db, 'rooms/' + currentRoomCode), {
-        button2state: userID //set button2state to user id of who pressed
-    })
-        .catch((error) => {
-            alert(error.message); //pop up on the webpage
-            console.log(error.code); //log the error code number
-            console.log(error.message); //logs the error message
-        })
-}
-
-let eventDetection = () => { //detects changes in the buttonState in the room
-    if (roomReady) { //detects if room is ready
-        const dbbutton1 = ref(db, 'rooms/' + currentRoomCode + '/button1state'); //reference button1state in current room
-        const dbbutton2 = ref(db, 'rooms/' + currentRoomCode + '/button2state'); //reference button2state in current room
-        onValue(dbbutton1, (data) => { //detect changes in button1state
-            console.log(data.val() + " pressed button 1!"); //print who pressed button 1 to console
-        });
-        onValue(dbbutton2, (data) => { //detect changes in button2state
-            console.log(data.val() + " pressed button 2!"); //print who pressed button 2 to console
-        });
-    }
-}
 
 let quitButtonEvent = () => { //function that handles user wanting to leave room
     if(confirm("Are you sure you want to leave?")) { //confirm that user actually wants to leave
@@ -127,6 +90,10 @@ let quitButtonEvent = () => { //function that handles user wanting to leave room
             console.log(roomCreator);
         });
         update(dbrefuser, {currentRoom: null}); //set current room of user back to null
+        update(ref(db, 'rooms/' + currentRoomCode + '/currentPlayers/player2'), {
+            uid: null,
+            name: null
+        })
         setTimeout(() => {
             if (roomCreator == userID) { //detect if person leaving is room creator
                 remove(dbroomref); //delete current room from database
@@ -138,9 +105,5 @@ let quitButtonEvent = () => { //function that handles user wanting to leave room
 
 //on window load, grab and post data
 window.addEventListener('load', getDataInfo);
-//on button1 press, send event
-button1Input.addEventListener('click', button1Event);
-//on button2 press, send event
-button2Input.addEventListener('click', button2Event);
 //on quitButton press, either delete room if creator, or leave room
 quitButtonInput.addEventListener('click', quitButtonEvent);

@@ -45,10 +45,75 @@ let createRoom = evt => {
         alert("Please enter a room code"); //alert user
     } else {//room code was entered, execute code
         set(ref(db, 'rooms/' + roomCode), {
-            //states of buttons for testing
-            button1state: 0,
-            button2state: 0,
-            roomCreator: userID //define creator of room
+            roomCreator: userID, //define creator of room
+            currentPlayers: {
+                player1: {
+                    uid: userID,
+                    name: auth.currentUser.displayName,
+                    health: 20,
+                    emeralds: 1,
+                    hand: {
+                        0: null,
+                        1: null,
+                        2: null,
+                        3: null,
+                        4: null,
+                        5: null,
+                        6: null
+                    }
+                },
+                player2: {
+                    uid: null,
+                    name: null,
+                    health: 20,
+                    emeralds: 1,
+                    hand: {
+                        0: null,
+                        1: null,
+                        2: null,
+                        3: null,
+                        4: null,
+                        5: null,
+                        6: null
+                    }
+                }
+            },
+            boardPositions: {
+                a1: {
+                    card: null
+                },
+                a2: {
+                    card: null
+                },
+                a3: {
+                    card: null
+                },
+                a4: {
+                    card: null
+                },
+                a5: {
+                    card: null
+                },
+                b1: {
+                    card: null
+                },
+                b2: {
+                    card: null
+                },
+                b3: {
+                    card: null
+                },
+                b4: {
+                    card: null
+                },
+                b5: {
+                    card: null
+                }
+            },
+            arrowPositions: {
+                base: null, //set to board positions
+                tip: null
+            }
         })
         update(ref(db, 'users/' + userID), {
             currentRoom: roomCode //set active room in current user's database
@@ -76,19 +141,29 @@ let joinRoom = evt => {
     } else { //room code was entered, run function
         get(ref(db, 'rooms/' + roomCode)).then((snapshot) => { //check if room exists
             if(snapshot.exists()){
-                update(ref(db, 'users/' + userID), {
-                    currentRoom: roomCode //set active room in current user's database
-                })
-                    .then(() => {
-                        setTimeout(() => {
-                            window.location.href = 'room.html'
-                        }, 250); //250ms wait to join room
+                if(snapshot.val().currentPlayers.player2.uid == null) {
+                    update(ref(db, 'users/' + userID), {
+                        currentRoom: roomCode //set active room in current user's database
                     })
-                    .catch((error) => {
-                        alert(error.message); //pop up on the webpage
-                        console.log(error.code); //log the error code number
-                        console.log(error.message); //logs the error message
-                    })
+                        .then(() => {
+                            update(ref(db, 'rooms/' + roomCode +'/currentPlayers/player2'), {
+                                uid: userID,
+                                name: auth.currentUser.displayName
+                            });
+                        })
+                        .then(() => {
+                            setTimeout(() => {
+                                window.location.href = 'room.html'
+                            }, 250); //250ms wait to join room
+                        })
+                        .catch((error) => {
+                            alert(error.message); //pop up on the webpage
+                            console.log(error.code); //log the error code number
+                            console.log(error.message); //logs the error message
+                        })
+                } else {
+                    alert("Room is full");
+                }
             } else {//room doesn't exist, return error
                 alert("Invalid room code entered, please try again.");//alert user
             }

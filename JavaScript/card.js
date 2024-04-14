@@ -6,10 +6,9 @@ export class Card {
     }
 //wiener
     toString() {
-        return "id: " + this.id +
-            "\nname: " + this.name +
-            "\ncost: " + this.cost;
+        return `id: ${this.id}\nname: ${this.name}\ncost: ${this.cost}`;
     }
+
 }
 
 export class Duck extends Card { //identified as card type 0

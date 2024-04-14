@@ -21,7 +21,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(); //get db reference
 const auth = getAuth(app); // grab auth from firebase
 let EmailInput = document.getElementById('emailInput'); //grabs info off the page
 let PasswordInput = document.getElementById('passwordInput');
