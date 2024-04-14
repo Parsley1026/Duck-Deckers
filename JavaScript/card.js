@@ -20,7 +20,18 @@ export class Duck extends Card { //identified as card type 0
             effect coding for ducks:
                 (for cards with multiple effects, type #'s into one line)
                 Example for card with freeze 1 and heal 4, effect var would be [[0, 1], [1, 4]]
-
+            0: Income (on tap)
+            1: adjacent buff (passive)
+            2: damage on play
+            3: random card (maybe)
+            4: on death damage
+            5: income on duck play
+            6: discount spell (passive)
+            7: not effected by spells
+            8: selective buff (on tap)
+            9: adjacent damage
+            10: trample
+            11: untapped on play
          */
         this.damage = damage;
         this.health = health;
@@ -41,6 +52,7 @@ export class Duck extends Card { //identified as card type 0
             return retString;
         }
     }
+
 }
 
 export class Spell extends Card { //identified as card type 1
@@ -59,6 +71,8 @@ export class Spell extends Card { //identified as card type 1
             5: awaken (un-tap)
             6: wipe (destroy land)
             7: buff
+            8: Buff for one round and then kill
+            9: manquacken project (EFFECT IS IN HAND)
          */
     }
 
@@ -86,7 +100,7 @@ export class Land extends Card { //identified as card type 2
             effect coding for land:
                 (for cards with multiple effects, type #'s into one line)
                 Example for card with freeze 1 and heal 4, effect var would be [[0, 1], [1, 4]]
-            0: tempered
+            0: tempered (reduces incoming damage by strength)
             1: damage on foe play
          */
     }
