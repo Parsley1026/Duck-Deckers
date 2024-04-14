@@ -100,6 +100,7 @@ export class Land extends Card { //identified as card type 2
                 Example for card with freeze 1 and heal 4, effect var would be [[0, 1], [1, 4]]
             0: tempered (reduces incoming damage by strength)
             1: damage on foe play
+            2: income on round start (Factory)
          */
     }
 
