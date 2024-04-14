@@ -1,6 +1,7 @@
 import { createCard } from "./cardCreation.js";
 import { Duck, Spell, Land } from "./card.js";
 import { Deck } from "./deck.js";
+import {currentRoomCode} from "./roomFB.js";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
@@ -74,12 +75,29 @@ let handSlot7img = document.getElementById('handSlot6img');
 
 //create our game function to run game
 let game = () => {
-
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            const userID = user.uid;
+            setTimeout(() =>{
+            onValue(ref(db, 'rooms/'+currentRoomCode+'/boardPositions/a1'), (snapshot) => {
+                if(snapshot.val() != null) {
+                    let card = snapshot.val().card;
+                    enemySlot1img.src = `../webpageImageAssets/${card.id}.png`;
+                } else {
+                    enemySlot1img.src = '../webpageImageAssets/dropZone.png';
+                }
+            });}, 500);
+        } else {
+            console.log("error getting user data");
+        }
+    });
 }
 
 let testFunction = () => {
-    enemySlot1img.src = '../webpageImageAssets/0.png';
-    enemySlot1img.style.border = '7px solid red';
+    update(ref(db, 'rooms/' + currentRoomCode +'/boardPositions/a1'), {
+        card: createCard(0)
+    });
+    console.log("hit");
 }
 
 //run game
