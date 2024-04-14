@@ -60,8 +60,7 @@ let createRoom = evt => {
                         4: null,
                         5: null,
                         6: null
-                    },
-                    library: get(ref(db, 'users/'+userID+'/cards'))
+                    }
                 },
                 player2: {
                     uid: null,

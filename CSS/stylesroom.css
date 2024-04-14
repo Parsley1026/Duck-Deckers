@@ -5,10 +5,7 @@
     height: 300px;
     width: 150px;
 }
-button {
-    background: transparent;
-    border: none;
-}
+
 .zones{
     height: 60px;
     width: auto;
