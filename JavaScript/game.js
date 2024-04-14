@@ -72,6 +72,8 @@ let handSlot7img = document.getElementById('handSlot6img');
 
 
 
+
+
 //create our game function to run game
 let game = () => {
 
