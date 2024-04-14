@@ -5,7 +5,7 @@ import {currentRoomCode} from "./roomFB.js";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { getDatabase, get, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+import { getDatabase, get, ref, onValue, update, remove, onChildAdded } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -78,32 +78,60 @@ let game = () => {
     onAuthStateChanged(auth, (user) => {
         if (user) {
             const userID = user.uid;
-            setTimeout(() =>{
-            onValue(ref(db, 'rooms/'+currentRoomCode+'/boardPositions/a1'), (snapshot) => {
-                if(snapshot.val() != null) {
-                    let card = snapshot.val().card;
-                    enemySlot1img.src = `../webpageImageAssets/${card.id}.png`;
-                } else {
-                    enemySlot1img.src = '../webpageImageAssets/dropZone.png';
-                }
-            });}, 500);
+                onChildAdded(ref(db, `rooms/${currentRoomCode}/boardPositions/a1`), (data) => {
+                    console.log("hit");
+                    if(data.val() != null){
+                        let card = data.val().card;
+                        enemySlot1img.src = `../webpageImageAssets/${0}.png`;
+                    } else {
+                        enemySlot1img.src = `../webpageImageAssets/dropZone.png`;
+                    }
+                })
         } else {
             console.log("error getting user data");
         }
     });
 }
 
-let testFunction = () => {
-    update(ref(db, 'rooms/' + currentRoomCode +'/boardPositions/a1'), {
-        card: createCard(0)
-    });
-    console.log("hit");
+function playCard(zone){
+    switch(zone) {
+        case 0:
+            update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), {
+                card: createCard(0)
+            });
+            break;
+        case 1:
+            update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a2'), {
+                card: createCard(0)
+            });
+            break;
+        case 2:
+            update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a3'), {
+                card: createCard(0)
+            });
+            break;
+        case 3:
+            update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a4'), {
+                card: createCard(0)
+            });
+            break;
+        case 4:
+            update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), {
+                card: createCard(0)
+            });
+            break;
+    }
 }
+
 
 //run game
 window.addEventListener('load', game);
 
 //all the buttons
-enemySlot1.addEventListener('click', testFunction);
+enemySlot1.addEventListener('click', () => playCard(0));
+enemySlot2.addEventListener('click', () => playCard(1));
+enemySlot3.addEventListener('click', () => playCard(2));
+enemySlot4.addEventListener('click', () => playCard(3));
+enemySlot5.addEventListener('click', () => playCard(4));
 
 
