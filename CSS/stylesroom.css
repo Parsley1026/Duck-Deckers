@@ -10,16 +10,17 @@ button {
     border: none;
 }
 .zones{
-    height: 60px;
+    height: 200px;
     width: auto;
-    padding: 20px;
+    padding: 10px;
 }
 .hand{
     position:absolute;
-    height: 60px;
+    height: 200px;
     width: auto;
-    padding: 20px;
-    top:1300px;
+    padding: 10px;
+    top:700px;
+    left: 0px;
 }
 .A{
     position: absolute;
@@ -27,30 +28,54 @@ button {
 }
 .B{
     position: absolute;
-    top:700px;
+    top:400px;
 }
 .column1{
-    left: 50px;
+    left: 500px;
 }
 .column2{
-    left: 450px;
+    left: 650px;
 }
 
 .column3{
-    left: 850px;
+    left: 800px;
 }
 
 .column4{
-    left: 1250px;
+    left: 950px;
 }
 .column5{
-    left: 1650px;
+    left: 1100px;
 }
 .column6{
-    left: 2050px;
+    left: 1250px;
 }
 .column7{
-    left: 2450px;
+    left: 1400px;
+}
+
+.column1H{
+    left: 350px;
+}
+.column2H{
+    left: 500px;
+}
+
+.column3H{
+    left: 650px;
+}
+
+.column4H{
+    left: 800px;
+}
+.column5H{
+    left: 950px;
+}
+.column6H{
+    left: 1100px;
+}
+.column7H{
+    left: 1250px;
 }
 
 
