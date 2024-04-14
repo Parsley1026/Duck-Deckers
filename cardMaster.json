@@ -32,5 +32,97 @@
     "effect": [0, 1],
     "damage": 0,
     "health": 1
+  },
+  "5": {
+    "name": "Brick of High Velocity",
+    "type": 1,
+    "cost": 1,
+    "effect": [3, 2]
+  },
+  "6": {
+    "name": "Duckgrade",
+    "type": 0,
+    "cost": 2,
+    "effect": null,
+    "damage": 3,
+    "health": 3
+  },
+  "7": {
+    "name": "Iron Island",
+    "type": 2,
+    "cost": 2,
+    "effect": [0, 1]
+  },
+  "8": {
+    "name": "Baker Duck",
+    "type": 0,
+    "cost": 2,
+    "effect": [1, 1],
+    "damage": 1,
+    "health": 1
+  },
+  "9": {
+    "name": "Supplies",
+    "type": 1,
+    "cost": 2,
+    "effect": [2, 2]
+  },
+  "10": {
+    "name": "Ranger",
+    "type": 0,
+    "cost": 2,
+    "effect": [2, 1],
+    "damage": 3,
+    "health": 1
+  },
+  "11": {
+    "name": "Duckruiter",
+    "type": 0,
+    "cost": 3,
+    "effect": [3, 1],
+    "damage": 2,
+    "health": 2
+  },
+  "12": {
+    "name": "Destruction",
+    "type": 1,
+    "cost": 4,
+    "effect": [4, 1]
+  },
+  "13": {
+    "name": "Bear Trap Barren",
+    "type": 2,
+    "cost": 4,
+    "effect": [1, 1]
+  },
+  "14: {
+    "name": "Gym Bro",
+    "type": 0,
+    "cost": 6,
+    "effect": null,
+    "damage": 7,
+    "health": 7
+  },
+  "15": {
+    "name": "Boom Barrel",
+    "type": 0,
+    "cost": 1,
+    "effect": [4, 1],
+    "damage": 1,
+    "health": 1
+  },
+  "16": {
+    "name": "Miner",
+    "type": 0,
+    "cost": 2,
+    "effect": [0, 1],
+    "damage": 1,
+    "health": 3
+  },
+  "17": {
+    "name": "Energy Drink",
+    "type": 1,
+    "cost": 2,
+    "effect": [5, 1]
   }
 }
