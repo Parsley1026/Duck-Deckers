@@ -107,7 +107,7 @@
     "cost": 4,
     "effect": [1, 1]
   },
-  "14: {
+  "14": {
     "name": "Gym Bro",
     "type": 0,
     "cost": 6,
@@ -221,7 +221,7 @@
     "name": "Duckium-277",
     "type": 1,
     "cost": 5,
-    "effect": [8, 5],
+    "effect": [8, 5]
   },
   "30": {
     "name": "Fun Police",
