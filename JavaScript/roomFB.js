@@ -57,9 +57,6 @@ let getDataInfo = () =>{
                                 console.log("getting room data");
                                 roomReady = true;
                                 console.log("room is ready " + roomReady); //room is ready for data transmission
-                                setTimeout(() => {
-                                    eventDetection(); //run eventDetection method every 50ms
-                                }, 50);
                             }, 500); //500ms wait for room creator data
 
 
