@@ -1,4 +1,16 @@
 {
+  "-2": {
+    "name": "Junk Mail",
+    "type": 1,
+    "cost": 2,
+    "effect": [13, 0]
+  },
+  "-1": {
+    "name": "Consolation",
+    "type": 1,
+    "cost": 0,
+    "effect": [12, 1]
+  },
   "0" :{
     "name": "Duck",
     "type": 0,
@@ -178,6 +190,26 @@
     "health": 1
   },
   "25": {
+    "name": "Hot Dog",
+    "type": 1,
+    "cost": 1,
+    "effect": [7, -3]
+  },
+  "26": {
+    "name": "Fireball",
+    "type": 1,
+    "cost": 2,
+    "effect": [3, 3]
+  },
+  "27": {
+    "name": "Mail Duck",
+    "type": 0,
+    "cost": 3,
+    "effect": [12, 2],
+    "damage": 3,
+    "health": 4
+  },
+  "28": {
     "name": "Laser Duck",
     "type": 0,
     "cost": 5,
@@ -185,13 +217,33 @@
     "damage": 5,
     "health": 5
   },
-  "26": {
+  "29": {
     "name": "Duckium-277",
     "type": 1,
     "cost": 5,
     "effect": [8, 5],
   },
-  "27": {
+  "30": {
+    "name": "Fun Police",
+    "type": 0,
+    "cost": 1,
+    "effect": [6, -1],
+    "damage": 2,
+    "health": 1
+  },
+  "31": {
+    "name": "Powerplant",
+    "type": 2,
+    "cost": 3,
+    "effect": [3, 2]
+  },
+  "32": {
+    "name": "Purge",
+    "type": 1,
+    "cost": 4,
+    "effect": [11, 3]
+  },
+  "33": {
     "name": "The Thin White Duck",
     "type": 0,
     "cost": 7,
@@ -199,28 +251,10 @@
     "damage": 5,
     "health": 3
   },
-  "28": {
-    "name": "TBD"
-  },
-  "29": {
-    "name": "TBD"
-  },
-  "30": {
-    "name": "TBD"
-  },
-  "31": {
-    "name": "TBD"
-  }, 
-  "32": {
-    "name": "TBD"
-  },
-  "33": {
-    "name": "Manquackhand Project",
+  "34": {
+    "name": "Manquackhan Project",
     "type": 1,
     "cost": 12,
     "effect": [9, 1]
-  },
-  "34": {
-    "name": "TBD"
   }
 }
