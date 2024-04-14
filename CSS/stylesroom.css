@@ -6,9 +6,52 @@
     width: 150px;
 }
 
-#button2{
-    margin-right: 5px;
+.zones{
+    height: 60px;
+    width: auto;
+    padding: 20px;
 }
+.hand{
+    position:absolute;
+    height: 60px;
+    width: auto;
+    padding: 20px;
+    top:1300px;
+}
+.A{
+    position: absolute;
+    top: 100px;
+}
+.B{
+    position: absolute;
+    top:700px;
+}
+.column1{
+    left: 50px;
+}
+.column2{
+    left: 450px;
+}
+
+.column3{
+    left: 850px;
+}
+
+.column4{
+    left: 1250px;
+}
+.column5{
+    left: 1650px;
+}
+.column6{
+    left: 2050px;
+}
+.column7{
+    left: 2450px;
+}
+
+
+
 
 #quitButton{
     margin-right: 5px;
