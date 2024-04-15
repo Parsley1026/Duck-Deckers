@@ -109,6 +109,8 @@ onAuthStateChanged(auth, (user) => {
 
 function checkForCard(){
     if (userID == roomCreatorID) {
+
+        //player spots
         onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), (snapshot) => {
             if (snapshot.val() != null) {
                 let card = snapshot.val().card;
@@ -149,7 +151,93 @@ function checkForCard(){
                 playerSlot5img.src = '../webpageImageAssets/dropZone.png';
             }
         });
+
+        //enemy spots
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b1'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                enemySlot1img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                enemySlot1img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b2'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                enemySlot2img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                enemySlot2img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b3'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                enemySlot3img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                enemySlot3img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b4'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                enemySlot4img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                enemySlot4img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b5'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                enemySlot5img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                enemySlot5img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
     } else {
+
+        //player spots
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b1'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                playerSlot1img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                playerSlot1img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b2'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                playerSlot2img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                playerSlot2img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b3'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                playerSlot3img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                playerSlot3img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b4'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                playerSlot4img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                playerSlot4img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b5'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                playerSlot5img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                playerSlot5img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+
+        //enemy slots
         onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), (snapshot) => {
             if (snapshot.val() != null) {
                 let card = snapshot.val().card;
@@ -195,32 +283,62 @@ function checkForCard(){
 
 
 function playCard(zone){
-    switch(zone) {
-        case 0:
-            update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), {
-                card: createCard(0)
-            });
-            break;
-        case 1:
-            update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a2'), {
-                card: createCard(0)
-            });
-            break;
-        case 2:
-            update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a3'), {
-                card: createCard(0)
-            });
-            break;
-        case 3:
-            update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a4'), {
-                card: createCard(0)
-            });
-            break;
-        case 4:
-            update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a5'), {
-                card: createCard(0)
-            });
-            break;
+    if(userID == roomCreatorID) {
+        switch (zone) {
+            case 0:
+                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), {
+                    card: createCard(0)
+                });
+                break;
+            case 1:
+                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a2'), {
+                    card: createCard(0)
+                });
+                break;
+            case 2:
+                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a3'), {
+                    card: createCard(0)
+                });
+                break;
+            case 3:
+                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a4'), {
+                    card: createCard(0)
+                });
+                break;
+            case 4:
+                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a5'), {
+                    card: createCard(0)
+                });
+                break;
+        }
+    } else {
+        switch (zone) {
+            case 0:
+                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b1'), {
+                    card: createCard(0)
+                });
+                break;
+            case 1:
+                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b2'), {
+                    card: createCard(0)
+                });
+                break;
+            case 2:
+                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b3'), {
+                    card: createCard(0)
+                });
+                break;
+            case 3:
+                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b4'), {
+                    card: createCard(0)
+                });
+                break;
+            case 4:
+                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b5'), {
+                    card: createCard(0)
+                });
+                break;
+        }
     }
 }
 
