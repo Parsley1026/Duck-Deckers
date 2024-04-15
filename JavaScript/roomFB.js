@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { getDatabase, get, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+import { getDatabase, get, ref, onValue, update, remove, child } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -87,7 +87,7 @@ let quitButtonEvent = () => { //function that handles user wanting to leave room
             if (roomCreator == userID) { //detect if person leaving is room creator
                 remove(dbroomref); //delete current room from database
             } else {
-                update(ref(db, 'rooms/' + currentRoomCode + '/currentPlayers/player2'), {
+                update(child(dbroomref, 'currentPlayers/player2'), {
                     uid: null,
                     name: null
                 })
