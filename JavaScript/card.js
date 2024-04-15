@@ -20,10 +20,22 @@ export class Duck extends Card { //identified as card type 0
                 (for cards with multiple effects, type #'s into one line)
                 Example for card with freeze 1 and heal 4, effect var would be [[0, 1], [1, 4]]
             0: Income (on tap)
-            1: adjacent buff (passive)
+                        if player1 and in B slot
+                            player1 emeralds++
+                            exhaust this
+                        if player2 and in A slot
+                            player2 emeralds++
+                            exhaust this
+            1: adjacent buff
             2: damage on play
+                when played
+                prompt user to select target
+                reference attack function pass in the second number
             3: random card (maybe)
             4: on death damage
+                //on health change
+                    //if this.getHealth<1
+
             5: income on duck play
             6: discount spell (passive)
             7: not effected by spells
@@ -31,6 +43,9 @@ export class Duck extends Card { //identified as card type 0
             9: adjacent damage
             10: trample
             11: untapped on play
+            12: discount duck (passive)
+            13: When this kills a foe, buff
+            14: damage all foes when played
          */
         this.damage = damage;
         this.health = health;
@@ -51,6 +66,34 @@ export class Duck extends Card { //identified as card type 0
             return retString;
         }
     }
+    abiltyTap(){
+        switch(this.id){
+            case 4:
+                return [this.effect]; //game.js will interpret this as adding 1 emerald to player
+            case 8:
+                return [this.effect]; //game.js will interpret this as buffing a card
+        }
+    }
+    abilityOnPlay(){
+        switch(this.id){
+            case 1:
+                return [this.effect];
+            case 2:
+                return [this.effect];
+            case 3:
+                return [this.effect];
+            case 11:
+                return [this.effect];
+            case 14:
+                return [this.effect];
+        }
+    }
+    abilityOnDeath(){
+        switch(this.id){
+            case 1:
+                return [this.effect];
+        }
+    }
 
 }
 
@@ -64,6 +107,9 @@ export class Spell extends Card { //identified as card type 1
                 Example for card with freeze 1 and heal 4, effect var would be [[0, 1], [1, 4]]
             0: freeze
             1: heal
+                increase target health by strength
+                    if health > max health
+                        health = max health
             2: draw
             3: damage
             4: destroy
@@ -101,6 +147,11 @@ export class Land extends Card { //identified as card type 2
                 Example for card with freeze 1 and heal 4, effect var would be [[0, 1], [1, 4]]
             0: tempered (reduces incoming damage by strength)
             1: damage on foe play
+                    if you are player1 and B slot is updated
+                        do 1 damage
+                    if you are player2 and A slot is updated
+                        do 1 damage
+            2: your ducks enter untapped
          */
     }
 
