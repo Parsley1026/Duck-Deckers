@@ -4,7 +4,6 @@ export class Card {
         this.name = name;
         this.cost = cost;
     }
-//wiener
     toString() {
         return `id: ${this.id}\nname: ${this.name}\ncost: ${this.cost}`;
     }
@@ -20,17 +19,18 @@ export class Duck extends Card { //identified as card type 0
                 (for cards with multiple effects, type #'s into one line)
                 Example for card with freeze 1 and heal 4, effect var would be [[0, 1], [1, 4]]
             0: Income (on tap)
-            1: adjacent buff (passive)
+            1: adjacent buff on play
             2: damage on play
-            3: random card (maybe)
+            3: Get rare or above duck
             4: on death damage
             5: income on duck play
-            6: discount spell (passive)
+            6: discount spell (passive) (negative # makes enemy spells more expensive)
             7: not effected by spells
             8: selective buff (on tap)
             9: adjacent damage
             10: trample
             11: untapped on play
+            12: mail duck
          */
         this.damage = damage;
         this.health = health;
@@ -52,6 +52,10 @@ export class Duck extends Card { //identified as card type 0
         }
     }
 
+    attack(enemyCard){
+        enemyCard.health -= this.damage;
+    }
+
 }
 
 export class Spell extends Card { //identified as card type 1
@@ -69,9 +73,13 @@ export class Spell extends Card { //identified as card type 1
             4: destroy
             5: awaken (un-tap)
             6: wipe (destroy land)
-            7: buff
+            7: buff (negative number buffs just attack)
             8: Buff for one round and then kill
             9: manquacken project (EFFECT IS IN HAND)
+            10: damage all foes
+            11: destroy foes with attack # or less
+            12: income on play
+            13: discard upon play
          */
     }
 
@@ -101,6 +109,8 @@ export class Land extends Card { //identified as card type 2
                 Example for card with freeze 1 and heal 4, effect var would be [[0, 1], [1, 4]]
             0: tempered (reduces incoming damage by strength)
             1: damage on foe play
+            2: income on round start (Factory)
+            3: attack buff
          */
     }
 

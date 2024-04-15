@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { getDatabase, get, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+import { getDatabase, get, ref, onValue, update, remove, child } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -29,15 +29,17 @@ let roomCreatorTag = document.getElementById('roomCreatorText');
 let quitButtonInput = document.getElementById('quitButton');//get quit button
 
 //global variables
-export let currentRoomCode = null;
+let currentRoomCode = null;
+let roomCreator = null;
+let userID = null;
 let roomReady = false;
 
 //create our getDataInfo function to get data from firebase
 let getDataInfo = () =>{
     onAuthStateChanged(auth, (user) => {
         if(user){
-            const userID = user.uid;
-            let roomCreatorData = null;
+            userID = user.uid;
+            roomCreator = null;
             const dbref = ref(db, 'users/'+userID);
 
             onValue(dbref, (snapshot) => {
@@ -51,7 +53,7 @@ let getDataInfo = () =>{
                     //get creator of room
                     get(dbrefroom).then((snapshot)=>{
                         if(snapshot.exists) {
-                            roomCreatorData = snapshot.val().roomCreator; //get room creator
+                            roomCreator = snapshot.val().roomCreator; //get room creator
 
                             setTimeout(() => {
                                 console.log("getting room data");
@@ -60,7 +62,7 @@ let getDataInfo = () =>{
                             }, 500); //500ms wait for room creator data
 
 
-                            roomCreatorTag.innerText = roomCreatorData; //send data to h2 tag
+                            roomCreatorTag.innerText = roomCreator; //send data to h2 tag
                         }
                     });
                 } else{
@@ -78,25 +80,23 @@ let getDataInfo = () =>{
 
 let quitButtonEvent = () => { //function that handles user wanting to leave room
     if(confirm("Are you sure you want to leave?")) { //confirm that user actually wants to leave
-        const userID = auth.currentUser.uid; //get uid of current user
         const dbrefuser = ref(db, 'users/' + userID); //get dbref of current user
         const dbroomref = ref(db, 'rooms/' + currentRoomCode); //get database reference of current room
-        let roomCreator = null;
-        get(dbroomref).then((snapshot) => { //get uid of room creator
-            roomCreator = snapshot.val().roomCreator; //set roomCreator to uid of room creator
-            console.log(roomCreator);
-        });
         update(dbrefuser, {currentRoom: null}); //set current room of user back to null
-        update(ref(db, 'rooms/' + currentRoomCode + '/currentPlayers/player2'), {
-            uid: null,
-            name: null
-        })
-        setTimeout(() => {
-            if (roomCreator == userID) { //detect if person leaving is room creator
-                remove(dbroomref); //delete current room from database
-            }
-        }, 500); //500 ms wait so that room creator actually exists
-        setTimeout(() => {window.location.href = 'home.html'}, 500); //500 ms wait to send user back to home page
+        if (roomCreator == userID) { //detect if person leaving is room creator
+            remove(dbroomref) //delete current room from database
+                .then(() => {
+                    window.location.href = 'home.html';
+                });
+        } else {
+            update(child(dbroomref, 'currentPlayers/player2'), {
+                uid: null,
+                name: null
+            })
+                .then(() => {
+                    window.location.href = 'home.html';
+                });
+        }
     }
 }
 
