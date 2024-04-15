@@ -4,7 +4,7 @@ import { Deck } from "./deck.js";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { getDatabase, get, ref, onValue, update, remove, onChildChanged, onChildAdded } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+import { getDatabase, get, ref, onValue, update, child } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -88,7 +88,7 @@ onAuthStateChanged(auth, (user) => {
             if (snapshot.exists()) {
                 currentRoomCode = snapshot.val().currentRoom;
             } else {
-                console.log("error getting current room code");
+                console.error("error getting current room code");
             }
         }).then(() => {
             console.log(currentRoomCode);
@@ -96,7 +96,7 @@ onAuthStateChanged(auth, (user) => {
                 if(snapshot.exists()){
                     roomCreatorID = snapshot.val().roomCreator;
                 } else {
-                    console.log("error getting creator of room");
+                    console.error("error getting creator of room");
                 }
             }).then(() => {
                 onValue(ref(db, `rooms/${currentRoomCode}`), () => {
@@ -105,7 +105,7 @@ onAuthStateChanged(auth, (user) => {
             })
         })
     } else {
-        console.log("error getting user data");
+        console.error("error getting user data");
     }
 });
 
@@ -343,3 +343,41 @@ function playCard(zone){
         }
     }
 }
+
+function checkForAvailableHandSlot(){//returns id of availble hand slot
+    let dbref;
+    let availableSlot = null;
+    if(userID == roomCreatorID && userID != null)
+        dbref = ref(db, `rooms/${currentRoomCode}/currentPlayers/player1/hand`);
+    else if(userID != null)
+        dbref = ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/hand`);
+    else
+        console.error("error getting userID");
+    for(let i = 0; i < 7; i++) {
+        onValue(child(dbref, `/${i}`), (data) => {
+            if (data.val() == null) {
+                availableSlot = i;
+            }
+        }, {
+            onlyOnce: true
+        });
+        if(availableSlot != null) break;
+    }
+    return availableSlot;
+}
+
+function fetchDeck(deck) { //fetches deck from firebase library
+    let dbref;
+    if(userID == roomCreatorID && userID != null)
+        dbref = ref(db, `rooms/${currentRoomCode}/currentPlayers/player1/hand`);
+    else if(userID != null)
+        dbref = ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/hand`);
+    else
+        console.error("error getting userID");
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'd') {
+        console.log(checkForAvailableHandSlot());
+    }
+});

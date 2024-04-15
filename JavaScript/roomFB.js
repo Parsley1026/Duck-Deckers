@@ -66,13 +66,13 @@ let getDataInfo = () =>{
                         }
                     });
                 } else{
-                    console.log("Error getting creator of room");
+                    console.error("Error getting creator of room");
                 }
 
             });
 
         } else{
-            console.log("Error getting user data");
+            console.error("Error getting user data");
         }
     })
 }
