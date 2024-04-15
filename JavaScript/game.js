@@ -98,9 +98,9 @@ onAuthStateChanged(auth, (user) => {
                     console.log("error getting creator of room");
                 }
             }).then(() => {
-                console.log(roomCreatorID);
-            }).then(() => {
-                checkForCard();
+                onValue(ref(db, `rooms/${currentRoomCode}`), () => {
+                    checkForCard();
+                });
             })
         })
     } else {
@@ -110,102 +110,87 @@ onAuthStateChanged(auth, (user) => {
 
 function checkForCard(){
     if (userID == roomCreatorID) {
-        console.log("oof");
-        console.log(userID + " " + roomCreatorID);
-        game = () => {
-            setTimeout(() => {
-                onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), (snapshot) => {
-                    if (snapshot.val() != null) {
-                        let card = snapshot.val().card;
-                        playerSlot1img.src = `../webpageImageAssets/${card.id}.png`;
-                    } else {
-                        playerSlot1img.src = '../webpageImageAssets/dropZone.png';
-                    }
-                });
-                onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a2'), (snapshot) => {
-                    if (snapshot.val() != null) {
-                        let card = snapshot.val().card;
-                        playerSlot2img.src = `../webpageImageAssets/${card.id}.png`;
-                    } else {
-                        playerSlot2img.src = '../webpageImageAssets/dropZone.png';
-                    }
-                });
-                onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a3'), (snapshot) => {
-                    if (snapshot.val() != null) {
-                        let card = snapshot.val().card;
-                        playerSlot3img.src = `../webpageImageAssets/${card.id}.png`;
-                    } else {
-                        playerSlot3img.src = '../webpageImageAssets/dropZone.png';
-                    }
-                });
-                onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a4'), (snapshot) => {
-                    if (snapshot.val() != null) {
-                        let card = snapshot.val().card;
-                        playerSlot4img.src = `../webpageImageAssets/${card.id}.png`;
-                    } else {
-                        playerSlot4img.src = '../webpageImageAssets/dropZone.png';
-                    }
-                });
-                onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a5'), (snapshot) => {
-                    if (snapshot.val() != null) {
-                        let card = snapshot.val().card;
-                        playerSlot5img.src = `../webpageImageAssets/${card.id}.png`;
-                    } else {
-                        playerSlot5img.src = '../webpageImageAssets/dropZone.png';
-                    }
-                });
-            }, 500);
-        }
-
-        ready();
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                playerSlot1img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                playerSlot1img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a2'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                playerSlot2img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                playerSlot2img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a3'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                playerSlot3img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                playerSlot3img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a4'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                playerSlot4img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                playerSlot4img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a5'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                playerSlot5img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                playerSlot5img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
     } else {
-        console.log("penis");
-        game = () => {
-            setTimeout(() => {
-                onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), (snapshot) => {
-                    if (snapshot.val() != null) {
-                        let card = snapshot.val().card;
-                        enemySlot1img.src = `../webpageImageAssets/${card.id}.png`;
-                    } else {
-                        enemySlot1img.src = '../webpageImageAssets/dropZone.png';
-                    }
-                });
-                onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a2'), (snapshot) => {
-                    if (snapshot.val() != null) {
-                        let card = snapshot.val().card;
-                        enemySlot2img.src = `../webpageImageAssets/${card.id}.png`;
-                    } else {
-                        enemySlot2img.src = '../webpageImageAssets/dropZone.png';
-                    }
-                });
-                onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a3'), (snapshot) => {
-                    if (snapshot.val() != null) {
-                        let card = snapshot.val().card;
-                        enemySlot3img.src = `../webpageImageAssets/${card.id}.png`;
-                    } else {
-                        enemySlot3img.src = '../webpageImageAssets/dropZone.png';
-                    }
-                });
-                onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a4'), (snapshot) => {
-                    if (snapshot.val() != null) {
-                        let card = snapshot.val().card;
-                        enemySlot4img.src = `../webpageImageAssets/${card.id}.png`;
-                    } else {
-                        enemySlot4img.src = '../webpageImageAssets/dropZone.png';
-                    }
-                });
-                onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a5'), (snapshot) => {
-                    if (snapshot.val() != null) {
-                        let card = snapshot.val().card;
-                        enemySlot5img.src = `../webpageImageAssets/${card.id}.png`;
-                    } else {
-                        enemySlot5img.src = '../webpageImageAssets/dropZone.png';
-                    }
-                });
-            }, 500);
-        }
-
-        ready();
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                enemySlot1img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                enemySlot1img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a2'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                enemySlot2img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                enemySlot2img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a3'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                enemySlot3img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                enemySlot3img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a4'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                enemySlot4img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                enemySlot4img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
+        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a5'), (snapshot) => {
+            if (snapshot.val() != null) {
+                let card = snapshot.val().card;
+                enemySlot5img.src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                enemySlot5img.src = '../webpageImageAssets/dropZone.png';
+            }
+        });
     }
 }
 
@@ -240,9 +225,6 @@ function playCard(zone){
     }
 }
 
-function ready() {
-    window.addEventListener('load', game);
-}
 
 
 
