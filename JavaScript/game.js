@@ -30,7 +30,6 @@ const auth = getAuth(app);
 let userID = null;
 let roomCreatorID = null;
 let currentRoomCode = null;
-let game;
 
 let handSlot1 = document.getElementById('handSlot0');
 let handSlot2 = document.getElementById('handSlot1');
