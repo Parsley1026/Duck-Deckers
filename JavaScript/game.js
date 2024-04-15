@@ -345,14 +345,8 @@ function playCard(zone){
 }
 
 function checkForAvailableHandSlot(){//returns id of availble hand slot
-    let dbref;
+    let dbref = refPlayer(`hand`);
     let availableSlot = null;
-    if(userID == roomCreatorID && userID != null)
-        dbref = ref(db, `rooms/${currentRoomCode}/currentPlayers/player1/hand`);
-    else if(userID != null)
-        dbref = ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/hand`);
-    else
-        console.error("error getting userID");
     for(let i = 0; i < 7; i++) {
         onValue(child(dbref, `/${i}`), (data) => {
             if (data.val() == null) {
@@ -367,13 +361,23 @@ function checkForAvailableHandSlot(){//returns id of availble hand slot
 }
 
 function fetchDeck(deck) { //fetches deck from firebase library
-    let dbref;
+    const dbref = refPlayer(``);
+    onValue(dbref, (data) => {
+        if(data.val().library != null){
+            deck
+        }
+    });
+}
+
+function refPlayer(dataPath){ //fetches a datapath based off player 1 or 2
     if(userID == roomCreatorID && userID != null)
-        dbref = ref(db, `rooms/${currentRoomCode}/currentPlayers/player1/hand`);
+        return ref(db, `rooms/${currentRoomCode}/currentPlayers/player1/${dataPath}`);
     else if(userID != null)
-        dbref = ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/hand`);
-    else
+        return ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/${dataPath}`);
+    else {
         console.error("error getting userID");
+        return null;
+    }
 }
 
 document.addEventListener('keydown', function(event) {
