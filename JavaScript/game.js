@@ -342,7 +342,8 @@ function playCard(zone){
     }
 }
 
-
-
-
-
+let deck = new Deck();
+enemySlot2.addEventListener('click', () => {
+    deck.populate();
+    console.log(deck.toString());
+});

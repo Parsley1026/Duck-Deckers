@@ -13,4 +13,17 @@ export class Deck{
         }
         return retString;
     }
+
+    shuffle(){
+        for(let i = 0; i < 5; i++) {
+            this.cards.sort(() => Math.random() - 0.5);
+        }
+    }
+
+    populate(){
+        this.cards = [];
+        for(let i = 0; i < 40; i++){
+            this.cards.push(createCard(i));
+        }
+    }
 }
