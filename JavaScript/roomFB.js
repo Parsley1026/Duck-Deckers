@@ -83,17 +83,20 @@ let quitButtonEvent = () => { //function that handles user wanting to leave room
         const dbrefuser = ref(db, 'users/' + userID); //get dbref of current user
         const dbroomref = ref(db, 'rooms/' + currentRoomCode); //get database reference of current room
         update(dbrefuser, {currentRoom: null}); //set current room of user back to null
-        setTimeout(() => {
-            if (roomCreator == userID) { //detect if person leaving is room creator
-                remove(dbroomref); //delete current room from database
-            } else {
-                update(child(dbroomref, 'currentPlayers/player2'), {
-                    uid: null,
-                    name: null
-                })
-            }
-        }, 500); //500 ms wait so that room creator actually exists
-        setTimeout(() => {window.location.href = 'home.html'}, 500); //500 ms wait to send user back to home page
+        if (roomCreator == userID) { //detect if person leaving is room creator
+            remove(dbroomref) //delete current room from database
+                .then(() => {
+                    window.location.href = 'home.html';
+                });
+        } else {
+            update(child(dbroomref, 'currentPlayers/player2'), {
+                uid: null,
+                name: null
+            })
+                .then(() => {
+                    window.location.href = 'home.html';
+                });
+        }
     }
 }
 
