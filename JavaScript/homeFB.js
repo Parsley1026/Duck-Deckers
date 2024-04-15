@@ -1,5 +1,6 @@
 //import test function
 import { Card, Duck, Land, Spell } from "./card.js";
+import { Deck } from "./deck.js";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
@@ -44,78 +45,87 @@ let createRoom = evt => {
     if(roomCode == ""){//check if anything is entered in room code, otherwise, return error to user
         alert("Please enter a room code"); //alert user
     } else {//room code was entered, execute code
-        set(ref(db, 'rooms/' + roomCode), {
-            roomCreator: userID, //define creator of room
-            currentPlayers: {
-                player1: {
-                    uid: userID,
-                    name: auth.currentUser.displayName,
-                    health: 20,
-                    emeralds: 1,
-                    hand: {
-                        0: null,
-                        1: null,
-                        2: null,
-                        3: null,
-                        4: null,
-                        5: null,
-                        6: null
-                    },
-                    library: get(ref(db, 'users/'+userID+'/cards'))
-                },
-                player2: {
-                    uid: null,
-                    name: null,
-                    health: 20,
-                    emeralds: 1,
-                    hand: {
-                        0: null,
-                        1: null,
-                        2: null,
-                        3: null,
-                        4: null,
-                        5: null,
-                        6: null
-                    }
-                }
-            },
-            boardPositions: {
-                a1: {
-                    card: null
-                },
-                a2: {
-                    card: null
-                },
-                a3: {
-                    card: null
-                },
-                a4: {
-                    card: null
-                },
-                a5: {
-                    card: null
-                },
-                b1: {
-                    card: null
-                },
-                b2: {
-                    card: null
-                },
-                b3: {
-                    card: null
-                },
-                b4: {
-                    card: null
-                },
-                b5: {
-                    card: null
-                }
-            },
-            arrowPositions: {
-                base: null, //set to board positions
-                tip: null
+        let deck = new Deck([]);
+        get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
+            if(snapshot.exists()){
+                deck = snapshot.val().cards;
+            } else {
+                console.log("error getting deck");
             }
-        })
+        }).then(() => {
+            set(ref(db, 'rooms/' + roomCode), {
+                roomCreator: userID, //define creator of room
+                currentPlayers: {
+                    player1: {
+                        uid: userID,
+                        name: auth.currentUser.displayName,
+                        health: 20,
+                        emeralds: 1,
+                        hand: {
+                            0: null,
+                            1: null,
+                            2: null,
+                            3: null,
+                            4: null,
+                            5: null,
+                            6: null
+                        },
+                        library: deck
+                    },
+                    player2: {
+                        uid: null,
+                        name: null,
+                        health: 20,
+                        emeralds: 1,
+                        hand: {
+                            0: null,
+                            1: null,
+                            2: null,
+                            3: null,
+                            4: null,
+                            5: null,
+                            6: null
+                        }
+                    }
+                },
+                boardPositions: {
+                    a1: {
+                        card: null
+                    },
+                    a2: {
+                        card: null
+                    },
+                    a3: {
+                        card: null
+                    },
+                    a4: {
+                        card: null
+                    },
+                    a5: {
+                        card: null
+                    },
+                    b1: {
+                        card: null
+                    },
+                    b2: {
+                        card: null
+                    },
+                    b3: {
+                        card: null
+                    },
+                    b4: {
+                        card: null
+                    },
+                    b5: {
+                        card: null
+                    }
+                },
+                arrowPositions: {
+                    base: null, //set to board positions
+                    tip: null
+                }
+            })
+        });
         update(ref(db, 'users/' + userID), {
             currentRoom: roomCode //set active room in current user's database
         })
@@ -147,9 +157,18 @@ let joinRoom = evt => {
                         currentRoom: roomCode //set active room in current user's database
                     })
                         .then(() => {
-                            update(ref(db, 'rooms/' + roomCode +'/currentPlayers/player2'), {
-                                uid: userID,
-                                name: auth.currentUser.displayName
+                            let deck = new Deck([]);
+                            get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
+                                if(snapshot.exists()){
+                                    deck = snapshot.val().cards;
+                                } else {
+                                    console.log("error getting cards");
+                                }
+                            }).then(() => {
+                                update(ref(db, 'rooms/' + roomCode + '/currentPlayers/player2'), {
+                                    uid: userID,
+                                    name: auth.currentUser.displayName
+                                });
                             });
                         })
                         .then(() => {
