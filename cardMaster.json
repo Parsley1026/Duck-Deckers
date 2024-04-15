@@ -235,10 +235,7 @@
     "name": "Duck Vender",
     "type": 0,
     "cost": 3,
-    "effect": [
-      12,
-      1
-    ],
+    "effect": [12, 1],
     "damage": 1,
     "health": 1
   },
