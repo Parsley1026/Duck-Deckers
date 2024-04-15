@@ -26,4 +26,18 @@ export class Deck{
             this.cards.push(createCard(i));
         }
     }
+
+    addCard(card){ //adds card to top of deck (for "Junk Mail" card, ID: 40)
+        this.cards.unshift(card);
+    }
+
+    draw(){
+        if(this.cards.length !== 0) {
+            let card;
+            card = this.cards.shift();
+            return card;
+        } else {
+            return "no more cards";
+        }
+    }
 }

@@ -1,16 +1,4 @@
 {
-  "-2": {
-    "name": "Junk Mail",
-    "type": 1,
-    "cost": 2,
-    "effect": [13, 0]
-  },
-  "-1": {
-    "name": "Consolation",
-    "type": 1,
-    "cost": 0,
-    "effect": [12, 1]
-  },
   "0" :{
     "name": "Duck",
     "type": 0,
@@ -294,5 +282,17 @@
     "type": 1,
     "cost": 12,
     "effect": [9, 1]
+  },
+  "40": {
+    "name": "Junk Mail",
+    "type": 1,
+    "cost": 2,
+    "effect": [13, 0]
+  },
+  "41": {
+    "name": "Consolation",
+    "type": 1,
+    "cost": 0,
+    "effect": [12, 1]
   }
 }

@@ -31,6 +31,8 @@ let userID = null;
 let roomCreatorID = null;
 let currentRoomCode = null;
 
+let deck = new Deck([]);
+
 let handSlot1 = document.getElementById('handSlot0');
 let handSlot2 = document.getElementById('handSlot1');
 let handSlot3 = document.getElementById('handSlot2');
@@ -341,9 +343,3 @@ function playCard(zone){
         }
     }
 }
-
-let deck = new Deck();
-enemySlot2.addEventListener('click', () => {
-    deck.populate();
-    console.log(deck.toString());
-});
