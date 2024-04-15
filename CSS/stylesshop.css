@@ -4,33 +4,10 @@
 }
 
 
-#dragTest{
-    position: absolute;
-    left: 10px;
-
-}
-.testcard {
-    position: absolute;
-    z-index: 9;
-    background-color: #f1f1f1;
-    border: 1px solid #d3d3d3;
-    text-align: center;
-    width: auto;
-    height: 100px;
-}
-
 .shopDuck {
     position: absolute;
     z-index: 9;
     text-align: center;
     width: 500px;
     height: auto;
-}
-
-.rectangle {
-    width:  300px ;
-    height: 500px;
-    background-color: #3498db;
-    border: 2px solid #2980b9;
-
 }

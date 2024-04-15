@@ -4,7 +4,6 @@ export class Card {
         this.name = name;
         this.cost = cost;
     }
-//wiener
     toString() {
         return `id: ${this.id}\nname: ${this.name}\ncost: ${this.cost}`;
     }
@@ -37,7 +36,7 @@ export class Duck extends Card { //identified as card type 0
                     //if this.getHealth<1
 
             5: income on duck play
-            6: discount spell (passive)
+            6: discount spell (passive) (negative # makes enemy spells more expensive)
             7: not effected by spells
             8: selective buff (on tap)
             9: adjacent damage
@@ -95,6 +94,10 @@ export class Duck extends Card { //identified as card type 0
         }
     }
 
+    attack(enemyCard){
+        enemyCard.health -= this.damage;
+    }
+
 }
 
 export class Spell extends Card { //identified as card type 1
@@ -115,9 +118,13 @@ export class Spell extends Card { //identified as card type 1
             4: destroy
             5: awaken (un-tap)
             6: wipe (destroy land)
-            7: buff
+            7: buff (negative number buffs just attack)
             8: Buff for one round and then kill
             9: manquacken project (EFFECT IS IN HAND)
+            10: damage all foes
+            11: destroy foes with attack # or less
+            12: income on play
+            13: discard upon play
          */
     }
 
