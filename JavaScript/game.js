@@ -3,7 +3,7 @@ import {Deck} from "./deck.js";
 
 // Import the functions you need from the SDKs you need
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { child, get, getDatabase, onValue, ref, update, onChildAdded } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+import { child, get, getDatabase, onValue, ref, update } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import {getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -31,7 +31,10 @@ let roomCreatorID = null;
 let currentRoomCode = null;
 
 let deck = new Deck([]);
+let selectedCard = null;
+let selectedZone = null;
 
+//slot zones
 let handSlot =
     [
         document.getElementById('handSlot0'),
@@ -43,6 +46,41 @@ let handSlot =
         document.getElementById('handSlot6')
     ];
 
+let enemySlot =
+    [
+        document.getElementById('dropZone0'),
+        document.getElementById('dropZone1'),
+        document.getElementById('dropZone2'),
+        document.getElementById('dropZone3'),
+        document.getElementById('dropZone4')
+    ];
+
+let playerSlot =
+    [
+        document.getElementById('dropZone5'),
+        document.getElementById('dropZone6'),
+        document.getElementById('dropZone7'),
+        document.getElementById('dropZone8'),
+        document.getElementById('dropZone9')
+    ];
+
+//image zones
+let enemySlotImg =
+    [
+        document.getElementById('dropZone0img'),
+        document.getElementById('dropZone1img'),
+        document.getElementById('dropZone2img'),
+        document.getElementById('dropZone3img'),
+        document.getElementById('dropZone4img')
+    ];
+let playerSlotImg =
+    [
+        document.getElementById('dropZone5img'),
+        document.getElementById('dropZone6img'),
+        document.getElementById('dropZone7img'),
+        document.getElementById('dropZone8img'),
+        document.getElementById('dropZone9img')
+    ];
 let handSlotImg =
     [
         document.getElementById('handSlot0img'),
@@ -54,45 +92,12 @@ let handSlotImg =
         document.getElementById('handSlot6img')
     ];
 
-let enemySlot1 = document.getElementById('dropZone0');
-let enemySlot2 = document.getElementById('dropZone1');
-let enemySlot3 = document.getElementById('dropZone2');
-let enemySlot4 = document.getElementById('dropZone3');
-let enemySlot5 = document.getElementById('dropZone4');
-
-let playerSlot1 = document.getElementById('dropZone5');
-let playerSlot2 = document.getElementById('dropZone6');
-let playerSlot3 = document.getElementById('dropZone7');
-let playerSlot4 = document.getElementById('dropZone8');
-let playerSlot5 = document.getElementById('dropZone9');
-
-//image zones
-let enemySlot1img = document.getElementById('dropZone0img');
-let enemySlot2img = document.getElementById('dropZone1img');
-let enemySlot3img = document.getElementById('dropZone2img');
-let enemySlot4img = document.getElementById('dropZone3img');
-let enemySlot5img = document.getElementById('dropZone4img');
-
-let enemySlotImg =
-    [
-        document.getElementById('dropZone0img'),
-        document.getElementById('dropZone1img'),
-        document.getElementById('dropZone2img'),
-        document.getElementById('dropZone3img'),
-        document.getElementById('dropZone4img')
-    ];
-
-let playerSlot1img = document.getElementById('dropZone5img');
-let playerSlot2img = document.getElementById('dropZone6img');
-let playerSlot3img = document.getElementById('dropZone7img');
-let playerSlot4img = document.getElementById('dropZone8img');
-let playerSlot5img = document.getElementById('dropZone9img');
-
-playerSlot1.addEventListener('click', () => playCard(0));
-playerSlot2.addEventListener('click', () => playCard(1));
-playerSlot3.addEventListener('click', () => playCard(2));
-playerSlot4.addEventListener('click', () => playCard(3));
-playerSlot5.addEventListener('click', () => playCard(4));
+for(let i = 0; i < playerSlot.length; i++){
+    playerSlot[i].addEventListener('click', () => {playCard(i);});
+}
+for(let i = 0; i < handSlot.length; i++){
+    handSlot[i].addEventListener('click', () => {selectCardHand(i);});
+}
 
 
 onAuthStateChanged(auth, (user) => {
@@ -126,205 +131,57 @@ onAuthStateChanged(auth, (user) => {
 function checkForCard(){
     const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
     if (userID == roomCreatorID) {
-
-        onChildAdded(dbrefboard, (data) => {
-            console.log(data.val());
-            if(data.val() != null){
-                let card = data.val().card;
-                console.log(card.id);
-                enemySlotImg[0].src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                enemySlotImg[0].src = `../webpageImageAssets/dropZone.png`;
+        onValue(dbrefboard, (data) => {
+            for(let i = 0; i < 5; i++){
+                playerSlotImg[i].src = `../webpageImageAssets/dropZone.png`;
+                enemySlotImg[i].src = `../webpageImageAssets/dropZone.png`;
             }
+            data.forEach((element) => {
+                if(element.val() != null){
+                    let card = element.val().card;
+                    if(element.key < 5) {
+                        playerSlotImg[element.key].src = `../webpageImageAssets/${card.id}.png`;
+                    } else {
+                        enemySlotImg[element.key-5].src = `../webpageImageAssets/${card.id}.png`;
+                    }
+                }
+            })
         }, {
             onlyOnce: true
         });
-
-        //player spots
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                playerSlot1img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                playerSlot1img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a2'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                playerSlot2img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                playerSlot2img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a3'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                playerSlot3img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                playerSlot3img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a4'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                playerSlot4img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                playerSlot4img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a5'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                playerSlot5img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                playerSlot5img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-
-        //enemy spots
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b1'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                enemySlot1img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                enemySlot1img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b2'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                enemySlot2img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                enemySlot2img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b3'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                enemySlot3img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                enemySlot3img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b4'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                enemySlot4img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                enemySlot4img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b5'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                enemySlot5img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                enemySlot5img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
     } else {
-
-        //player spots
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b1'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                playerSlot1img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                playerSlot1img.src = '../webpageImageAssets/dropZone.png';
+        onValue(dbrefboard, (data) => {
+            for(let i = 0; i < 5; i++){
+                playerSlotImg[i].src = `../webpageImageAssets/dropZone.png`;
+                enemySlotImg[i].src = `../webpageImageAssets/dropZone.png`;
             }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b2'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                playerSlot2img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                playerSlot2img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b3'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                playerSlot3img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                playerSlot3img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b4'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                playerSlot4img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                playerSlot4img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b5'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                playerSlot5img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                playerSlot5img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-
-        //enemy slots
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                enemySlot1img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                enemySlot1img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a2'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                enemySlot2img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                enemySlot2img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a3'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                enemySlot3img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                enemySlot3img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a4'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                enemySlot4img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                enemySlot4img.src = '../webpageImageAssets/dropZone.png';
-            }
-        });
-        onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a5'), (snapshot) => {
-            if (snapshot.val() != null) {
-                let card = snapshot.val().card;
-                enemySlot5img.src = `../webpageImageAssets/${card.id}.png`;
-            } else {
-                enemySlot5img.src = '../webpageImageAssets/dropZone.png';
-            }
+            data.forEach((element) => {
+                if(element.val() != null){
+                    let card = element.val().card;
+                    if(element.key > 4) {
+                        playerSlotImg[element.key-5].src = `../webpageImageAssets/${card.id}.png`;
+                    } else {
+                        enemySlotImg[element.key].src = `../webpageImageAssets/${card.id}.png`;
+                    }
+                }
+            })
+        }, {
+            onlyOnce: true
         });
     }
 
     //hand slots
     const dbrefhand = refPlayer(`/hand`);
     onValue(dbrefhand, (data) => {
-        if(data.val() != null) {
-            for (let i = 0; i < 7; i++) {
-                if (data.val()[i] != null) {
-                    let card = data.val()[i];
-                    handSlotImg[i].src = `../webpageImageAssets/${card.id}.png`;
-                } else {
-                    handSlotImg[i].src = '../webpageImageAssets/handSlot.png';
-                }
-            }
-        } else {
-            console.log("hand empty");
+        for(let i = 0; i < 6; i++){
+            handSlotImg[i].src = `../webpageImageAssets/handSlot.png`;
         }
+        data.forEach((element) => {
+            if(element.val() != null){
+                let card = element.val();
+                handSlotImg[element.key].src = `../webpageImageAssets/${card.id}.png`;
+            }
+        })
     }, {
         onlyOnce: true
     });
@@ -332,63 +189,8 @@ function checkForCard(){
 
 
 function playCard(zone){
-    if(userID == roomCreatorID) {
-        switch (zone) {
-            case 0:
-                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), {
-                    card: createCard(0)
-                });
-                break;
-            case 1:
-                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a2'), {
-                    card: createCard(0)
-                });
-                break;
-            case 2:
-                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a3'), {
-                    card: createCard(0)
-                });
-                break;
-            case 3:
-                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a4'), {
-                    card: createCard(0)
-                });
-                break;
-            case 4:
-                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a5'), {
-                    card: createCard(0)
-                });
-                break;
-        }
-    } else {
-        switch (zone) {
-            case 0:
-                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b1'), {
-                    card: createCard(0)
-                });
-                break;
-            case 1:
-                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b2'), {
-                    card: createCard(0)
-                });
-                break;
-            case 2:
-                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b3'), {
-                    card: createCard(0)
-                });
-                break;
-            case 3:
-                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b4'), {
-                    card: createCard(0)
-                });
-                break;
-            case 4:
-                update(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/b5'), {
-                    card: createCard(0)
-                });
-                break;
-        }
-    }
+    const dbrefhand = refPlayer(`/hand`);
+    const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
 }
 
 function checkForAvailableHandSlot(){//returns id of available hand slot, null if none
@@ -441,8 +243,8 @@ function draw(){
     if(deck && availableSlot != null){
         drawnCard = deck.draw();
         returnDeck();
-        update(dbref, {
-            [availableSlot]: drawnCard
+        update(child(dbref, `/${availableSlot}`), {
+            card: drawnCard
         });
     } else {
         if(deck == null){
@@ -463,10 +265,31 @@ function refPlayer(dataPath){ //fetches a datapath based off player 1 or 2
     }
 }
 
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'd') {
-        console.log(checkForAvailableHandSlot());
+function selectCardHand(zone){
+    const dbref = refPlayer(`/hand`);
+    if(selectedCard == null){
+        onValue(dbref, (data) => {
+            if(data.val() != null) {
+                if (data.val()[zone] != null) {
+                    selectedCard = data.val()[zone].card;
+                    selectedZone = zone;
+                    handSlotImg[zone].style.border = '7px solid red';
+                } else {
+                    console.error("no card in selected spot");
+                }
+            }else{
+                console.error("hand reference hasn't been initialized yet");
+            }
+        })
+    } else if(zone == selectedZone) {
+        selectedCard = null;
+        handSlotImg[zone].style.border = '0px';
+    } else {
+        console.error("a card is already selected");
     }
+}
+
+document.addEventListener('keydown', function(event) {
     if (event.key === '1') {
         draw();
     }

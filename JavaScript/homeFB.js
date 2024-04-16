@@ -96,34 +96,34 @@ let createRoom = evt => {
                     }
                 },
                 boardPositions: {
-                    a1: {
+                    0: {
                         card: null
                     },
-                    a2: {
+                    1: {
                         card: null
                     },
-                    a3: {
+                    2: {
                         card: null
                     },
-                    a4: {
+                    3: {
                         card: null
                     },
-                    a5: {
+                    4: {
                         card: null
                     },
-                    b1: {
+                    5: {
                         card: null
                     },
-                    b2: {
+                    6: {
                         card: null
                     },
-                    b3: {
+                    7: {
                         card: null
                     },
-                    b4: {
+                    8: {
                         card: null
                     },
-                    b5: {
+                    9: {
                         card: null
                     }
                 },
