@@ -178,7 +178,7 @@ function checkForCard(){
         }
         data.forEach((element) => {
             if(element.val() != null){
-                let card = element.val();
+                let card = element.val().card;
                 handSlotImg[element.key].src = `../webpageImageAssets/${card.id}.png`;
             }
         })
