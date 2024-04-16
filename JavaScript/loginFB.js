@@ -49,7 +49,7 @@ function UpdateSplash(){
     document.getElementById('splashtext').innerHTML = splash;
 }
 var splash = "";
-const splashTexts = ["Ze brootoof devish is redy to payer","Are you serious right now?","What's quackin?","Gymbro always skips leg day!", "Ethan is cool :)", "Syed is a bum",
+const splashTexts = ["I HATE JAVASCRIPT","Ze brootoof devish is redy to payer","Are you serious right now?","What's quackin?","Gymbro always skips leg day!", "Ethan is cool :)", "Syed is a bum",
                                 "You're either a smart fella, or a fart smella!", "We log your password!", "..But I'm a creep!", "Hai!!! Hai!! Hai!! ^-^",
                                 ":3", "Number 9, Number 9, Number 9","Does he know the method?", "RAHHHHH","Heck yeah!", "Spiral out!", "Made with JS!", "All hail Zickert!",
                                 "Fall off your horse!", "I refuse!", "Zoo Wee Mama!", "Ha ha, charade you are!", "I stay noided!", "I've got blisters on my fingers!",

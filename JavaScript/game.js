@@ -29,6 +29,7 @@ const auth = getAuth(app);
 let userID = null;
 let roomCreatorID = null;
 let currentRoomCode = null;
+let picked = false;
 
 let deck = new Deck([]);
 let selectedCard = null;
@@ -98,7 +99,6 @@ for(let i = 0; i < playerSlot.length; i++){
 for(let i = 0; i < handSlot.length; i++){
     handSlot[i].addEventListener('click', () => {selectCardHand(i);});
 }
-
 
 onAuthStateChanged(auth, (user) => {
     if(user) {
@@ -186,7 +186,6 @@ function checkForCard(){
         onlyOnce: true
     });
 }
-
 
 function playCard(zone){
     const dbrefhand = refPlayer(`/hand`);
