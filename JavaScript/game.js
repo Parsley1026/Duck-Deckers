@@ -1,11 +1,17 @@
-import { createCard } from "./cardCreation.js";
-import { Duck, Spell, Land } from "./card.js";
-import { Deck } from "./deck.js";
+import {createCard} from "./cardCreation.js";
+import {Deck} from "./deck.js";
 
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { getDatabase, get, ref, onValue, update, child } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+import {
+    child,
+    get,
+    getDatabase,
+    onValue,
+    ref,
+    update
+} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+import {getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -105,7 +111,7 @@ onAuthStateChanged(auth, (user) => {
             })
         })
     } else {
-        console.error("error getting user data");
+        throw new Error("error getting user data");
     }
 });
 
@@ -360,13 +366,20 @@ function checkForAvailableHandSlot(){//returns id of availble hand slot
     return availableSlot;
 }
 
-function fetchDeck(deck) { //fetches deck from firebase library
+function fetchDeck() { //fetches deck from firebase library
     const dbref = refPlayer(``);
+    let deck = new Deck([]);
     onValue(dbref, (data) => {
         if(data.val().library != null){
-            deck
+            deck = data.val().library;
+        } else {
+            deck = -64;
         }
+    }, {
+        onlyOnce: true
     });
+    if(deck == -64){throw new Error("error getting deck");}
+    return deck;
 }
 
 function refPlayer(dataPath){ //fetches a datapath based off player 1 or 2
@@ -375,7 +388,7 @@ function refPlayer(dataPath){ //fetches a datapath based off player 1 or 2
     else if(userID != null)
         return ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/${dataPath}`);
     else {
-        console.error("error getting userID");
+        throw new Error("error getting userID");
         return null;
     }
 }
@@ -383,5 +396,9 @@ function refPlayer(dataPath){ //fetches a datapath based off player 1 or 2
 document.addEventListener('keydown', function(event) {
     if (event.key === 'd') {
         console.log(checkForAvailableHandSlot());
+    }
+    if (event.key === '1') {
+        deck = fetchDeck();
+        console.log(deck.toString());
     }
 });

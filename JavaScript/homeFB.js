@@ -45,14 +45,20 @@ let createRoom = evt => {
     if(roomCode == ""){//check if anything is entered in room code, otherwise, return error to user
         alert("Please enter a room code"); //alert user
     } else {//room code was entered, execute code
-        let deck = new Deck([]);
+        let deck = new Deck();
         get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
             if(snapshot.exists()){
-                deck = snapshot.val().cards;
+                console.log(snapshot.val().cards.length);
+                let duck = new Duck()
+                for(let i = 0; i < snapshot.val().cards.length; i++) {
+                    console.log(snapshot.val().cards[i]);
+                    deck.addCardBack();
+                }
+                console.log(deck.toString());
             } else {
                 console.log("error getting deck");
             }
-        }).then(() => {
+        })/*.then(() => {
             set(ref(db, 'rooms/' + roomCode), {
                 roomCreator: userID, //define creator of room
                 currentPlayers: {
@@ -70,7 +76,7 @@ let createRoom = evt => {
                             5: null,
                             6: null
                         },
-                        library: deck
+                        cards: deck
                     },
                     player2: {
                         uid: null,
@@ -131,14 +137,14 @@ let createRoom = evt => {
         })
             .then(() => {
                 setTimeout(() => {
-                    window.location.href = 'room.html'
+                    //window.location.href = 'room.html'
                 }, 250); //250ms wait to create room
             })
             .catch((error) => {
                 alert(error.message); //pop up on the webpage
                 console.log(error.code); //log the error code number
                 console.log(error.message); //logs the error message
-            })
+            })*/
     }
 }
 

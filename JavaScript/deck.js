@@ -27,8 +27,12 @@ export class Deck{
         }
     }
 
-    addCard(card){ //adds card to top of deck (for "Junk Mail" card, ID: 40)
+    addCardFront(card){ //adds card to top of deck (for "Junk Mail" card, ID: 40)
         this.cards.unshift(card);
+    }
+
+    addCardBack(card){ //adds card to back of deck
+        this.cards.push(card);
     }
 
     draw(){
