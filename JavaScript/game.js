@@ -3,14 +3,7 @@ import {Deck} from "./deck.js";
 
 // Import the functions you need from the SDKs you need
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import {
-    child,
-    get,
-    getDatabase,
-    onValue,
-    ref,
-    update
-} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+import { child, get, getDatabase, onValue, ref, update, onChildAdded } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import {getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -39,23 +32,26 @@ let currentRoomCode = null;
 
 let deck = new Deck([]);
 
-let handSlot1 = document.getElementById('handSlot0');
-let handSlot2 = document.getElementById('handSlot1');
-let handSlot3 = document.getElementById('handSlot2');
-let handSlot4 = document.getElementById('handSlot3');
-let handSlot5 = document.getElementById('handSlot4');
-let handSlot6 = document.getElementById('handSlot5');
-let handSlot7 = document.getElementById('handSlot6');
+let handSlot =
+    [
+        document.getElementById('handSlot0'),
+        document.getElementById('handSlot1'),
+        document.getElementById('handSlot2'),
+        document.getElementById('handSlot3'),
+        document.getElementById('handSlot4'),
+        document.getElementById('handSlot5'),
+        document.getElementById('handSlot6')
+    ];
 
 let handSlotImg =
     [
-    document.getElementById('handSlot0img'),
-    document.getElementById('handSlot1img'),
-    document.getElementById('handSlot2img'),
-    document.getElementById('handSlot3img'),
-    document.getElementById('handSlot4img'),
-    document.getElementById('handSlot5img'),
-    document.getElementById('handSlot6img')
+        document.getElementById('handSlot0img'),
+        document.getElementById('handSlot1img'),
+        document.getElementById('handSlot2img'),
+        document.getElementById('handSlot3img'),
+        document.getElementById('handSlot4img'),
+        document.getElementById('handSlot5img'),
+        document.getElementById('handSlot6img')
     ];
 
 let enemySlot1 = document.getElementById('dropZone0');
@@ -76,6 +72,15 @@ let enemySlot2img = document.getElementById('dropZone1img');
 let enemySlot3img = document.getElementById('dropZone2img');
 let enemySlot4img = document.getElementById('dropZone3img');
 let enemySlot5img = document.getElementById('dropZone4img');
+
+let enemySlotImg =
+    [
+        document.getElementById('dropZone0img'),
+        document.getElementById('dropZone1img'),
+        document.getElementById('dropZone2img'),
+        document.getElementById('dropZone3img'),
+        document.getElementById('dropZone4img')
+    ];
 
 let playerSlot1img = document.getElementById('dropZone5img');
 let playerSlot2img = document.getElementById('dropZone6img');
@@ -119,7 +124,21 @@ onAuthStateChanged(auth, (user) => {
 });
 
 function checkForCard(){
+    const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
     if (userID == roomCreatorID) {
+
+        onChildAdded(dbrefboard, (data) => {
+            console.log(data.val());
+            if(data.val() != null){
+                let card = data.val().card;
+                console.log(card.id);
+                enemySlotImg[0].src = `../webpageImageAssets/${card.id}.png`;
+            } else {
+                enemySlotImg[0].src = `../webpageImageAssets/dropZone.png`;
+            }
+        }, {
+            onlyOnce: true
+        });
 
         //player spots
         onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), (snapshot) => {
