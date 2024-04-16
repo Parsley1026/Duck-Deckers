@@ -367,11 +367,15 @@ function checkForAvailableHandSlot(){//returns id of availble hand slot
 }
 
 function fetchDeck() { //fetches deck from firebase library
-    const dbref = refPlayer(``);
+    const dbref = refPlayer(`/cards`);
     let deck = new Deck([]);
     onValue(dbref, (data) => {
-        if(data.val().library != null){
-            deck = data.val().library;
+        if(data.val().cards != null){
+            for(let i = 0; i < data.val().cards.length; i++){
+                let id;
+                id = data.val().cards[i].id;
+                deck.addCardBack(createCard(id));
+            }
         } else {
             deck = -64;
         }

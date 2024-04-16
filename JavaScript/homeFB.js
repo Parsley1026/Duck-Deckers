@@ -1,11 +1,13 @@
 //import test function
 import { Card, Duck, Land, Spell } from "./card.js";
 import { Deck } from "./deck.js";
+import {createCard} from "./cardCreation.js";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getDatabase, set, ref, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -45,20 +47,18 @@ let createRoom = evt => {
     if(roomCode == ""){//check if anything is entered in room code, otherwise, return error to user
         alert("Please enter a room code"); //alert user
     } else {//room code was entered, execute code
-        let deck = new Deck();
+        let deck = new Deck([]);
         get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
             if(snapshot.exists()){
-                console.log(snapshot.val().cards.length);
-                let duck = new Duck()
                 for(let i = 0; i < snapshot.val().cards.length; i++) {
-                    console.log(snapshot.val().cards[i]);
-                    deck.addCardBack();
+                    let id;
+                    id = snapshot.val().cards[i].id;
+                    deck.addCardBack(createCard(id));
                 }
-                console.log(deck.toString());
             } else {
                 console.log("error getting deck");
             }
-        })/*.then(() => {
+        }).then(() => {
             set(ref(db, 'rooms/' + roomCode), {
                 roomCreator: userID, //define creator of room
                 currentPlayers: {
@@ -137,14 +137,14 @@ let createRoom = evt => {
         })
             .then(() => {
                 setTimeout(() => {
-                    //window.location.href = 'room.html'
+                    window.location.href = 'room.html'
                 }, 250); //250ms wait to create room
             })
             .catch((error) => {
                 alert(error.message); //pop up on the webpage
                 console.log(error.code); //log the error code number
                 console.log(error.message); //logs the error message
-            })*/
+            })
     }
 }
 
