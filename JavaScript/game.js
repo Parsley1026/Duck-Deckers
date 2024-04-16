@@ -30,6 +30,7 @@ const auth = getAuth(app);
 let userID = null;
 let roomCreatorID = null;
 let currentRoomCode = null;
+let picked = false;
 
 let handSlot1 = document.getElementById('handSlot0');
 let handSlot2 = document.getElementById('handSlot1');
@@ -72,11 +73,50 @@ let playerSlot3img = document.getElementById('dropZone7img');
 let playerSlot4img = document.getElementById('dropZone8img');
 let playerSlot5img = document.getElementById('dropZone9img');
 
-playerSlot1.addEventListener('click', () => playCard(0));
+//card placement
+playerSlot1.addEventListener('click', () => setTimeout(playCard(0), 5000)); //YES THERES A TIMEOUT. SEE BELOW
 playerSlot2.addEventListener('click', () => playCard(1));
 playerSlot3.addEventListener('click', () => playCard(2));
 playerSlot4.addEventListener('click', () => playCard(3));
 playerSlot5.addEventListener('click', () => playCard(4));
+
+//ISSUE. I NO WANT RED BORDER TO APPEAR WHEN THE CARD IS FIRST PLACED. BAD! WHENEVER THE ZONE IS CLICKED, THERE SHOULD BE A PAUSE, TO CHECK IF THE
+//ZONE CURRENTLY HAS A CARD IMAGE OR NOT. THE PROBLEM IS, THE CARD IS PLACED INSTANTLY, SO THE FUNCTION NEVER REGISTERS THAT
+//THE ZONE WAS EMPTY. DOES THAT MAKE SENSE?
+//
+
+
+//Triggers card select
+playerSlot1.addEventListener('click', () => pick(0));
+playerSlot2.addEventListener('click', () => pick(1));
+playerSlot3.addEventListener('click', () => pick(2));
+playerSlot4.addEventListener('click', () => pick(3));
+playerSlot5.addEventListener('click', () => pick(4));
+function pick(zone) {
+    let selectedCard;
+    if (zone === 0) {
+        selectedCard = playerSlot1img;
+    } else if (zone === 1) {
+        selectedCard = playerSlot2img;
+    }else if (zone ===2){
+        selectedCard = playerSlot3img;
+    }else if (zone ===3){
+        selectedCard = playerSlot4img;
+    }else if (zone ===4){
+        selectedCard = playerSlot5img;
+    }
+    if(selectedCard.src !== '../webpageImageAssets/dropZone.png') { //if the selected tile isn't the default tile
+        if (!picked) {// and if it isn't already picked
+            selectedCard.style.border = '7px solid red' //put a red indicator around the card
+            picked = true; //the card is now selected
+            console.log(selectedCard.src)
+        } else {
+            selectedCard.style.border = '0px solid red';
+            picked = false;
+        }
+    }
+}
+
 
 
 onAuthStateChanged(auth, (user) => {
@@ -114,9 +154,9 @@ function checkForCard(){
         onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a1'), (snapshot) => {
             if (snapshot.val() != null) {
                 let card = snapshot.val().card;
-                playerSlot1img.src = `../webpageImageAssets/${card.id}.png`;
+                playerSlot1img.src = `../webpageImageAssets/${card.id}.png`; //set the card to cardID.png
             } else {
-                playerSlot1img.src = '../webpageImageAssets/dropZone.png';
+                playerSlot1img.src = '../webpageImageAssets/dropZone.png'; //default png
             }
         });
         onValue(ref(db, 'rooms/' + currentRoomCode + '/boardPositions/a2'), (snapshot) => {
