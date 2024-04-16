@@ -58,6 +58,7 @@ let createRoom = evt => {
             } else {
                 console.log("error getting deck");
             }
+            deck.shuffle();
         }).then(() => {
             set(ref(db, 'rooms/' + roomCode), {
                 roomCreator: userID, //define creator of room
@@ -166,14 +167,20 @@ let joinRoom = evt => {
                             let deck = new Deck([]);
                             get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
                                 if(snapshot.exists()){
-                                    deck = snapshot.val().cards;
+                                    for(let i = 0; i < snapshot.val().cards.length; i++) {
+                                        let id;
+                                        id = snapshot.val().cards[i].id;
+                                        deck.addCardBack(createCard(id));
+                                    }
                                 } else {
-                                    console.log("error getting cards");
+                                    console.log("error getting deck");
                                 }
+                                deck.shuffle();
                             }).then(() => {
                                 update(ref(db, 'rooms/' + roomCode + '/currentPlayers/player2'), {
                                     uid: userID,
-                                    name: auth.currentUser.displayName
+                                    name: auth.currentUser.displayName,
+                                    cards: deck
                                 });
                             });
                         })

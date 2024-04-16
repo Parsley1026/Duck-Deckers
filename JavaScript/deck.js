@@ -41,7 +41,7 @@ export class Deck{
             card = this.cards.shift();
             return card;
         } else {
-            return "no more cards";
+            return null;
         }
     }
 }

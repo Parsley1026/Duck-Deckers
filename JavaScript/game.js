@@ -47,13 +47,16 @@ let handSlot5 = document.getElementById('handSlot4');
 let handSlot6 = document.getElementById('handSlot5');
 let handSlot7 = document.getElementById('handSlot6');
 
-let handSlot1img = document.getElementById('handSlot0img');
-let handSlot2img = document.getElementById('handSlot1img');
-let handSlot3img = document.getElementById('handSlot2img');
-let handSlot4img = document.getElementById('handSlot3img');
-let handSlot5img = document.getElementById('handSlot4img');
-let handSlot6img = document.getElementById('handSlot5img');
-let handSlot7img = document.getElementById('handSlot6img');
+let handSlotImg =
+    [
+    document.getElementById('handSlot0img'),
+    document.getElementById('handSlot1img'),
+    document.getElementById('handSlot2img'),
+    document.getElementById('handSlot3img'),
+    document.getElementById('handSlot4img'),
+    document.getElementById('handSlot5img'),
+    document.getElementById('handSlot6img')
+    ];
 
 let enemySlot1 = document.getElementById('dropZone0');
 let enemySlot2 = document.getElementById('dropZone1');
@@ -287,6 +290,25 @@ function checkForCard(){
             }
         });
     }
+
+    //hand slots
+    const dbrefhand = refPlayer(`/hand`);
+    onValue(dbrefhand, (data) => {
+        if(data.val() != null) {
+            for (let i = 0; i < 7; i++) {
+                if (data.val()[i] != null) {
+                    let card = data.val()[i];
+                    handSlotImg[i].src = `../webpageImageAssets/${card.id}.png`;
+                } else {
+                    handSlotImg[i].src = '../webpageImageAssets/handSlot.png';
+                }
+            }
+        } else {
+            console.log("hand empty");
+        }
+    }, {
+        onlyOnce: true
+    });
 }
 
 
@@ -350,7 +372,7 @@ function playCard(zone){
     }
 }
 
-function checkForAvailableHandSlot(){//returns id of availble hand slot
+function checkForAvailableHandSlot(){//returns id of available hand slot, null if none
     let dbref = refPlayer(`hand`);
     let availableSlot = null;
     for(let i = 0; i < 7; i++) {
@@ -370,20 +392,46 @@ function fetchDeck() { //fetches deck from firebase library
     const dbref = refPlayer(`/cards`);
     let deck = new Deck([]);
     onValue(dbref, (data) => {
-        if(data.val().cards != null){
+        if(data.val() != null){
             for(let i = 0; i < data.val().cards.length; i++){
                 let id;
                 id = data.val().cards[i].id;
                 deck.addCardBack(createCard(id));
             }
         } else {
-            deck = -64;
+            deck = null;
         }
     }, {
         onlyOnce: true
     });
-    if(deck == -64){throw new Error("error getting deck");}
     return deck;
+}
+
+function returnDeck() {
+    const dbref = refPlayer(``);
+    update(dbref, {
+       cards: deck
+    });
+}
+
+function draw(){
+    const dbref = refPlayer(`/hand`);
+    let drawnCard;
+    let availableSlot = checkForAvailableHandSlot();
+    deck = fetchDeck();
+    if(deck && availableSlot != null){
+        drawnCard = deck.draw();
+        returnDeck();
+        update(dbref, {
+            [availableSlot]: drawnCard
+        });
+    } else {
+        if(deck == null){
+            console.error("out of cards");
+        } else {
+            console.error("hand is full");
+        }
+    }
 }
 
 function refPlayer(dataPath){ //fetches a datapath based off player 1 or 2
@@ -393,7 +441,6 @@ function refPlayer(dataPath){ //fetches a datapath based off player 1 or 2
         return ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/${dataPath}`);
     else {
         throw new Error("error getting userID");
-        return null;
     }
 }
 
@@ -402,7 +449,6 @@ document.addEventListener('keydown', function(event) {
         console.log(checkForAvailableHandSlot());
     }
     if (event.key === '1') {
-        deck = fetchDeck();
-        console.log(deck.toString());
+        draw();
     }
 });
