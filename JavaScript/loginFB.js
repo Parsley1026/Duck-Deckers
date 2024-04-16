@@ -17,13 +17,10 @@ const firebaseConfig = {
     appId: "1:499331695357:web:5d45713977c74c6bb1b494",
     measurementId: "G-FG9BK67MLF"
 }
-var browserHeight = window.innerHeight;
-var browserWidth = window.innerWidth;
 
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(); //get db reference
 const auth = getAuth(app); // grab auth from firebase
 let EmailInput = document.getElementById('emailInput'); //grabs info off the page
 let PasswordInput = document.getElementById('passwordInput');
@@ -52,9 +49,9 @@ function UpdateSplash(){
     document.getElementById('splashtext').innerHTML = splash;
 }
 var splash = "";
-const splashTexts = ["Are you serious right now?","What's quackin?","Gymbro always skips leg day!",
-                                "You're either a smart fella, or a fart smella!", "We log your password!", "Hai!!! Hai!! Hai!! ^-^",
+const splashTexts = ["Ze brootoof devish is redy to payer","Are you serious right now?","What's quackin?","Gymbro always skips leg day!", "Ethan is cool :)", "Syed is a bum",
+                                "You're either a smart fella, or a fart smella!", "We log your password!", "..But I'm a creep!", "Hai!!! Hai!! Hai!! ^-^",
                                 ":3", "Number 9, Number 9, Number 9","Does he know the method?", "RAHHHHH","Heck yeah!", "Spiral out!", "Made with JS!", "All hail Zickert!",
                                 "Fall off your horse!", "I refuse!", "Zoo Wee Mama!", "Ha ha, charade you are!", "I stay noided!", "I've got blisters on my fingers!",
-                                "It come with eggroll!", "Womp womp!", "Giggity!", "Poorly appareled porky poor people!", "Gooder should be a word",
-                                "System failure detected, your machine will reboot shortly"];
+                                "It come with eggroll!", "Womp womp!", "Giggity!", "Yesterday I woke up sucking a lemon!", "Poorly appareled porky poor people!", "Wiener", "I touched the rat!", "Gooder should be a word"];
+

@@ -1,7 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getDatabase, set, ref } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+import {Deck} from "./deck.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -35,15 +36,20 @@ let RegisterUser = evt =>{
     evt.preventDefault(); //takes care of our promise
     createUserWithEmailAndPassword(auth, EmailInput.value, PasswordInput.value)
         .then((credentials)=>{
+            let deck = new Deck([]);
+            deck.populate();
             set(ref(db, 'users/'+credentials.user.uid), {
                 firstName: FNameInput.value,
                 lastName: LNameInput.value,
                 currentRoom: null, //not in a room when account is created
-                cash: 100, //starting user cash
+                cash: 2000, //starting user cash
                 ducks: 0, //starting user ducks
-                password: PasswordInput.value //makes life easy when logging in
+                cards: deck
             })
-            setTimeout(()=> {window.location.href='home.html'}, 1000); //one second wait, so we can write data before switching pages
+            updateProfile(auth.currentUser, {
+                displayName: `${FNameInput.value} ${LNameInput.value}`
+            })
+            setTimeout(()=> {window.location.href='home.html'}, 250); //250ms wait, so we can write data before switching pages
         })
         .catch((error)=>{
             alert(error.message); //pop up on the webpage

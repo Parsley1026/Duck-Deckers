@@ -3,35 +3,11 @@
     transform: translateY(5px);
 }
 
-#shopBackground{
+
+.shopDuck {
     position: absolute;
-    height: 100vh;
-    width: 100vw;
-    z-index: -1;
-    margin: auto;
-}
-
-#shopHeader{
-    color: aliceblue;
-    font-family: "Curlz MT";
-}
-
-#cash{
-    color: aliceblue;
-    font-family: "Curlz MT";
-
-}
-
-#ducks{
-    color: aliceblue;
-    font-family: "Curlz MT";
-
-}
-
-#redeemCash{
-    margin-right: 5px;
-}
-
-#shopToHomeButton{
-    margin-right: 5px;
+    z-index: 9;
+    text-align: center;
+    width: 500px;
+    height: auto;
 }

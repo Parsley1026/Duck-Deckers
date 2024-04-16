@@ -1,7 +1,13 @@
+//import test function
+import { Card, Duck, Land, Spell } from "./card.js";
+import { Deck } from "./deck.js";
+import {createCard} from "./cardCreation.js";
+
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getDatabase, set, ref, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -40,14 +46,92 @@ let createRoom = evt => {
     const userID = auth.currentUser.uid; //current userID
     if(roomCode == ""){//check if anything is entered in room code, otherwise, return error to user
         alert("Please enter a room code"); //alert user
-        return; //abort function
     } else {//room code was entered, execute code
-        set(ref(db, 'rooms/' + roomCode), {
-            //states of buttons for testing
-            button1state: 0,
-            button2state: 0,
-            roomCreator: userID //define creator of room
-        })
+        let deck = new Deck([]);
+        get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
+            if(snapshot.exists()){
+                for(let i = 0; i < snapshot.val().cards.length; i++) {
+                    let id;
+                    id = snapshot.val().cards[i].id;
+                    deck.addCardBack(createCard(id));
+                }
+            } else {
+                console.log("error getting deck");
+            }
+        }).then(() => {
+            set(ref(db, 'rooms/' + roomCode), {
+                roomCreator: userID, //define creator of room
+                currentPlayers: {
+                    player1: {
+                        uid: userID,
+                        name: auth.currentUser.displayName,
+                        health: 20,
+                        emeralds: 1,
+                        hand: {
+                            0: null,
+                            1: null,
+                            2: null,
+                            3: null,
+                            4: null,
+                            5: null,
+                            6: null
+                        },
+                        cards: deck
+                    },
+                    player2: {
+                        uid: null,
+                        name: null,
+                        health: 20,
+                        emeralds: 1,
+                        hand: {
+                            0: null,
+                            1: null,
+                            2: null,
+                            3: null,
+                            4: null,
+                            5: null,
+                            6: null
+                        }
+                    }
+                },
+                boardPositions: {
+                    a1: {
+                        card: null
+                    },
+                    a2: {
+                        card: null
+                    },
+                    a3: {
+                        card: null
+                    },
+                    a4: {
+                        card: null
+                    },
+                    a5: {
+                        card: null
+                    },
+                    b1: {
+                        card: null
+                    },
+                    b2: {
+                        card: null
+                    },
+                    b3: {
+                        card: null
+                    },
+                    b4: {
+                        card: null
+                    },
+                    b5: {
+                        card: null
+                    }
+                },
+                arrowPositions: {
+                    base: null, //set to board positions
+                    tip: null
+                }
+            })
+        });
         update(ref(db, 'users/' + userID), {
             currentRoom: roomCode //set active room in current user's database
         })
@@ -71,37 +155,54 @@ let joinRoom = evt => {
     const userID = auth.currentUser.uid;
     if(roomCode == ""){//check if room code was entered by user, otherwise, return error to user
         alert("Please enter a room code"); //notify user
-        return; //cancel function
     } else { //room code was entered, run function
         get(ref(db, 'rooms/' + roomCode)).then((snapshot) => { //check if room exists
             if(snapshot.exists()){
-                update(ref(db, 'users/' + userID), {
-                    currentRoom: roomCode //set active room in current user's database
-                })
-                    .then(() => {
-                        setTimeout(() => {
-                            window.location.href = 'room.html'
-                        }, 250); //250ms wait to join room
+                if(snapshot.val().currentPlayers.player2.uid == null) {
+                    update(ref(db, 'users/' + userID), {
+                        currentRoom: roomCode //set active room in current user's database
                     })
-                    .catch((error) => {
-                        alert(error.message); //pop up on the webpage
-                        console.log(error.code); //log the error code number
-                        console.log(error.message); //logs the error message
-                    })
+                        .then(() => {
+                            let deck = new Deck([]);
+                            get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
+                                if(snapshot.exists()){
+                                    deck = snapshot.val().cards;
+                                } else {
+                                    console.log("error getting cards");
+                                }
+                            }).then(() => {
+                                update(ref(db, 'rooms/' + roomCode + '/currentPlayers/player2'), {
+                                    uid: userID,
+                                    name: auth.currentUser.displayName
+                                });
+                            });
+                        })
+                        .then(() => {
+                            setTimeout(() => {
+                                window.location.href = 'room.html'
+                            }, 250); //250ms wait to join room
+                        })
+                        .catch((error) => {
+                            alert(error.message); //pop up on the webpage
+                            console.log(error.code); //log the error code number
+                            console.log(error.message); //logs the error message
+                        })
+                } else {
+                    alert("Room is full");
+                }
             } else {//room doesn't exist, return error
-                alert("Invalid room code entered, please try again. \n Hint: Use your eyes.");//alert user
-                return;//cancel function
+                alert("Invalid room code entered, please try again.");//alert user
             }
         });
     }
 }
 
 //create my signOut method
-let signOut = ()=>{
-    if(confirm("Are you sure you want to sign out?")) {//make sure user wants to sign out
+let signOut = () =>{
+    if(confirm("Are you sure you want to sign out?") == true) {//make sure user wants to sign out
         auth.signOut(); //sign out from the database
-        window.location.href = 'home.html'; //switch the window from home to login
-    }
+        window.location.href = 'login.html'; //switch the window from home to login
+    } else {}
 }
 //create our getDataInfo function to get data from firebase
 let getDataInfo = () =>{
@@ -133,4 +234,3 @@ SignOutButton.addEventListener('click', signOut);
 createRoomButton.addEventListener('click', createRoom);
 //when joinRoom button clicked, attempt to join room
 joinRoomButton.addEventListener('click', joinRoom);
-

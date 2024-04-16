@@ -6,8 +6,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="../CSS/styleshome.css">
 </head>
-<body>
-<img id = "homeBackground" src = "../webpageImageAssets/bluebackground.jpg" alt = "background">
+
+<link rel="stylesheet" href="../CSS/styleshome.css">
+<body style = "background-color: lightskyblue">
+
 
     <form id="MainForm" class="w-25 pt-4 px-4">
         <h2 class="mb-3">User Profile</h2>
@@ -29,7 +31,7 @@
                     <div class="createRoom"> <!-- Code generator button; Home -> Room -->
                         <div class="codeCreateEntry">
                             <input type = "text" class = "form-control" id = "codeCreateInput" placeholder="Room Code">
-                            <label for = "codeCreateInput">Create Room</label> <!--THIS NEEDS TO BE ALIGNED PROPERLY LATER -->
+                            <label for = "codeCreateInput">Create Room</label>
                         </div>
                         <div class="codeCreateSubmit"> <!-- Room join button; Home -> Room -->
                             <button id="codeCreateButton" type="button" class="btn btn-primary" style="float: right">Create Room</button>
@@ -44,8 +46,7 @@
         </div>
 
         <div class = "loginScreen"> <!-- Sign Out button; Home -> Login -->
-            <a href="login.html">
-                <button id="signOutButton" type="button" class="btn btn-primary" style="float: right">Sign Out</button></a>
+            <button id="signOutButton" type="button" class="btn btn-primary" style="float: right">Sign Out</button>
         </div>
 
     </form>

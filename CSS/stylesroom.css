@@ -1,3 +1,4 @@
+
 .zone{
     position: absolute;
     top: 300px; /* Adjust as needed */
@@ -5,10 +6,85 @@
     height: 300px;
     width: 150px;
 }
-
-#button2{
-    margin-right: 5px;
+button {
+    background: transparent;
+    border: none;
 }
+.zones{
+    height: 200px;
+    width: auto;
+    padding: 10px;
+}
+.hand{
+    position:absolute;
+    height: 200px;
+    width: auto;
+    padding: 10px;
+    top:700px;
+    left: 0px;
+}
+.A{
+    position: absolute;
+    top: 100px;
+}
+.B{
+    position: absolute;
+    top:400px;
+}
+.column1{
+    left: 500px;
+}
+.column2{
+    left: 650px;
+}
+
+.column3{
+    left: 800px;
+}
+
+.column4{
+    left: 950px;
+}
+.column5{
+    left: 1100px;
+}
+.column6{
+    left: 1250px;
+}
+.column7{
+    left: 1400px;
+}
+
+.column1H{
+    left: 350px;
+}
+.column2H{
+    left: 500px;
+}
+
+.column3H{
+    left: 650px;
+}
+
+.column4H{
+    left: 800px;
+}
+.column5H{
+    left: 950px;
+}
+.column6H{
+    left: 1100px;
+}
+.column7H{
+    left: 1250px;
+}
+.statIcon{
+    height: 75px;
+    width: auto;
+}
+
+
+
 
 #quitButton{
     margin-right: 5px;

@@ -1,0 +1,298 @@
+{
+  "0" :{
+    "name": "Duck",
+    "type": 0,
+    "cost": 1,
+    "effect": null,
+    "damage": 2,
+    "health": 2
+  },
+  "1" : {
+    "name": "Snowball",
+    "type": 1,
+    "cost": 1,
+    "effect": [0, 1]
+  },
+  "2" : {
+    "name": "Duckium",
+    "type": 1,
+    "cost": 1,
+    "effect": [7, 1]
+  },
+  "3" : {
+    "name": "Soup",
+    "type": 1,
+    "cost": 1,
+    "effect": [[1, 4], [2, 1]]
+  },
+  "4": {
+    "name": "Money Duck",
+    "type": 0,
+    "cost": 1,
+    "effect": [0, 1],
+    "damage": 0,
+    "health": 1
+  },
+  "5": {
+    "name": "Brick of High Velocity",
+    "type": 1,
+    "cost": 1,
+    "effect": [3, 2]
+  },
+  "6": {
+    "name": "Duckgrade",
+    "type": 0,
+    "cost": 2,
+    "effect": null,
+    "damage": 3,
+    "health": 3
+  },
+  "7": {
+    "name": "Iron Island",
+    "type": 2,
+    "cost": 2,
+    "effect": [0, 1]
+  },
+  "8": {
+    "name": "Baker Duck",
+    "type": 0,
+    "cost": 2,
+    "effect": [1, 1],
+    "damage": 1,
+    "health": 1
+  },
+  "9": {
+    "name": "Supplies",
+    "type": 1,
+    "cost": 2,
+    "effect": [2, 2]
+  },
+  "10": {
+    "name": "Ranger",
+    "type": 0,
+    "cost": 2,
+    "effect": [2, 1],
+    "damage": 3,
+    "health": 1
+  },
+  "11": {
+    "name": "Duckruiter",
+    "type": 0,
+    "cost": 3,
+    "effect": [3, 1],
+    "damage": 2,
+    "health": 2
+  },
+  "12": {
+    "name": "Destruction",
+    "type": 1,
+    "cost": 4,
+    "effect": [4, 1]
+  },
+  "13": {
+    "name": "Bear Trap Barren",
+    "type": 2,
+    "cost": 4,
+    "effect": [1, 1]
+  },
+  "14": {
+    "name": "Duckskateer",
+    "type": 0,
+    "cost": 4,
+    "effect": null,
+    "damage": 5,
+    "health": 5
+  },
+  "15": {
+    "name": "Gym Bro",
+    "type": 0,
+    "cost": 6,
+    "effect": null,
+    "damage": 7,
+    "health": 7
+  },
+  "16": {
+    "name": "Boom Barrel",
+    "type": 0,
+    "cost": 1,
+    "effect": [4, 1],
+    "damage": 1,
+    "health": 1
+  },
+  "17": {
+    "name": "Miner",
+    "type": 0,
+    "cost": 2,
+    "effect": [0, 1],
+    "damage": 1,
+    "health": 3
+  },
+  "18": {
+    "name": "Energy Drink",
+    "type": 1,
+    "cost": 2,
+    "effect": [5, 1]
+  },
+  "19": {
+    "name": "Factory",
+    "type": 2,
+    "cost": 3,
+    "effect": [2, 1]
+  },
+  "20": {
+    "name": "Arisduckrat",
+    "type": 0,
+    "cost": 3,
+    "effect": [5, 1],
+    "damage": 1,
+    "health": 1
+  },
+  "21": {
+    "name": "Arms Dealer",
+    "type": 0,
+    "cost": 3,
+    "effect": [6, 1],
+    "damage": 2,
+    "health": 2
+  },
+  "22": {
+    "name": "Shield Duck",
+    "type": 0,
+    "cost": 3,
+    "effect": [7, 1],
+    "damage": 3,
+    "health": 5
+  },
+  "23": {
+    "name": "Earthquack",
+    "type": 1,
+    "cost": 5,
+    "effect": [[10, 2], [4, 1]]
+  },
+  "24": {
+    "name": "Burger Duck",
+    "type": 0,
+    "cost": 4,
+    "effect": [8, 2],
+    "damage": 2,
+    "health": 2
+  },
+  "25": {
+    "name": "Bomber",
+    "type": 0,
+    "cost": 5,
+    "effect": [9, 2],
+    "damage": 4,
+    "health": 1
+  },
+  "26": {
+    "name": "Hot Dog",
+    "type": 1,
+    "cost": 1,
+    "effect": [7, -3]
+  },
+  "27": {
+    "name": "Fireball",
+    "type": 1,
+    "cost": 2,
+    "effect": [3, 3]
+  },
+  "28": {
+    "name": "Mail Duck",
+    "type": 0,
+    "cost": 3,
+    "effect": [12, 2],
+    "damage": 3,
+    "health": 4
+  },
+  "29": {
+    "name": "Laser Duck",
+    "type": 0,
+    "cost": 5,
+    "effect": [10, 1],
+    "damage": 5,
+    "health": 5
+  },
+  "30": {
+    "name": "Duckium-277",
+    "type": 1,
+    "cost": 5,
+    "effect": [8, 5]
+  },
+  "31": {
+    "name": "Duck Vender",
+    "type": 0,
+    "cost": 3,
+    "effect": [12, 1],
+    "damage": 1,
+    "health": 1
+  },
+  "32": {
+    "name": "Fun Police",
+    "type": 0,
+    "cost": 1,
+    "effect": [6, -1],
+    "damage": 2,
+    "health": 1
+  },
+  "33": {
+    "name": "Powerplant",
+    "type": 2,
+    "cost": 3,
+    "effect": [3, 2]
+  },
+  "34": {
+    "name": "Purge",
+    "type": 1,
+    "cost": 4,
+    "effect": [11, 3]
+  },
+  "35": {
+    "name": "Count Quackula",
+    "type": 0,
+    "cost": 6,
+    "effect": [13, 2],
+    "damage": 7,
+    "health": 3
+  },
+  "36": {
+    "name": "Starducks",
+    "type": 2,
+    "cost": 10,
+    "effect": [3, 2]
+  },
+  "37": {
+    "name": "Reckoner",
+    "type": 0,
+    "cost": 6,
+    "effect": [14, 3],
+    "damage": 4,
+    "health": 6
+  },
+  "38": {
+    "name": "The Thin White Duck",
+    "type": 0,
+    "cost": 7,
+    "effect": [11, 1],
+    "damage": 5,
+    "health": 3
+  },
+  "39": {
+    "name": "Manquackhan Project",
+    "type": 1,
+    "cost": 12,
+    "effect": [9, 1]
+  },
+  "40": {
+    "name": "Junk Mail",
+    "type": 1,
+    "cost": 2,
+    "effect": [13, 0]
+  },
+  "41": {
+    "name": "Consolation",
+    "type": 1,
+    "cost": 0,
+    "effect": [12, 1]
+  }
+}

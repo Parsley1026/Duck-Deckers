@@ -1,0 +1,37 @@
+import {Duck, Spell, Land} from "./card.js";
+import data from "../cardMaster.json" with { type : 'json'};
+
+export function createCard(id) { //create a card from cardMaster.json based on input id #
+    let card;
+        const keys = Object.keys(data); //get id of cards via json directories
+        switch(data[keys[id]].type){ //create card depending on card type
+            case 0: //card type 0 is a duck, so create duck
+                card = new Duck(
+                    keys[id],
+                    data[keys[id]].name,
+                    data[keys[id]].cost,
+                    data[keys[id]].effect,
+                    data[keys[id]].damage,
+                    data[keys[id]].health
+                );
+                break;
+            case 1: //card type 1 is a spell, so create spell
+                card = new Spell(
+                    keys[id],
+                    data[keys[id]].name,
+                    data[keys[id]].cost,
+                    data[keys[id]].effect,
+                );
+                break;
+            case 2: //card type 2 is a land, so create land
+                card = new Land(
+                    keys[id],
+                    data[keys[id]].name,
+                    data[keys[id]].cost,
+                    data[keys[id]].effect,
+                );
+                break;
+        }
+    return card;
+}
+
