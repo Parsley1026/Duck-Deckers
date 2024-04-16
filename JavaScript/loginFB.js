@@ -54,3 +54,4 @@ const splashTexts = ["I HATE JAVASCRIPT","Ze brootoof devish is redy to payer","
                                 ":3", "Number 9, Number 9, Number 9","Does he know the method?", "RAHHHHH","Heck yeah!", "Spiral out!", "Made with JS!", "All hail Zickert!",
                                 "Fall off your horse!", "I refuse!", "Zoo Wee Mama!", "Ha ha, charade you are!", "I stay noided!", "I've got blisters on my fingers!",
                                 "It come with eggroll!", "Womp womp!", "Giggity!", "Yesterday I woke up sucking a lemon!", "Poorly appareled porky poor people!", "Wiener", "I touched the rat!", "Gooder should be a word"];
+

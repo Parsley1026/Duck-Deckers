@@ -1,8 +1,8 @@
-import { createCard } from "./cardCreation.js";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getDatabase, set, ref } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+import {Deck} from "./deck.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -36,19 +36,15 @@ let RegisterUser = evt =>{
     evt.preventDefault(); //takes care of our promise
     createUserWithEmailAndPassword(auth, EmailInput.value, PasswordInput.value)
         .then((credentials)=>{
+            let deck = new Deck([]);
+            deck.populate();
             set(ref(db, 'users/'+credentials.user.uid), {
                 firstName: FNameInput.value,
                 lastName: LNameInput.value,
                 currentRoom: null, //not in a room when account is created
                 cash: 2000, //starting user cash
                 ducks: 0, //starting user ducks
-                cards: {
-                    0: createCard(0),
-                    1: createCard(1),
-                    2: createCard(2),
-                    3: createCard(3),
-                    4: createCard(4)
-                }
+                cards: deck
             })
             updateProfile(auth.currentUser, {
                 displayName: `${FNameInput.value} ${LNameInput.value}`
