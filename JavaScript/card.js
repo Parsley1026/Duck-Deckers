@@ -1,8 +1,9 @@
 export class Card {
-    constructor(id, name, cost) {
+    constructor(id, name, cost, type) {
         this.id = id;
         this.name = name;
         this.cost = cost;
+        this.type = type;
     }
     toString() {
         return `id: ${this.id}\nname: ${this.name}\ncost: ${this.cost}`;
@@ -11,8 +12,8 @@ export class Card {
 }
 
 export class Duck extends Card { //identified as card type 0
-    constructor(id, name, cost, effect, damage, health) {
-        super(id, name, cost);
+    constructor(id, name, cost, type, effect, damage, health) {
+        super(id, name, cost, type);
         this.effect = effect; //format for effect is an array, [effect #, effect strength]
         /*
             effect coding for ducks:
@@ -101,8 +102,8 @@ export class Duck extends Card { //identified as card type 0
 }
 
 export class Spell extends Card { //identified as card type 1
-    constructor(id, name, cost, effect){
-        super(id, name, cost);
+    constructor(id, name, cost, type, effect){
+        super(id, name, cost, type);
         this.effect = effect; //format for effect is an array, [effect #, effect strength]
         /*
             effect coding for spells:
@@ -145,8 +146,8 @@ export class Spell extends Card { //identified as card type 1
 }
 
 export class Land extends Card { //identified as card type 2
-    constructor(id, name, cost, effect){
-        super(id, name, cost);
+    constructor(id, name, cost, type, effect){
+        super(id, name, cost, type);
         this.effect = effect; //format for effect is an array, [effect #, effect strength]
         /*
             effect coding for land:

@@ -1,9 +1,9 @@
-import {createCard} from "./cardCreation.js";
+import {createCard, createCardDB } from "./cardCreation.js";
 import {Deck} from "./deck.js";
 
 // Import the functions you need from the SDKs you need
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { child, get, getDatabase, onValue, ref, update } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+import { child, get, getDatabase, onValue, ref, update} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import {getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -29,7 +29,6 @@ const auth = getAuth(app);
 let userID = null;
 let roomCreatorID = null;
 let currentRoomCode = null;
-let picked = false;
 
 let deck = new Deck([]);
 let selectedCard = null;
@@ -94,7 +93,13 @@ let handSlotImg =
     ];
 
 for(let i = 0; i < playerSlot.length; i++){
-    playerSlot[i].addEventListener('click', () => {playCard(i);});
+    playerSlot[i].addEventListener('click', () => {
+        if(selectedCard != null){
+            playCard(i);
+        } else {
+            //do something else like card actions
+        }
+    });
 }
 for(let i = 0; i < handSlot.length; i++){
     handSlot[i].addEventListener('click', () => {selectCardHand(i);});
@@ -173,12 +178,12 @@ function checkForCard(){
     //hand slots
     const dbrefhand = refPlayer(`/hand`);
     onValue(dbrefhand, (data) => {
-        for(let i = 0; i < 6; i++){
+        for(let i = 0; i < 7; i++){
             handSlotImg[i].src = `../webpageImageAssets/handSlot.png`;
         }
         data.forEach((element) => {
             if(element.val() != null){
-                let card = element.val();
+                let card = element.val().card;
                 handSlotImg[element.key].src = `../webpageImageAssets/${card.id}.png`;
             }
         })
@@ -188,8 +193,19 @@ function checkForCard(){
 }
 
 function playCard(zone){
-    const dbrefhand = refPlayer(`/hand`);
-    const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
+    let updates = {};
+    if(userID == roomCreatorID){
+        if(fetchCard(zone) == null){
+            handSlotImg[selectedZone].style.border = '0px';
+            updates[`rooms/${currentRoomCode}/boardPositions/${zone}/card`] = selectedCard;
+            updates[`rooms/${currentRoomCode}/currentPlayers/player1/hand/${selectedZone}`] = null;
+            update(ref(db), updates);
+            selectedCard = null;
+            selectedZone = null;
+        } else {
+            console.error("there is already a card here");
+        }
+    }
 }
 
 function checkForAvailableHandSlot(){//returns id of available hand slot, null if none
@@ -225,6 +241,19 @@ function fetchDeck() { //fetches deck from firebase library
         onlyOnce: true
     });
     return deck;
+}
+
+function fetchCard(zone){
+    const dbref = ref(db, `rooms/${currentRoomCode}/boardPositions/${zone}`);
+    let card = null;
+    onValue(dbref, (data) => {
+        if(data.val() != null){
+            card = createCardDB(data.val().card);
+        }
+    }, {
+        onlyOnce: true
+    });
+    return card;
 }
 
 function returnDeck() {
@@ -270,7 +299,7 @@ function selectCardHand(zone){
         onValue(dbref, (data) => {
             if(data.val() != null) {
                 if (data.val()[zone] != null) {
-                    selectedCard = data.val()[zone].card;
+                    selectedCard = createCardDB(data.val()[zone].card);
                     selectedZone = zone;
                     handSlotImg[zone].style.border = '7px solid red';
                 } else {
@@ -279,6 +308,8 @@ function selectCardHand(zone){
             }else{
                 console.error("hand reference hasn't been initialized yet");
             }
+        }, {
+            onlyOnce: true
         })
     } else if(zone == selectedZone) {
         selectedCard = null;
