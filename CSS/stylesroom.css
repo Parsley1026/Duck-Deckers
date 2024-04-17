@@ -23,6 +23,25 @@ button {
     top:700px;
     left: 0px;
 }
+.penis{
+    position:absolute;
+    height: 240px;
+    width: auto;
+    padding: 10px;
+    top:700px;
+    right: 400px;
+}
+.fartPoo{
+    position: absolute;
+    right:440px;
+    top:100px;
+}
+.pooFart{
+    z-index: 2;
+    position: absolute;
+    right:440px;
+    top: 400px;
+}
 .A{
     position: absolute;
     top: 100px;
@@ -82,10 +101,34 @@ button {
     height: 75px;
     width: auto;
 }
+.wiener{
+    position: absolute;
+    height: 100px;
+    left: 650px;
+    width: auto;
+    z-index: 2;
+    top: 0px;
+}
+#playerHealth{
+    position: absolute;
+    z-index: 2;
+    left: 45px;
+    top: 147px;
+    color: white;
+    font-size: xx-large;
+}
+#enemyHealth{
+    position: absolute;
+    z-index: 3;
+    left: 895px;
+    top: 20px;
+    color: white;
+    font-size: xx-large;
 
-
+}
 
 
 #quitButton{
     margin-right: 5px;
 }
+

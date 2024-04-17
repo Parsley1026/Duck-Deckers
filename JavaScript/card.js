@@ -99,6 +99,7 @@ export class Duck extends Card { //identified as card type 0
         enemyCard.health -= this.damage;
     }
 
+
 }
 
 export class Spell extends Card { //identified as card type 1
