@@ -36,6 +36,11 @@ let RegisterUser = evt =>{
     evt.preventDefault(); //takes care of our promise
     createUserWithEmailAndPassword(auth, EmailInput.value, PasswordInput.value)
         .then((credentials)=>{
+            if(FNameInput.value == null){
+                throw new Error("Please enter a first name");
+            } else if (LNameInput.value == null){
+                throw new Error("Please enter a last name");
+            }
             let deck = new Deck([]);
             deck.populate();
             set(ref(db, 'users/'+credentials.user.uid), {
