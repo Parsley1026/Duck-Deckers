@@ -53,7 +53,7 @@ let createRoom = evt => {
                 for(let i = 0; i < snapshot.val().cards.length; i++) {
                     let id;
                     id = snapshot.val().cards[i].id;
-                    deck.addCardBack(createCard(0));
+                    deck.addCardBack(createCard(id));
                 }
             } else {
                 console.log("error getting deck");
@@ -170,7 +170,7 @@ let joinRoom = evt => {
                                     for(let i = 0; i < snapshot.val().cards.length; i++) {
                                         let id;
                                         id = snapshot.val().cards[i].id;
-                                        deck.addCardBack(createCard(0));
+                                        deck.addCardBack(createCard(id));
                                     }
                                 } else {
                                     console.log("error getting deck");
