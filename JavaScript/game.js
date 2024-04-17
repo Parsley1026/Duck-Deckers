@@ -368,7 +368,7 @@ function getYourEmeralds(read) {
             onlyOnce: true
         });
         return emeralds;
-    } else {
+    } else { //I dont want the player to see the enemy's emeralds, I don't think its necessary but just in case:
         let player;
         if (userID == roomCreatorID) {
             player = 2;
