@@ -32,7 +32,10 @@ let currentRoomCode = null;
 
 let deck = new Deck([]);
 let selectedCard = null;
-let selectedZone = null;
+let attackingCard = null;
+let selectedZoneHand = null;
+let selectedZonePlayer = null;
+let selectedZoneEnemy = null;
 
 //slot zones
 let handSlot =
@@ -65,6 +68,19 @@ let playerSlot =
     ];
 
 //image zones
+let dropSlotImg =
+    [
+        document.getElementById('dropZone0img'),
+        document.getElementById('dropZone1img'),
+        document.getElementById('dropZone2img'),
+        document.getElementById('dropZone3img'),
+        document.getElementById('dropZone4img'),
+        document.getElementById('dropZone5img'),
+        document.getElementById('dropZone6img'),
+        document.getElementById('dropZone7img'),
+        document.getElementById('dropZone8img'),
+        document.getElementById('dropZone9img')
+    ];
 let enemySlotImg =
     [
         document.getElementById('dropZone0img'),
@@ -94,10 +110,17 @@ let handSlotImg =
 
 for(let i = 0; i < playerSlot.length; i++){
     playerSlot[i].addEventListener('click', () => {
-        if(selectedCard != null){
+        if(selectedZoneHand != null) {
             playCard(i);
         } else {
-            //do something else like card actions
+            selectCardPlayer(i);
+        }
+    });
+}
+for(let i = 0; i < enemySlot.length; i++){
+    enemySlot[i].addEventListener('click', () => {
+        if(attackingCard != null){
+            attackCard(i + 5);
         }
     });
 }
@@ -125,6 +148,7 @@ onAuthStateChanged(auth, (user) => {
             }).then(() => {
                 onValue(ref(db, `rooms/${currentRoomCode}`), () => { //live data
                     checkForCard();
+                    checkCardStatus();
                     document.getElementById("playerHealth").innerHTML = getYourHealth(0);
                     document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
                 });
@@ -134,6 +158,27 @@ onAuthStateChanged(auth, (user) => {
         throw new Error("error getting user data");
     }
 });
+
+function checkCardStatus() {
+    const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
+    let offset = 0;
+    if(userID == roomCreatorID){offset = -5;}
+    onValue(dbrefboard, (data) => {
+        data.forEach((element) => {
+            if(element.val().card.type == 0 && element.val().card.health <= 0){
+               dropSlotImg[parseInt(element.key)+offset].style.border = '7px solid green';
+               setTimeout(() => {
+                   update(child(dbrefboard, `/${element.key}`), {
+                       card: null
+                   });
+                   dropSlotImg[parseInt(element.key)+offset].style.border = '0px';
+               }, 2500); //2.5 second wait before card removal
+           }
+        });
+    }, {
+        onlyOnce: true
+    });
+}
 
 function checkForCard(){
     const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
@@ -198,12 +243,23 @@ function playCard(zone){
     let updates = {};
     if(userID == roomCreatorID){
         if(fetchCard(zone) == null){
-            handSlotImg[selectedZone].style.border = '0px';
+            handSlotImg[selectedZoneHand].style.border = '0px';
             updates[`rooms/${currentRoomCode}/boardPositions/${zone}/card`] = selectedCard;
-            updates[`rooms/${currentRoomCode}/currentPlayers/player1/hand/${selectedZone}`] = null;
+            updates[`rooms/${currentRoomCode}/currentPlayers/player1/hand/${selectedZoneHand}`] = null;
             update(ref(db), updates);
             selectedCard = null;
-            selectedZone = null;
+            selectedZoneHand = null;
+        } else {
+            console.error("there is already a card here");
+        }
+    } else {
+        if(fetchCard(zone + 5) == null){
+            handSlotImg[selectedZoneHand].style.border = '0px';
+            updates[`rooms/${currentRoomCode}/boardPositions/${zone+5}/card`] = selectedCard;
+            updates[`rooms/${currentRoomCode}/currentPlayers/player2/hand/${selectedZoneHand}`] = null;
+            update(ref(db), updates);
+            selectedCard = null;
+            selectedZoneHand = null;
         } else {
             console.error("there is already a card here");
         }
@@ -334,8 +390,8 @@ function selectCardHand(zone){
             if(data.val() != null) {
                 if (data.val()[zone] != null) {
                     selectedCard = createCardDB(data.val()[zone].card);
-                    selectedZone = zone;
-                    handSlotImg[zone].style.border = '6.5px solid red';
+                    selectedZoneHand = zone;
+                    handSlotImg[zone].style.border = '7px solid red';
                 } else {
                     console.error("no card in selected spot");
                 }
@@ -345,16 +401,86 @@ function selectCardHand(zone){
         }, {
             onlyOnce: true
         })
-    } else if(zone == selectedZone) {
+    } else if(zone == selectedZoneHand) {
         selectedCard = null;
+        selectedZoneHand = null;
         handSlotImg[zone].style.border = '0px';
     } else {
         console.error("a card is already selected");
     }
 }
 
+function selectCardPlayer(zone){
+    let offset = 0;
+    if(userID != roomCreatorID){offset = 5;}
+    if(selectedCard == null && attackingCard == null){
+        if(fetchCard(zone + offset) != null) {
+            selectedCard = fetchCard(zone + offset);
+            selectedZonePlayer = zone;
+            playerSlotImg[zone].style.border = '7px solid red';
+        } else {
+            console.error("no card in selected spot");
+        }
+    } else if(zone == selectedZonePlayer && attackingCard == null) {
+        selectedCard = null;
+        selectedZonePlayer = null;
+        playerSlotImg[zone].style.border = '0px';
+    } else {
+        console.error("a card is already selected");
+    }
+}
+
+function attackCard(zone) { //should only ever be used in attacking mode
+    let offset = 0;
+    if(userID != roomCreatorID){offset = -5;}
+    if(selectedZoneHand == null){
+        if(fetchCard(zone + offset) != null && fetchCard(zone + offset).type == 0) {
+            selectedCard = fetchCard(zone + offset);
+            selectedZoneEnemy = zone;
+            attackingCard.attack(selectedCard);
+            update(ref(db, `rooms/${currentRoomCode}/boardPositions/${zone + offset}`), {
+                card: selectedCard
+            });
+            playerSlotImg[selectedZonePlayer].style.border = '0px';
+            selectedCard = null;
+            attackingCard = null;
+            selectedZoneEnemy = null;
+            selectedZonePlayer = null;
+        } else if(fetchCard(zone + offset) != null && fetchCard(zone + offset).type != 0) {
+            console.error("cannot attack spell/land");
+        } else {
+            console.error("no card in selected space");
+        }
+    } else {
+        console.error("cannot use hand cards on enemy cards (for now)");
+    }
+}
+
+function initiateAttack(){
+    if(selectedZonePlayer != null) {
+        if(selectedCard.type == 0 || attackingCard != null) {
+            if (attackingCard == null) {
+                playerSlotImg[selectedZonePlayer].style.border = '7px solid blue';
+                attackingCard = selectedCard;
+                selectedCard = 0;
+            } else {
+                selectedCard = attackingCard;
+                attackingCard = null;
+                playerSlotImg[selectedZonePlayer].style.border = '7px solid red';
+            }
+        } else {
+            console.log("cannot attack with a spell/land")
+        }
+    } else {
+        console.error("no duck is selected");
+    }
+}
+
 document.addEventListener('keydown', function(event) {
     if (event.key === '1') {
         draw();
+    }
+    if (event.key === `a`) {
+        initiateAttack();
     }
 });

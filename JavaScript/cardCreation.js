@@ -42,12 +42,14 @@ export function createCardDB(data){
     let card;
     switch(data.type) {
         case 0:
+            let effect = null;
+            if(data.effect != null){effect = data.effect;}
             card = new Duck(
                 data.id,
                 data.name,
                 data.cost,
                 data.type,
-                data.effect,
+                effect,
                 data.damage,
                 data.health
             );
