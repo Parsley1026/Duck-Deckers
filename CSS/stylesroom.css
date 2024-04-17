@@ -117,6 +117,14 @@ button {
     color: white;
     font-size: xx-large;
 }
+#playerEmeralds{
+    position: absolute;
+    z-index: 2;
+    left: 130px;
+    top: 147px;
+    color: black;
+    font-size: xx-large;
+}
 #enemyHealth{
     position: absolute;
     z-index: 3;
