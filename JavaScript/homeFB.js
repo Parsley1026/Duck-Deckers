@@ -1,11 +1,13 @@
 //import test function
 import { Card, Duck, Land, Spell } from "./card.js";
 import { Deck } from "./deck.js";
+import {createCard} from "./cardCreation.js";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
 import { getDatabase, set, ref, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -48,10 +50,15 @@ let createRoom = evt => {
         let deck = new Deck([]);
         get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
             if(snapshot.exists()){
-                deck = snapshot.val().cards;
+                for(let i = 0; i < snapshot.val().cards.length; i++) {
+                    let id;
+                    id = snapshot.val().cards[i].id;
+                    deck.addCardBack(createCard(0));
+                }
             } else {
                 console.log("error getting deck");
             }
+            deck.shuffle();
         }).then(() => {
             set(ref(db, 'rooms/' + roomCode), {
                 roomCreator: userID, //define creator of room
@@ -70,7 +77,7 @@ let createRoom = evt => {
                             5: null,
                             6: null
                         },
-                        library: deck
+                        cards: deck
                     },
                     player2: {
                         uid: null,
@@ -89,34 +96,34 @@ let createRoom = evt => {
                     }
                 },
                 boardPositions: {
-                    a1: {
+                    0: {
                         card: null
                     },
-                    a2: {
+                    1: {
                         card: null
                     },
-                    a3: {
+                    2: {
                         card: null
                     },
-                    a4: {
+                    3: {
                         card: null
                     },
-                    a5: {
+                    4: {
                         card: null
                     },
-                    b1: {
+                    5: {
                         card: null
                     },
-                    b2: {
+                    6: {
                         card: null
                     },
-                    b3: {
+                    7: {
                         card: null
                     },
-                    b4: {
+                    8: {
                         card: null
                     },
-                    b5: {
+                    9: {
                         card: null
                     }
                 },
@@ -160,14 +167,20 @@ let joinRoom = evt => {
                             let deck = new Deck([]);
                             get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
                                 if(snapshot.exists()){
-                                    deck = snapshot.val().cards;
+                                    for(let i = 0; i < snapshot.val().cards.length; i++) {
+                                        let id;
+                                        id = snapshot.val().cards[i].id;
+                                        deck.addCardBack(createCard(0));
+                                    }
                                 } else {
-                                    console.log("error getting cards");
+                                    console.log("error getting deck");
                                 }
+                                deck.shuffle();
                             }).then(() => {
                                 update(ref(db, 'rooms/' + roomCode + '/currentPlayers/player2'), {
                                     uid: userID,
-                                    name: auth.currentUser.displayName
+                                    name: auth.currentUser.displayName,
+                                    cards: deck
                                 });
                             });
                         })

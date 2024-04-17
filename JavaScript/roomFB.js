@@ -28,11 +28,14 @@ let currentRoomTag = document.getElementById('roomCode'); //links with my h2 tag
 let roomCreatorTag = document.getElementById('roomCreatorText');
 let quitButtonInput = document.getElementById('quitButton');//get quit button
 
+
+
 //global variables
 let currentRoomCode = null;
 let roomCreator = null;
 let userID = null;
 let roomReady = false;
+
 
 //create our getDataInfo function to get data from firebase
 let getDataInfo = () =>{
@@ -45,7 +48,9 @@ let getDataInfo = () =>{
             onValue(dbref, (snapshot) => {
                 currentRoomCode = snapshot.val().currentRoom; //get current room code
 
+
                 currentRoomTag.innerText = currentRoomCode; //send data to h2 tag
+
 
                 if(currentRoomCode != null) {
                     const dbrefroom = ref(db, 'rooms/' + currentRoomCode); //get ref of current room
@@ -66,13 +71,13 @@ let getDataInfo = () =>{
                         }
                     });
                 } else{
-                    console.log("Error getting creator of room");
+                    console.error("Error getting creator of room");
                 }
 
             });
 
         } else{
-            console.log("Error getting user data");
+            console.error("Error getting user data");
         }
     })
 }
