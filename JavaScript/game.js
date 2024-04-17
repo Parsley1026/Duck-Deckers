@@ -146,10 +146,11 @@ onAuthStateChanged(auth, (user) => {
                     console.error("error getting creator of room");
                 }
             }).then(() => {
-                onValue(ref(db, `rooms/${currentRoomCode}`), () => { //live data
+                onValue(ref(db, `rooms/${currentRoomCode}`), () => { //live data. gets updated every time new data occurs.
                     checkForCard();
                     checkCardStatus();
                     document.getElementById("playerHealth").innerHTML = getYourHealth(0);
+                    document.getElementById("playerEmeralds").innerHTML = getYourEmeralds(0);
                     document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
                 });
             })
@@ -354,7 +355,36 @@ function getYourHealth(read){
         });
         return health;
     }
-
+}
+function getYourEmeralds(read) {
+    if (read == 0) {
+        const dbref = refPlayer(``);
+        let emeralds = null;
+        onValue(dbref, (data) => {
+            if (data.val() != null) {
+                emeralds = data.val().emeralds;
+            }
+        }, {
+            onlyOnce: true
+        });
+        return emeralds;
+    } else {
+        let player;
+        if (userID == roomCreatorID) {
+            player = 2;
+        } else {
+            player = 1;
+        }
+        let emeralds = null;
+        onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player${player}`), (data) => {
+            if (data.val() != null) {
+                emeralds = data.val().emeralds;
+            }
+        }, {
+            onlyOnce: true
+        });
+        return emeralds;
+    }
 }
 
 function draw(){
