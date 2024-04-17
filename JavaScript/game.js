@@ -32,7 +32,10 @@ let currentRoomCode = null;
 
 let deck = new Deck([]);
 let selectedCard = null;
-let selectedZone = null;
+let attackingCard = null;
+let selectedZoneHand = null;
+let selectedZonePlayer = null;
+let selectedZoneEnemy = null;
 
 //slot zones
 let handSlot =
@@ -94,10 +97,10 @@ let handSlotImg =
 
 for(let i = 0; i < playerSlot.length; i++){
     playerSlot[i].addEventListener('click', () => {
-        if(selectedCard != null){
+        if(selectedZoneHand != null) {
             playCard(i);
         } else {
-            //do something else like card actions
+            selectCardPlayer(i);
         }
     });
 }
@@ -123,7 +126,7 @@ onAuthStateChanged(auth, (user) => {
                     console.error("error getting creator of room");
                 }
             }).then(() => {
-                onValue(ref(db, `rooms/${currentRoomCode}`), () => {
+                onValue(ref(db, `rooms/${currentRoomCode}`), () => { //live data
                     checkForCard();
                 });
             })
@@ -196,12 +199,12 @@ function playCard(zone){
     let updates = {};
     if(userID == roomCreatorID){
         if(fetchCard(zone) == null){
-            handSlotImg[selectedZone].style.border = '0px';
+            handSlotImg[selectedZoneHand].style.border = '0px';
             updates[`rooms/${currentRoomCode}/boardPositions/${zone}/card`] = selectedCard;
-            updates[`rooms/${currentRoomCode}/currentPlayers/player1/hand/${selectedZone}`] = null;
+            updates[`rooms/${currentRoomCode}/currentPlayers/player1/hand/${selectedZoneHand}`] = null;
             update(ref(db), updates);
             selectedCard = null;
-            selectedZone = null;
+            selectedZoneHand = null;
         } else {
             console.error("there is already a card here");
         }
@@ -300,7 +303,7 @@ function selectCardHand(zone){
             if(data.val() != null) {
                 if (data.val()[zone] != null) {
                     selectedCard = createCardDB(data.val()[zone].card);
-                    selectedZone = zone;
+                    selectedZoneHand = zone;
                     handSlotImg[zone].style.border = '7px solid red';
                 } else {
                     console.error("no card in selected spot");
@@ -311,7 +314,7 @@ function selectCardHand(zone){
         }, {
             onlyOnce: true
         })
-    } else if(zone == selectedZone) {
+    } else if(zone == selectedZoneHand) {
         selectedCard = null;
         handSlotImg[zone].style.border = '0px';
     } else {
@@ -319,8 +322,57 @@ function selectCardHand(zone){
     }
 }
 
+function selectCardPlayer(zone){
+    if(selectedCard == null){
+        if(fetchCard(zone) != null) {
+            selectedCard = fetchCard(zone);
+            selectedZonePlayer = zone;
+            playerSlotImg[zone].style.border = '7px solid red';
+        } else {
+            console.error("no card in selected spot");
+        }
+    } else if(zone == selectedZonePlayer) {
+        selectedCard = null;
+        playerSlotImg[zone].style.border = '0px';
+    } else {
+        console.error("a card is already selected");
+    }
+}
+
+function attackCard(zone) { //should only ever be used in attacking mode
+    if(selectedZoneHand == null){
+        selectedCard = fetchCard(zone);
+        selectedZoneEnemy = zone;
+    } else {
+        console.error("cannot use hand cards on enemy cards (for now)");
+    }
+}
+
+function initiateAttack(){
+    if(selectedZonePlayer != null) {
+        if(selectedCard.type == 0) {
+            if (attackingCard == null) {
+                playerSlotImg[selectedZonePlayer].style.border = '7px solid blue';
+                attackingCard = selectedCard;
+                selectedCard = null;
+            } else {
+                selectedCard = attackingCard;
+                attackingCard = null;
+                playerSlotImg[selectedZonePlayer].style.border = '7px solid red';
+            }
+        } else {
+            console.log("cannot attack with a spell/land")
+        }
+    } else {
+        console.error("no duck is selected");
+    }
+}
+
 document.addEventListener('keydown', function(event) {
     if (event.key === '1') {
         draw();
+    }
+    if (event.key === `a`) {
+        initiateAttack();
     }
 });
