@@ -10,6 +10,7 @@ export function createCard(id) { //create a card from cardMaster.json based on i
                     keys[id],
                     data[keys[id]].name,
                     data[keys[id]].cost,
+                    data[keys[id]].type,
                     data[keys[id]].effect,
                     data[keys[id]].damage,
                     data[keys[id]].health
@@ -20,6 +21,7 @@ export function createCard(id) { //create a card from cardMaster.json based on i
                     keys[id],
                     data[keys[id]].name,
                     data[keys[id]].cost,
+                    data[keys[id]].type,
                     data[keys[id]].effect,
                 );
                 break;
@@ -28,10 +30,47 @@ export function createCard(id) { //create a card from cardMaster.json based on i
                     keys[id],
                     data[keys[id]].name,
                     data[keys[id]].cost,
+                    data[keys[id]].type,
                     data[keys[id]].effect,
                 );
                 break;
         }
+    return card;
+}
+
+export function createCardDB(data){
+    let card;
+    switch(data.type) {
+        case 0:
+            card = new Duck(
+                data.id,
+                data.name,
+                data.cost,
+                data.type,
+                data.effect,
+                data.damage,
+                data.health
+            );
+            break;
+        case 1:
+            card = new Spell(
+                data.id,
+                data.name,
+                data.cost,
+                data.type,
+                data.effect,
+            );
+            break;
+        case 2:
+            card = new Land(
+                data.id,
+                data.name,
+                data.cost,
+                data.type,
+                data.effect,
+            );
+            break;
+    }
     return card;
 }
 
