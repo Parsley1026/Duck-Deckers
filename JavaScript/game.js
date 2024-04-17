@@ -165,7 +165,11 @@ function checkCardStatus() {
         data.forEach((element) => {
             if(element.val().card.type == 0 && element.val().card.health <= 0){
                 let offset = 0;
-                if(userID == roomCreatorID && parseInt(element.key) > 4){offset = -5;}
+                if(userID == roomCreatorID && parseInt(element.key) > 4){
+                    offset = -5;
+                } else if(userID == roomCreatorID){
+                    offset = 5;
+                }
                dropSlotImg[parseInt(element.key)+offset].style.border = '7px solid green';
                setTimeout(() => {
                    update(child(dbrefboard, `/${element.key}`), {
