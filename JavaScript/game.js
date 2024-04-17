@@ -272,7 +272,7 @@ function selectCardHand(zone){
                 if (data.val()[zone] != null) {
                     selectedCard = data.val()[zone].card;
                     selectedZone = zone;
-                    handSlotImg[zone].style.border = '7px solid red';
+                    handSlotImg[zone].style.border = '6.5px solid red';
                 } else {
                     console.error("no card in selected spot");
                 }

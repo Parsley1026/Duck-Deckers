@@ -27,6 +27,8 @@ const auth = getAuth(app);
 let currentRoomTag = document.getElementById('roomCode'); //links with my h2 tags above
 let roomCreatorTag = document.getElementById('roomCreatorText');
 let quitButtonInput = document.getElementById('quitButton');//get quit button
+let enemyHealth = document.getElementById('enemyHealth');
+enemyHealth = 31313;
 
 //global variables
 let currentRoomCode = null;
