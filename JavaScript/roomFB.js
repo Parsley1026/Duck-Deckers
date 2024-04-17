@@ -27,14 +27,15 @@ const auth = getAuth(app);
 let currentRoomTag = document.getElementById('roomCode'); //links with my h2 tags above
 let roomCreatorTag = document.getElementById('roomCreatorText');
 let quitButtonInput = document.getElementById('quitButton');//get quit button
-let enemyHealth = document.getElementById('enemyHealth');
-enemyHealth = 31313;
+
+
 
 //global variables
 let currentRoomCode = null;
 let roomCreator = null;
 let userID = null;
 let roomReady = false;
+
 
 //create our getDataInfo function to get data from firebase
 let getDataInfo = () =>{
@@ -47,7 +48,9 @@ let getDataInfo = () =>{
             onValue(dbref, (snapshot) => {
                 currentRoomCode = snapshot.val().currentRoom; //get current room code
 
+
                 currentRoomTag.innerText = currentRoomCode; //send data to h2 tag
+
 
                 if(currentRoomCode != null) {
                     const dbrefroom = ref(db, 'rooms/' + currentRoomCode); //get ref of current room

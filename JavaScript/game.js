@@ -123,8 +123,10 @@ onAuthStateChanged(auth, (user) => {
                     console.error("error getting creator of room");
                 }
             }).then(() => {
-                onValue(ref(db, `rooms/${currentRoomCode}`), () => {
+                onValue(ref(db, `rooms/${currentRoomCode}`), () => { //live data
                     checkForCard();
+                    document.getElementById("playerHealth").innerHTML = getYourHealth(0);
+                    document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
                 });
             })
         })
@@ -261,6 +263,38 @@ function returnDeck() {
     update(dbref, {
        cards: deck
     });
+}
+
+function getYourHealth(read){
+    if(read == 0){
+        const dbref = refPlayer(``);
+        let health = null;
+        onValue(dbref, (data) => {
+            if(data.val() != null){
+                health = data.val().health;
+            }
+        }, {
+            onlyOnce: true
+        });
+        return health;
+    }else{
+        let player;
+        if(userID == roomCreatorID){
+            player = 2;
+        }else{
+            player = 1;
+        }
+        let health = null;
+        onValue(ref(db,`rooms/${currentRoomCode}/currentPlayers/player${player}`), (data) => {
+            if(data.val() != null){
+                health = data.val().health;
+            }
+        }, {
+            onlyOnce: true
+        });
+        return health;
+    }
+
 }
 
 function draw(){
