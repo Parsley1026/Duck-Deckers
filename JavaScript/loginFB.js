@@ -31,7 +31,7 @@ let SignInUser = evt =>{
     signInWithEmailAndPassword(auth,EmailInput.value,PasswordInput.value)
         .then((credentials)=>{
             console.log(credentials);//log them credentials
-            window.location.href="home.html";
+            window.location.href="HTML/home.html";
         })
         .catch((error)=>{ //catch the error
             alert(error.message);
