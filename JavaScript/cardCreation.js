@@ -1,5 +1,5 @@
 import {Duck, Spell, Land} from "./card.js";
-import data from "../cardMaster.json" with { type : 'json'};
+import data from "../cardMaster.json" assert { type : 'json'};
 
 export function createCard(id) { //create a card from cardMaster.json based on input id #
     let card;
