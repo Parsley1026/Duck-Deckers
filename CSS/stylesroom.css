@@ -113,7 +113,7 @@ button {
     position: absolute;
     z-index: 2;
     left: 45px;
-    top: 147px;
+    top: 170px;
     color: white;
     font-size: xx-large;
 }
@@ -121,7 +121,7 @@ button {
     position: absolute;
     z-index: 2;
     left: 130px;
-    top: 147px;
+    top: 170px;
     color: black;
     font-size: xx-large;
 }
@@ -134,7 +134,27 @@ button {
     font-size: xx-large;
 
 }
+.toolTip {
+    display: inline-block;
+}
+/* Tooltip text */
+.toolTip .toolTipText {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
 
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 3;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.toolTip:hover .toolTipText {
+    visibility: visible;
+}
 
 #quitButton{
     margin-right: 5px;
