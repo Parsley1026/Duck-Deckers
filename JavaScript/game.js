@@ -110,32 +110,49 @@ let handSlotImg =
 
 for(let i = 0; i < playerSlot.length; i++){
     playerSlot[i].addEventListener('click', () => {
-        if(checkTurn()) {
-            if (selectedZoneHand != null) {
-                playCard(i);
+        if(checkForPlayer2()) {
+            if (checkTurn()) {
+                if (selectedZoneHand != null) {
+                    playCard(i);
+                } else {
+                    selectCardPlayer(i);
+                }
             } else {
-                selectCardPlayer(i);
+                console.error("not your turn fucko");
+                alert("not your turn fucko");
             }
         } else {
-            console.error("not your turn fucko");
-            alert("not your turn fucko");
+            console.error("opponent has not joined yet");
+            alert("Opponent has not joined yet");
         }
     });
 }
 for(let i = 0; i < enemySlot.length; i++){
     enemySlot[i].addEventListener('click', () => {
-        if(checkTurn()) {
-            if (attackingCard != null) {
-                attackCard(i + 5);
+        if(checkForPlayer2()) {
+            if (checkTurn()) {
+                if (attackingCard != null) {
+                    attackCard(i + 5);
+                }
+            } else {
+                console.error("not your turn fucko");
+                alert("not your turn fucko");
             }
         } else {
-            console.error("not your turn fucko");
-            alert("not your turn fucko");
+            console.error("opponent has not joined yet");
+            alert("Opponent has not joined yet");
         }
     });
 }
 for(let i = 0; i < handSlot.length; i++){
-    handSlot[i].addEventListener('click', () => {selectCardHand(i);});
+    if(checkForPlayer2()) {
+        handSlot[i].addEventListener('click', () => {
+            selectCardHand(i);
+        });
+    } else {
+        console.error("opponent has not joined yet");
+        alert("Opponent has not joined yet");
+    }
 }
 
 onAuthStateChanged(auth, (user) => {
@@ -521,11 +538,59 @@ function checkTurn() {
     return currentTurn == userID;
 }
 
+function passTurn(){
+    if(selectedCard == null) {
+        let opponentUid = null;
+        if(userID == roomCreatorID){
+            onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player2`), (data) => {
+                opponentUid = data.val().uid;
+            }, {
+                onlyOnce: true
+            });
+        } else {
+            onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player1`), (data) => {
+                opponentUid = data.val().uid;
+            }, {
+                onlyOnce: true
+            });
+        }
+        update(ref(db, `rooms/${currentRoomCode}`), {
+            turn: opponentUid
+        });
+    } else {
+        throw new Error("Please de-select all cards before passing your turn");
+    }
+}
+
+function checkForPlayer2(){
+    let result = null;
+    onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player2`), (data) => {
+        result = data.val().uid;
+    }, {
+        onlyOnce: true
+    });
+    return result != null;
+}
+
 document.addEventListener('keydown', function(event) {
     if (event.key === '1') {
-        draw();
+        if(checkForPlayer2()) {
+            draw();
+        } else {
+            console.error("opponent has not joined yet");
+            alert("Opponent has not joined yet");
+        }
     }
     if (event.key === `a`) {
         initiateAttack();
+    }
+});
+
+document.getElementById("passButton").addEventListener("click", () => {
+    try{
+        passTurn();
+    } catch(e){
+        console.error(e.message);
+        alert(e.message);
     }
 });
