@@ -1,5 +1,3 @@
-//import test function
-import { Card, Duck, Land, Spell } from "./card.js";
 import { Deck } from "./deck.js";
 import {createCard} from "./cardCreation.js";
 
@@ -62,6 +60,7 @@ let createRoom = evt => {
         }).then(() => {
             set(ref(db, 'rooms/' + roomCode), {
                 roomCreator: userID, //define creator of room
+                turn: userID,
                 currentPlayers: {
                     player1: {
                         uid: userID,
