@@ -91,7 +91,7 @@ let quitButtonEvent = () => { //function that handles user wanting to leave room
                 });
         } else {
             update(child(dbroomref, 'currentPlayers/player2'), {
-                uid: null,
+                uid: "quit",
                 name: null
             })
                 .then(() => {

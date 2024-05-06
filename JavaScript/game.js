@@ -110,49 +110,70 @@ let handSlotImg =
 
 for(let i = 0; i < playerSlot.length; i++){
     playerSlot[i].addEventListener('click', () => {
-        if(checkForPlayer2()) {
-            if (checkTurn()) {
-                if (selectedZoneHand != null) {
-                    playCard(i);
+        switch(checkForPlayer2()) {
+            case 0:
+                if (checkTurn()) {
+                    if (selectedZoneHand != null) {
+                        playCard(i);
+                    } else {
+                        selectCardPlayer(i);
+                    }
                 } else {
-                    selectCardPlayer(i);
+                    console.error("not your turn");
+                    alert("Not your turn");
                 }
-            } else {
-                console.error("not your turn fucko");
-                alert("not your turn fucko");
-            }
-        } else {
-            console.error("opponent has not joined yet");
-            alert("Opponent has not joined yet");
+                break;
+            case 1:
+                console.error("Opponent has forfeit");
+                alert("Opponent has forfeit");
+                break;
+            case 2:
+                console.error("Opponent has not yet joined");
+                alert("Opponent has not joined yet");
+                break;
         }
     });
 }
 for(let i = 0; i < enemySlot.length; i++){
     enemySlot[i].addEventListener('click', () => {
-        if(checkForPlayer2()) {
-            if (checkTurn()) {
-                if (attackingCard != null) {
-                    attackCard(i + 5);
+        switch(checkForPlayer2()){
+            case 0:
+                if (checkTurn()) {
+                    if (attackingCard != null) {
+                        attackCard(i + 5);
+                    }
+                } else {
+                    console.error("not your turn");
+                    alert("It is not your turn");
                 }
-            } else {
-                console.error("not your turn fucko");
-                alert("not your turn fucko");
-            }
-        } else {
-            console.error("opponent has not joined yet");
-            alert("Opponent has not joined yet");
+                break;
+            case 1:
+                console.error("Opponent has forfeit");
+                alert("Opponent has forfeit");
+                break;
+            case 2:
+                console.error("Opponent has not joined yet");
+                alert("Opponent has not joined yet");
+                break;
         }
     });
 }
 for(let i = 0; i < handSlot.length; i++){
-    if(checkForPlayer2()) {
-        handSlot[i].addEventListener('click', () => {
-            selectCardHand(i);
-        });
-    } else {
-        console.error("opponent has not joined yet");
-        alert("Opponent has not joined yet");
-    }
+    handSlot[i].addEventListener('click', () => {
+        switch(checkForPlayer2()){
+            case 0:
+                selectCardHand(i);
+                break;
+            case 1:
+                console.error("Opponent has forfeit");
+                alert("Opponent has forfeit");
+                break;
+            case 2:
+                console.error("Opponent has not joined yet");
+                alert("Opponent has not joined yet");
+                break;
+        }
+    });
 }
 
 onAuthStateChanged(auth, (user) => {
@@ -386,22 +407,30 @@ function getYourHealth(read){
 }
 
 function draw(){
-    const dbref = refPlayer(`/hand`);
-    let drawnCard;
-    let availableSlot = checkForAvailableHandSlot();
-    deck = fetchDeck();
-    if(deck && availableSlot != null){
-        drawnCard = deck.draw();
-        returnDeck();
-        update(child(dbref, `/${availableSlot}`), {
-            card: drawnCard
-        });
-    } else {
-        if(deck == null){
-            console.error("out of cards");
-        } else {
-            console.error("hand is full");
-        }
+    switch(checkForPlayer2()) {
+        case 0:
+            const dbref = refPlayer(`/hand`);
+            let drawnCard;
+            let availableSlot = checkForAvailableHandSlot();
+            deck = fetchDeck();
+            if (deck && availableSlot != null) {
+                drawnCard = deck.draw();
+                returnDeck();
+                update(child(dbref, `/${availableSlot}`), {
+                    card: drawnCard
+                });
+            } else {
+                if (deck == null) {
+                    throw new Error("out of cards");
+                } else {
+                    throw new Error("hand is full");
+                }
+            }
+            break;
+        case 1:
+            throw new Error("Opponent has forfeit");
+        case 2:
+            throw new Error("Opponent has not yet joined");
     }
 }
 
@@ -565,20 +594,26 @@ function passTurn(){
 function checkForPlayer2(){
     let result = null;
     onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player2`), (data) => {
-        result = data.val().uid;
+        if(data.val().uid != null && data.val().uid != "quit"){
+            result = 0;
+        } else if (data.val().uid != null){
+            result = 1;
+        } else {
+            result = 2;
+        }
     }, {
         onlyOnce: true
     });
-    return result != null;
+    return result;
 }
 
 document.addEventListener('keydown', function(event) {
     if (event.key === '1') {
-        if(checkForPlayer2()) {
+        try{
             draw();
-        } else {
-            console.error("opponent has not joined yet");
-            alert("Opponent has not joined yet");
+        } catch (e) {
+            console.error(e.message);
+            alert(e.message);
         }
     }
     if (event.key === `a`) {
