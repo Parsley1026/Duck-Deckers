@@ -3,7 +3,7 @@ import {Deck} from "./deck.js";
 
 // Import the functions you need from the SDKs you need
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { child, get, getDatabase, onValue, ref, update} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+import { child, get, getDatabase, onValue, ref, update, runTransaction } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import {getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -276,7 +276,7 @@ function checkForCard(){
     }
 
     //hand slots
-    const dbrefhand = refPlayer(`/hand`);
+    const dbrefhand = refPlayer(`/hand`, 0);
     onValue(dbrefhand, (data) => {
         for(let i = 0; i < 7; i++){
             handSlotImg[i].src = `../webpageImageAssets/handSlot.png`;
@@ -320,7 +320,7 @@ function playCard(zone){
 }
 
 function checkForAvailableHandSlot(){//returns id of available hand slot, null if none
-    let dbref = refPlayer(`hand`);
+    let dbref = refPlayer(`hand`, 0);
     let availableSlot = null;
     for(let i = 0; i < 7; i++) {
         onValue(child(dbref, `/${i}`), (data) => {
@@ -336,7 +336,7 @@ function checkForAvailableHandSlot(){//returns id of available hand slot, null i
 }
 
 function fetchDeck() { //fetches deck from firebase library
-    const dbref = refPlayer(`/cards`);
+    const dbref = refPlayer(`/cards`, 0);
     let deck = new Deck([]);
     onValue(dbref, (data) => {
         if(data.val() != null){
@@ -368,7 +368,7 @@ function fetchCard(zone){
 }
 
 function returnDeck() {
-    const dbref = refPlayer(``);
+    const dbref = refPlayer(``, 0);
     update(dbref, {
        cards: deck
     });
@@ -376,7 +376,7 @@ function returnDeck() {
 
 function getYourHealth(read){
     if(read == 0){
-        const dbref = refPlayer(``);
+        const dbref = refPlayer(``, 0);
         let health = null;
         onValue(dbref, (data) => {
             if(data.val() != null){
@@ -409,7 +409,7 @@ function getYourHealth(read){
 function draw(){
     switch(checkForPlayer2()) {
         case 0:
-            const dbref = refPlayer(`/hand`);
+            const dbref = refPlayer(`/hand`, 0);
             let drawnCard;
             let availableSlot = checkForAvailableHandSlot();
             deck = fetchDeck();
@@ -434,18 +434,30 @@ function draw(){
     }
 }
 
-function refPlayer(dataPath){ //fetches a datapath based off player 1 or 2
-    if(userID == roomCreatorID && userID != null)
-        return ref(db, `rooms/${currentRoomCode}/currentPlayers/player1/${dataPath}`);
-    else if(userID != null)
-        return ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/${dataPath}`);
-    else {
-        throw new Error("error getting userID");
+function refPlayer(dataPath, plr){ //fetches a datapath based off player 1 or 2
+    if(plr == 0) {
+        if (userID == roomCreatorID && userID != null)
+            return ref(db, `rooms/${currentRoomCode}/currentPlayers/player1/${dataPath}`);
+        else if (userID != null)
+            return ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/${dataPath}`);
+        else {
+            throw new Error("error getting userID");
+        }
+    } else if(plr == 1){
+        if (userID == roomCreatorID && userID != null)
+            return ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/${dataPath}`);
+        else if (userID != null)
+            return ref(db, `rooms/${currentRoomCode}/currentPlayers/player1/${dataPath}`);
+        else {
+            throw new Error("error getting userID");
+        }
+    } else {
+        throw new Error("Invalid plr input");
     }
 }
 
 function selectCardHand(zone){
-    const dbref = refPlayer(`/hand`);
+    const dbref = refPlayer(`/hand`,0);
     if(selectedCard == null){
         onValue(dbref, (data) => {
             if(data.val() != null) {
@@ -627,5 +639,33 @@ document.getElementById("passButton").addEventListener("click", () => {
     } catch(e){
         console.error(e.message);
         alert(e.message);
+    }
+});
+
+document.getElementById("badGuy").addEventListener("click", () => {
+    let check = null;
+    if(userID == roomCreatorID){
+        for(let i = 0; i < 5; i++){
+            if(fetchCard(i) != null){check = false;}
+        }
+    } else {
+        for(let i = 0; i < 5; i++){
+            if(fetchCard(i + 5) != null){check = false;}
+        }
+    }
+
+    if(!check){
+        if(attackingCard != null){
+            let opponentRef = refPlayer(`/health`, 1);
+            runTransaction(opponentRef, (health) => {
+                return health -= attackingCard.damage;
+            });
+            playerSlotImg[selectedZonePlayer].style.border = '0px';
+            attackingCard = null;
+            selectedCard = null;
+        }
+    } else {
+        console.error("All enemy ducks must be eliminated before attacking opponent health");
+        alert("All enemy ducks must be eliminated before attacking opponent health");
     }
 });
