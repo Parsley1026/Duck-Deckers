@@ -38,8 +38,7 @@ let joinRoomButton = document.getElementById('codeJoinButton');
 let cashInput = document.getElementById('cash');
 
 //room creation method
-let createRoom = evt => {
-    evt.preventDefault();
+let createRoom = () => {
     const roomCode = createRoomInput.value; //room code from user input
     const userID = auth.currentUser.uid; //current userID
     if(roomCode == ""){//check if anything is entered in room code, otherwise, return error to user
@@ -148,9 +147,7 @@ let createRoom = evt => {
                 }, 250); //250ms wait to create room
             })
             .catch((error) => {
-                alert(error.message); //pop up on the webpage
-                console.log(error.code); //log the error code number
-                console.log(error.message); //logs the error message
+                throw new Error(error);
             })
     }
 }
@@ -244,6 +241,13 @@ window.addEventListener('load', getDataInfo);
 //when the Sign-Out button is clicked, run our function
 SignOutButton.addEventListener('click', signOut);
 //when createRoom button clicked, create room
-createRoomButton.addEventListener('click', createRoom);
+createRoomButton.addEventListener('click', () => {
+    try{
+        createRoom()
+    }catch (e) {
+        console.error(e.message);
+        alert(e.message);
+    }
+});
 //when joinRoom button clicked, attempt to join room
 joinRoomButton.addEventListener('click', joinRoom);
