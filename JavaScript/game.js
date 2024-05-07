@@ -66,6 +66,8 @@ let playerSlot =
         document.getElementById('dropZone8'),
         document.getElementById('dropZone9')
     ];
+let enemyPlayer = document.getElementById('badGuyImg')
+
 
 //image zones
 let dropSlotImg =
@@ -156,10 +158,13 @@ onAuthStateChanged(auth, (user) => {
                     console.error("error getting creator of room");
                 }
             }).then(() => {
+
                 onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
+
                     checkForCard();
                     checkCardStatus();
                     document.getElementById("playerHealth").innerHTML = getYourHealth(0);
+                    document.getElementById("playerEmeralds").innerHTML = getYourEmeralds(0);
                     document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
                     document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
                 });
@@ -181,13 +186,15 @@ function checkCardStatus() {
                 } else if(userID == roomCreatorID){
                     offset = 5;
                 }
+                var audio = document.getElementById("attackSound");
+                audio.play();
                dropSlotImg[parseInt(element.key)+offset].style.border = '7px solid green';
                setTimeout(() => {
                    update(child(dbrefboard, `/${element.key}`), {
                        card: null
                    });
                    dropSlotImg[parseInt(element.key)+offset].style.border = '0px';
-               }, 2500); //2.5 second wait before card removal
+               }, 1000); //I changed it to 1 second, 2.5 seemed too clunky.
            }
         });
     }, {
@@ -196,6 +203,7 @@ function checkCardStatus() {
 }
 
 function checkForCard(){
+
     const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
     if (userID == roomCreatorID) {
         onValue(dbrefboard, (data) => {
@@ -255,10 +263,12 @@ function checkForCard(){
 }
 
 function playCard(zone){
+    var placeSound = document.getElementById("placeSound");
     let updates = {};
     if(userID == roomCreatorID){
         if(fetchCard(zone) == null){
             handSlotImg[selectedZoneHand].style.border = '0px';
+            placeSound.play();
             updates[`rooms/${currentRoomCode}/boardPositions/${zone}/card`] = selectedCard;
             updates[`rooms/${currentRoomCode}/currentPlayers/player1/hand/${selectedZoneHand}`] = null;
             update(ref(db), updates);
@@ -269,6 +279,7 @@ function playCard(zone){
         }
     } else {
         if(fetchCard(zone + 5) == null){
+            placeSound.play();
             handSlotImg[selectedZoneHand].style.border = '0px';
             updates[`rooms/${currentRoomCode}/boardPositions/${zone+5}/card`] = selectedCard;
             updates[`rooms/${currentRoomCode}/currentPlayers/player2/hand/${selectedZoneHand}`] = null;
@@ -365,7 +376,36 @@ function getYourHealth(read){
         });
         return health;
     }
-
+}
+function getYourEmeralds(read) {
+    if (read == 0) {
+        const dbref = refPlayer(``);
+        let emeralds = null;
+        onValue(dbref, (data) => {
+            if (data.val() != null) {
+                emeralds = data.val().emeralds;
+            }
+        }, {
+            onlyOnce: true
+        });
+        return emeralds;
+    } else { //I dont want the player to see the enemy's emeralds, I don't think its necessary but just in case:
+        let player;
+        if (userID == roomCreatorID) {
+            player = 2;
+        } else {
+            player = 1;
+        }
+        let emeralds = null;
+        onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player${player}`), (data) => {
+            if (data.val() != null) {
+                emeralds = data.val().emeralds;
+            }
+        }, {
+            onlyOnce: true
+        });
+        return emeralds;
+    }
 }
 
 function draw(){
@@ -529,3 +569,23 @@ document.addEventListener('keydown', function(event) {
         initiateAttack();
     }
 });
+
+function attackPlayer() {
+    if (attackingCard != null){
+        const dbref = refPlayer(``);
+        onValue(dbref, (data) => {
+            if(data.val() != null){
+                alert(attackingCard.attack + "Damage done")
+                data.val().health = data.val().health - attackingCard.attack;
+                attackingCard = null; //the card has already attacked so now there is no attacking card.
+
+            }
+        } ,{
+            onlyOnce: true
+        });
+    }
+}
+
+enemyPlayer.addEventListener('click', attackPlayer);
+
+
