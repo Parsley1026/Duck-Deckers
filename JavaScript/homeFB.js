@@ -45,6 +45,13 @@ let createRoom = evt => {
     if(roomCode == ""){//check if anything is entered in room code, otherwise, return error to user
         alert("Please enter a room code"); //alert user
     } else {//room code was entered, execute code
+        onValue(ref(db, `rooms/${roomCode}`), (data) => {
+            if(data.exists() == false){
+                throw new Error("Room already exists, please try a different code");
+            }
+        }, {
+            onlyOnce: true
+        });
         let deck = new Deck([]);
         get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
             if(snapshot.exists()){
@@ -237,6 +244,13 @@ window.addEventListener('load', getDataInfo);
 //when the Sign-Out button is clicked, run our function
 SignOutButton.addEventListener('click', signOut);
 //when createRoom button clicked, create room
-createRoomButton.addEventListener('click', createRoom);
+createRoomButton.addEventListener('click', () => {
+    try{
+        createRoom();
+    } catch (e) {
+        console.error(e.message);
+        alert(e.message);
+    }
+});
 //when joinRoom button clicked, attempt to join room
 joinRoomButton.addEventListener('click', joinRoom);
