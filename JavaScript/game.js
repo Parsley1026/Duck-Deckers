@@ -112,17 +112,27 @@ let handSlotImg =
 
 for(let i = 0; i < playerSlot.length; i++){
     playerSlot[i].addEventListener('click', () => {
-        if(selectedZoneHand != null) {
-            playCard(i);
+        if(checkTurn()) {
+            if (selectedZoneHand != null) {
+                playCard(i);
+            } else {
+                selectCardPlayer(i);
+            }
         } else {
-            selectCardPlayer(i);
+            console.error("not your turn fucko");
+            alert("not your turn fucko");
         }
     });
 }
 for(let i = 0; i < enemySlot.length; i++){
     enemySlot[i].addEventListener('click', () => {
-        if(attackingCard != null){
-            attackCard(i + 5);
+        if(checkTurn()) {
+            if (attackingCard != null) {
+                attackCard(i + 5);
+            }
+        } else {
+            console.error("not your turn fucko");
+            alert("not your turn fucko");
         }
     });
 }
@@ -148,12 +158,15 @@ onAuthStateChanged(auth, (user) => {
                     console.error("error getting creator of room");
                 }
             }).then(() => {
-                onValue(ref(db, `rooms/${currentRoomCode}`), () => { //live data. gets updated every time new data occurs.
+
+                onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
+
                     checkForCard();
                     checkCardStatus();
                     document.getElementById("playerHealth").innerHTML = getYourHealth(0);
                     document.getElementById("playerEmeralds").innerHTML = getYourEmeralds(0);
                     document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
+                    document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
                 });
             })
         })
@@ -433,7 +446,7 @@ function selectCardHand(zone){
                 if (data.val()[zone] != null) {
                     selectedCard = createCardDB(data.val()[zone].card);
                     selectedZoneHand = zone;
-                    handSlotImg[zone].style.border = '7px solid red';
+                    handSlotImg[zone].style.border = '7px solid blue';
                 } else {
                     console.error("no card in selected spot");
                 }
@@ -459,7 +472,7 @@ function selectCardPlayer(zone){
         if(fetchCard(zone + offset) != null) {
             selectedCard = fetchCard(zone + offset);
             selectedZonePlayer = zone;
-            playerSlotImg[zone].style.border = '7px solid red';
+            playerSlotImg[zone].style.border = '7px solid blue';
         } else {
             console.error("no card in selected spot");
         }
@@ -502,13 +515,13 @@ function initiateAttack(){
     if(selectedZonePlayer != null) {
         if(selectedCard.type == 0 || attackingCard != null) {
             if (attackingCard == null) {
-                playerSlotImg[selectedZonePlayer].style.border = '7px solid blue';
+                playerSlotImg[selectedZonePlayer].style.border = '7px solid red';
                 attackingCard = selectedCard;
                 selectedCard = 0;
             } else {
                 selectedCard = attackingCard;
                 attackingCard = null;
-                playerSlotImg[selectedZonePlayer].style.border = '7px solid red';
+                playerSlotImg[selectedZonePlayer].style.border = '7px solid blue';
             }
         } else {
             console.log("cannot attack with a spell/land")
@@ -516,6 +529,36 @@ function initiateAttack(){
     } else {
         console.error("no duck is selected");
     }
+}
+
+function getPlayerName(id){
+    let name = null;
+    if(id == roomCreatorID && id != null){
+        onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player1`), (data) => {
+            name = data.val().name;
+        }, {
+            onlyOnce: true
+        });
+    } else if(id != null){
+        onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player2`), (data) => {
+            name = data.val().name;
+        }, {
+            onlyOnce: true
+        });
+    } else {
+        throw new Error("error getting display name");
+    }
+    return name;
+}
+
+function checkTurn() {
+    let currentTurn = null;
+    onValue(ref(db, `rooms/${currentRoomCode}/turn`), (data) => {
+        currentTurn = data.val();
+    }, {
+        onlyOnce: true
+    });
+    return currentTurn == userID;
 }
 
 document.addEventListener('keydown', function(event) {

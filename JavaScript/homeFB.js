@@ -1,5 +1,3 @@
-//import test function
-import { Card, Duck, Land, Spell } from "./card.js";
 import { Deck } from "./deck.js";
 import {createCard} from "./cardCreation.js";
 
@@ -62,6 +60,7 @@ let createRoom = evt => {
         }).then(() => {
             set(ref(db, 'rooms/' + roomCode), {
                 roomCreator: userID, //define creator of room
+                turn: userID,
                 currentPlayers: {
                     player1: {
                         uid: userID,
@@ -208,7 +207,7 @@ let joinRoom = evt => {
 let signOut = () =>{
     if(confirm("Are you sure you want to sign out?") == true) {//make sure user wants to sign out
         auth.signOut(); //sign out from the database
-        window.location.href = 'login.html'; //switch the window from home to login
+        window.location.href = '../index.html'; //switch the window from home to login
     } else {}
 }
 //create our getDataInfo function to get data from firebase

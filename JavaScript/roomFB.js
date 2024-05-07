@@ -25,7 +25,6 @@ const auth = getAuth(app);
 
 //grab all the data from the form
 let currentRoomTag = document.getElementById('roomCode'); //links with my h2 tags above
-let roomCreatorTag = document.getElementById('roomCreatorText');
 let quitButtonInput = document.getElementById('quitButton');//get quit button
 
 
@@ -65,9 +64,6 @@ let getDataInfo = () =>{
                                 roomReady = true;
                                 console.log("room is ready " + roomReady); //room is ready for data transmission
                             }, 500); //500ms wait for room creator data
-
-
-                            roomCreatorTag.innerText = roomCreator; //send data to h2 tag
                         }
                     });
                 } else{
