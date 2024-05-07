@@ -195,11 +195,37 @@ onAuthStateChanged(auth, (user) => {
                 }
             }).then(() => {
                 onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
-                    checkForCard();
-                    checkCardStatus();
-                    document.getElementById("playerHealth").innerHTML = getYourHealth(0);
-                    document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
-                    document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
+                    const buttons = document.getElementsByTagName("button");
+                    switch(checkForMajorEvent()) {
+                        case 0:
+                            checkForCard();
+                            checkCardStatus();
+                            document.getElementById("playerHealth").innerHTML = getYourHealth(0);
+                            document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
+                            document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
+                            break;
+                        case 1:
+                            alert("You lose!");
+                            for (const button of buttons) {
+                                button.disabled = true;
+                            }
+                            document.getElementById("quitButton").disabled = false; //re-enable quit button
+                            break;
+                        case 2:
+                            alert("You win!");
+                            for (const button of buttons) {
+                                button.disabled = true;
+                            }
+                            document.getElementById("quitButton").disabled = false; //re-enable quit button
+                            break;
+                        case 3:
+                            alert("Opponent has forfeit");
+                            for (const button of buttons) {
+                                button.disabled = true;
+                            }
+                            document.getElementById("quitButton").disabled = false; //re-enable quit button
+                            break;
+                    }
                 });
             })
         })
@@ -240,6 +266,7 @@ function checkForMajorEvent() {
     }, {
         onlyOnce: true
     });
+    return result;
 }
 
 function checkCardStatus() {
