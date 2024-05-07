@@ -110,7 +110,7 @@ let handSlotImg =
 
 for(let i = 0; i < playerSlot.length; i++){
     playerSlot[i].addEventListener('click', () => {
-        switch(checkForPlayer2()) {
+        switch(checkForOpponent()) {
             case 0:
                 if (checkTurn()) {
                     if (selectedZoneHand != null) {
@@ -136,7 +136,7 @@ for(let i = 0; i < playerSlot.length; i++){
 }
 for(let i = 0; i < enemySlot.length; i++){
     enemySlot[i].addEventListener('click', () => {
-        switch(checkForPlayer2()){
+        switch(checkForOpponent()){
             case 0:
                 if (checkTurn()) {
                     if (attackingCard != null) {
@@ -160,7 +160,7 @@ for(let i = 0; i < enemySlot.length; i++){
 }
 for(let i = 0; i < handSlot.length; i++){
     handSlot[i].addEventListener('click', () => {
-        switch(checkForPlayer2()){
+        switch(checkForOpponent()){
             case 0:
                 selectCardHand(i);
                 break;
@@ -256,7 +256,7 @@ function checkForMajorEvent() {
             if (data.val().health <= 0) {
                 result = 2;
             } else if (userID == roomCreatorID) {
-                if (checkForPlayer2() == 1) {
+                if (checkForOpponent() == 1) {
                     result = 3;
                 }
             }
@@ -468,7 +468,7 @@ function getYourHealth(read){
 }
 
 function draw(){
-    switch(checkForPlayer2()) {
+    switch(checkForOpponent()) {
         case 0:
             const dbref = refPlayer(`/hand`, 0);
             let drawnCard;
@@ -641,32 +641,42 @@ function checkTurn() {
 }
 
 function passTurn(){
-    if(selectedCard == null) {
-        let opponentUid = null;
-        if(userID == roomCreatorID){
-            onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player2`), (data) => {
-                opponentUid = data.val().uid;
-            }, {
-                onlyOnce: true
-            });
-        } else {
-            onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player1`), (data) => {
-                opponentUid = data.val().uid;
-            }, {
-                onlyOnce: true
-            });
-        }
-        update(ref(db, `rooms/${currentRoomCode}`), {
-            turn: opponentUid
-        });
-    } else {
-        throw new Error("Please de-select all cards before passing your turn");
+    switch(checkForOpponent()) {
+        case 0:
+            if(selectedCard == null){
+                let opponentUid = null;
+                if (userID == roomCreatorID) {
+                    onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player2`), (data) => {
+                        opponentUid = data.val().uid;
+                    }, {
+                        onlyOnce: true
+                    });
+                } else {
+                    onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player1`), (data) => {
+                        opponentUid = data.val().uid;
+                    }, {
+                        onlyOnce: true
+                    });
+                }
+                update(ref(db, `rooms/${currentRoomCode}`), {
+                    turn: opponentUid
+                });
+            } else {
+                throw new Error("Please de-select all cards before passing your turn");
+            }
+            break;
+        case 1:
+            console.log("Opponent has forfeit, majorEvent function should run");
+            break;
+        case 2:
+            throw new Error("Opponent has not joined yet");
     }
 }
 
-function checkForPlayer2(){
+function checkForOpponent(){
     let result = null;
-    onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player2`), (data) => {
+    const opponentRef = refPlayer('', 1);
+    onValue(opponentRef, (data) => {
         if(data.val().uid != null && data.val().uid != "quit"){
             result = 0;
         } else if (data.val().uid != null){
