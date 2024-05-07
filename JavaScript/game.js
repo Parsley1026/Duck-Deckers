@@ -470,22 +470,26 @@ function getYourHealth(read){
 function draw(){
     switch(checkForOpponent()) {
         case 0:
-            const dbref = refPlayer(`/hand`, 0);
-            let drawnCard;
-            let availableSlot = checkForAvailableHandSlot();
-            deck = fetchDeck();
-            if (deck && availableSlot != null) {
-                drawnCard = deck.draw();
-                returnDeck();
-                update(child(dbref, `/${availableSlot}`), {
-                    card: drawnCard
-                });
-            } else {
-                if (deck == null) {
-                    throw new Error("out of cards");
+            if(checkTurn()) {
+                const dbref = refPlayer(`/hand`, 0);
+                let drawnCard;
+                let availableSlot = checkForAvailableHandSlot();
+                deck = fetchDeck();
+                if (deck && availableSlot != null) {
+                    drawnCard = deck.draw();
+                    returnDeck();
+                    update(child(dbref, `/${availableSlot}`), {
+                        card: drawnCard
+                    });
                 } else {
-                    throw new Error("hand is full");
+                    if (deck == null) {
+                        throw new Error("out of cards");
+                    } else {
+                        throw new Error("hand is full");
+                    }
                 }
+            } else {
+                throw new Error("Not your turn");
             }
             break;
         case 1:
