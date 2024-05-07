@@ -44,113 +44,116 @@ let createRoom = () => {
     if(roomCode == ""){//check if anything is entered in room code, otherwise, return error to user
         alert("Please enter a room code"); //alert user
     } else {//room code was entered, execute code
-        let check = false;
+        let check = true;
         onValue(ref(db, `rooms/${roomCode}`), (data) => {
             if(!data.exists()){
-                check = true;
+                check = false;
             }
         }, {
             onlyOnce: true
         });
-        if(check){throw new Error("Room already exists, please try a different code");}
-        let deck = new Deck([]);
-        get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
-            if(snapshot.exists()){
-                for(let i = 0; i < snapshot.val().cards.length; i++) {
-                    let id;
-                    id = snapshot.val().cards[i].id;
-                    deck.addCardBack(createCard(0));
+        if(check) {
+            let deck = new Deck([]);
+            get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    for (let i = 0; i < snapshot.val().cards.length; i++) {
+                        let id;
+                        id = snapshot.val().cards[i].id;
+                        deck.addCardBack(createCard(0));
+                    }
+                } else {
+                    console.log("error getting deck");
                 }
-            } else {
-                console.log("error getting deck");
-            }
-            deck.shuffle();
-        }).then(() => {
-            set(ref(db, 'rooms/' + roomCode), {
-                roomCreator: userID, //define creator of room
-                turn: userID,
-                currentPlayers: {
-                    player1: {
-                        uid: userID,
-                        name: auth.currentUser.displayName,
-                        health: 20,
-                        emeralds: 1,
-                        hand: {
-                            0: null,
-                            1: null,
-                            2: null,
-                            3: null,
-                            4: null,
-                            5: null,
-                            6: null
+                deck.shuffle();
+            }).then(() => {
+                set(ref(db, 'rooms/' + roomCode), {
+                    roomCreator: userID, //define creator of room
+                    turn: userID,
+                    currentPlayers: {
+                        player1: {
+                            uid: userID,
+                            name: auth.currentUser.displayName,
+                            health: 20,
+                            emeralds: 1,
+                            hand: {
+                                0: null,
+                                1: null,
+                                2: null,
+                                3: null,
+                                4: null,
+                                5: null,
+                                6: null
+                            },
+                            cards: deck
                         },
-                        cards: deck
-                    },
-                    player2: {
-                        uid: null,
-                        name: null,
-                        health: 20,
-                        emeralds: 1,
-                        hand: {
-                            0: null,
-                            1: null,
-                            2: null,
-                            3: null,
-                            4: null,
-                            5: null,
-                            6: null
+                        player2: {
+                            uid: null,
+                            name: null,
+                            health: 20,
+                            emeralds: 1,
+                            hand: {
+                                0: null,
+                                1: null,
+                                2: null,
+                                3: null,
+                                4: null,
+                                5: null,
+                                6: null
+                            }
                         }
+                    },
+                    boardPositions: {
+                        0: {
+                            card: null
+                        },
+                        1: {
+                            card: null
+                        },
+                        2: {
+                            card: null
+                        },
+                        3: {
+                            card: null
+                        },
+                        4: {
+                            card: null
+                        },
+                        5: {
+                            card: null
+                        },
+                        6: {
+                            card: null
+                        },
+                        7: {
+                            card: null
+                        },
+                        8: {
+                            card: null
+                        },
+                        9: {
+                            card: null
+                        }
+                    },
+                    arrowPositions: {
+                        base: null, //set to board positions
+                        tip: null
                     }
-                },
-                boardPositions: {
-                    0: {
-                        card: null
-                    },
-                    1: {
-                        card: null
-                    },
-                    2: {
-                        card: null
-                    },
-                    3: {
-                        card: null
-                    },
-                    4: {
-                        card: null
-                    },
-                    5: {
-                        card: null
-                    },
-                    6: {
-                        card: null
-                    },
-                    7: {
-                        card: null
-                    },
-                    8: {
-                        card: null
-                    },
-                    9: {
-                        card: null
-                    }
-                },
-                arrowPositions: {
-                    base: null, //set to board positions
-                    tip: null
-                }
+                })
+            });
+            update(ref(db, 'users/' + userID), {
+                currentRoom: roomCode //set active room in current user's database
             })
-        });
-        update(ref(db, 'users/' + userID), {
-            currentRoom: roomCode //set active room in current user's database
-        })
-            .then(() => {
-                setTimeout(() => {
-                    window.location.href = 'room.html'
-                }, 250); //250ms wait to create room
-            })
-            .catch((error) => {
-                throw new Error(error);
-            })
+                .then(() => {
+                    setTimeout(() => {
+                        window.location.href = 'room.html'
+                    }, 250); //250ms wait to create room
+                })
+                .catch((error) => {
+                    throw new Error(error);
+                })
+        } else {
+            throw new Error("Room already exists, please try a different code");
+        }
     }
 }
 
