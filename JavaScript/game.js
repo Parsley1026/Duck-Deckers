@@ -196,6 +196,7 @@ onAuthStateChanged(auth, (user) => {
             }).then(() => {
                 onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
                     const buttons = document.getElementsByTagName("button");
+                    let repeatPrevent = true;
                     switch(checkForMajorEvent()) {
                         case 0:
                             checkForCard();
@@ -205,25 +206,34 @@ onAuthStateChanged(auth, (user) => {
                             document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
                             break;
                         case 1:
-                            alert("You lose!");
-                            for (const button of buttons) {
-                                button.disabled = true;
+                            if(repeatPrevent) {
+                                alert("You lose!");
+                                for (const button of buttons) {
+                                    button.disabled = true;
+                                }
+                                document.getElementById("quitButton").disabled = false; //re-enable quit button
+                                repeatPrevent = false;
                             }
-                            document.getElementById("quitButton").disabled = false; //re-enable quit button
                             break;
                         case 2:
-                            alert("You win!");
-                            for (const button of buttons) {
-                                button.disabled = true;
+                            if(repeatPrevent) {
+                                alert("You win!");
+                                for (const button of buttons) {
+                                    button.disabled = true;
+                                }
+                                document.getElementById("quitButton").disabled = false; //re-enable quit button
+                                repeatPrevent = false;
                             }
-                            document.getElementById("quitButton").disabled = false; //re-enable quit button
                             break;
                         case 3:
-                            alert("Opponent has forfeit");
-                            for (const button of buttons) {
-                                button.disabled = true;
+                            if(repeatPrevent) {
+                                alert("Opponent has forfeit");
+                                for (const button of buttons) {
+                                    button.disabled = true;
+                                }
+                                document.getElementById("quitButton").disabled = false; //re-enable quit button
+                                repeatPrevent = false;
                             }
-                            document.getElementById("quitButton").disabled = false; //re-enable quit button
                             break;
                     }
                 });
