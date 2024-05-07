@@ -36,6 +36,7 @@ let attackingCard = null;
 let selectedZoneHand = null;
 let selectedZonePlayer = null;
 let selectedZoneEnemy = null;
+let repeatPrevent = true;
 
 //slot zones
 let handSlot =
@@ -196,7 +197,6 @@ onAuthStateChanged(auth, (user) => {
             }).then(() => {
                 onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
                     const buttons = document.getElementsByTagName("button");
-                    let repeatPrevent = true;
                     switch(checkForMajorEvent()) {
                         case 0:
                             checkForCard();
