@@ -45,12 +45,15 @@ let createRoom = () => {
         alert("Please enter a room code"); //alert user
     } else {//room code was entered, execute code
         onValue(ref(db, `rooms/${roomCode}`), (data) => {
-            if(data.exists() == false){
+            if(!data.exists()){
                 throw new Error("Room already exists, please try a different code");
             }
         }, {
             onlyOnce: true
-        });
+        })
+            .catch((e) => {
+                throw new Error(e);
+            });
         let deck = new Deck([]);
         get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
             if(snapshot.exists()){
