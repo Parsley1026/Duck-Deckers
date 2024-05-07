@@ -244,13 +244,6 @@ window.addEventListener('load', getDataInfo);
 //when the Sign-Out button is clicked, run our function
 SignOutButton.addEventListener('click', signOut);
 //when createRoom button clicked, create room
-createRoomButton.addEventListener('click', () => {
-    try{
-        createRoom();
-    } catch (e) {
-        console.error(e.message);
-        alert(e.message);
-    }
-});
+createRoomButton.addEventListener('click', createRoom);
 //when joinRoom button clicked, attempt to join room
 joinRoomButton.addEventListener('click', joinRoom);
