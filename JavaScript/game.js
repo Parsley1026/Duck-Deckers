@@ -208,6 +208,40 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
+function checkForMajorEvent() {
+    /*
+    0: normal game
+    1: you died
+    2: opponent died
+    3: opponent forfeit
+    */
+    const dbrefyou = refPlayer('', 0);
+    const dbrefopponent = refPlayer('', 1);
+    let result = 0;
+    onValue(dbrefyou, (data) => {
+        if(data.val().health <= 0){
+            result = 1;
+        }
+    }, {
+        onlyOnce: true
+    });
+    onValue(dbrefopponent, (data) => {
+        if(data.exists()) {
+            if (data.val().health <= 0) {
+                result = 2;
+            } else if (userID == roomCreatorID) {
+                if (checkForPlayer2() == 1) {
+                    result = 3;
+                }
+            }
+        } else if (userID != roomCreatorID && userID != null){
+            result = 3;
+        }
+    }, {
+        onlyOnce: true
+    });
+}
+
 function checkCardStatus() {
     const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
     onValue(dbrefboard, (data) => {
