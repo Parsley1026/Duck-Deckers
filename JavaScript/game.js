@@ -643,26 +643,30 @@ function checkTurn() {
 function passTurn(){
     switch(checkForOpponent()) {
         case 0:
-            if(selectedCard == null){
-                let opponentUid = null;
-                if (userID == roomCreatorID) {
-                    onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player2`), (data) => {
-                        opponentUid = data.val().uid;
-                    }, {
-                        onlyOnce: true
+            if(checkTurn()) {
+                if (selectedCard == null) {
+                    let opponentUid = null;
+                    if (userID == roomCreatorID) {
+                        onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player2`), (data) => {
+                            opponentUid = data.val().uid;
+                        }, {
+                            onlyOnce: true
+                        });
+                    } else {
+                        onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player1`), (data) => {
+                            opponentUid = data.val().uid;
+                        }, {
+                            onlyOnce: true
+                        });
+                    }
+                    update(ref(db, `rooms/${currentRoomCode}`), {
+                        turn: opponentUid
                     });
                 } else {
-                    onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player1`), (data) => {
-                        opponentUid = data.val().uid;
-                    }, {
-                        onlyOnce: true
-                    });
+                    throw new Error("Please de-select all cards before passing your turn");
                 }
-                update(ref(db, `rooms/${currentRoomCode}`), {
-                    turn: opponentUid
-                });
             } else {
-                throw new Error("Please de-select all cards before passing your turn");
+                throw new Error("Not your turn");
             }
             break;
         case 1:
