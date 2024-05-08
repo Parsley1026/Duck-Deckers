@@ -3,7 +3,7 @@ import {Deck} from "./deck.js";
 
 // Import the functions you need from the SDKs you need
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-import { child, get, getDatabase, onValue, ref, update} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+import { child, get, getDatabase, onValue, ref, update, runTransaction } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 import {getAuth, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -36,6 +36,7 @@ let attackingCard = null;
 let selectedZoneHand = null;
 let selectedZonePlayer = null;
 let selectedZoneEnemy = null;
+let repeatPrevent = true;
 
 //slot zones
 let handSlot =
@@ -112,32 +113,70 @@ let handSlotImg =
 
 for(let i = 0; i < playerSlot.length; i++){
     playerSlot[i].addEventListener('click', () => {
-        if(checkTurn()) {
-            if (selectedZoneHand != null) {
-                playCard(i);
-            } else {
-                selectCardPlayer(i);
-            }
-        } else {
-            console.error("not your turn fucko");
-            alert("not your turn fucko");
+        switch(checkForOpponent()) {
+            case 0:
+                if (checkTurn()) {
+                    if (selectedZoneHand != null) {
+                        playCard(i);
+                    } else {
+                        selectCardPlayer(i);
+                    }
+                } else {
+                    console.error("not your turn");
+                    alert("Not your turn");
+                }
+                break;
+            case 1:
+                console.error("Opponent has forfeit");
+                alert("Opponent has forfeit");
+                break;
+            case 2:
+                console.error("Opponent has not yet joined");
+                alert("Opponent has not joined yet");
+                break;
         }
     });
 }
 for(let i = 0; i < enemySlot.length; i++){
     enemySlot[i].addEventListener('click', () => {
-        if(checkTurn()) {
-            if (attackingCard != null) {
-                attackCard(i + 5);
-            }
-        } else {
-            console.error("not your turn fucko");
-            alert("not your turn fucko");
+        switch(checkForOpponent()){
+            case 0:
+                if (checkTurn()) {
+                    if (attackingCard != null) {
+                        attackCard(i + 5);
+                    }
+                } else {
+                    console.error("not your turn");
+                    alert("It is not your turn");
+                }
+                break;
+            case 1:
+                console.error("Opponent has forfeit");
+                alert("Opponent has forfeit");
+                break;
+            case 2:
+                console.error("Opponent has not joined yet");
+                alert("Opponent has not joined yet");
+                break;
         }
     });
 }
 for(let i = 0; i < handSlot.length; i++){
-    handSlot[i].addEventListener('click', () => {selectCardHand(i);});
+    handSlot[i].addEventListener('click', () => {
+        switch(checkForOpponent()){
+            case 0:
+                selectCardHand(i);
+                break;
+            case 1:
+                console.error("Opponent has forfeit");
+                alert("Opponent has forfeit");
+                break;
+            case 2:
+                console.error("Opponent has not joined yet");
+                alert("Opponent has not joined yet");
+                break;
+        }
+    });
 }
 
 onAuthStateChanged(auth, (user) => {
@@ -157,23 +196,104 @@ onAuthStateChanged(auth, (user) => {
                 } else {
                     console.error("error getting creator of room");
                 }
-            }).then(() => {
-
+            }).then(async () => {
+                const buttons = document.getElementsByTagName("button");
+                if (await getRound().then((result) =>{return result;}) == 1 && await fetchDeck().then((result) => {return result.cards.length;}) == 40) {
+                    for (let i = 0; i < 3; i++) {
+                        try {
+                            await draw(true);
+                        } catch (e) {
+                            alert(e.message);
+                            console.error(e.message);
+                        }
+                    }
+                }
                 onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
-
-                    checkForCard();
-                    checkCardStatus();
-                    document.getElementById("playerHealth").innerHTML = getYourHealth(0);
-                    document.getElementById("playerEmeralds").innerHTML = getYourEmeralds(0);
-                    document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
-                    document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
+                    switch (checkForMajorEvent()) {
+                        case 0:
+                            checkForCard();
+                            checkCardStatus();
+                            document.getElementById("playerHealth").innerHTML = getYourHealth(0);
+                            document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
+                            document.getElementById("playerEmeralds").innerHTML = getYourEmeralds(0);
+                            document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
+                            if (data.val().turn == userID) {
+                                document.getElementById("passButton").disabled = false;
+                            }
+                            break;
+                        case 1:
+                            if (repeatPrevent) {
+                                alert("You lose!");
+                                for (const button of buttons) {
+                                    button.disabled = true;
+                                }
+                                document.getElementById("quitButton").disabled = false; //re-enable quit button
+                                repeatPrevent = false;
+                            }
+                            break;
+                        case 2:
+                            if (repeatPrevent) {
+                                alert("You win!");
+                                for (const button of buttons) {
+                                    button.disabled = true;
+                                }
+                                document.getElementById("quitButton").disabled = false; //re-enable quit button
+                                repeatPrevent = false;
+                            }
+                            break;
+                        case 3:
+                            if (repeatPrevent) {
+                                alert("Opponent has forfeit");
+                                for (const button of buttons) {
+                                    button.disabled = true;
+                                }
+                                document.getElementById("quitButton").disabled = false; //re-enable quit button
+                                repeatPrevent = false;
+                            }
+                            break;
+                    }
                 });
-            })
-        })
+            });
+        });
     } else {
         throw new Error("error getting user data");
     }
 });
+
+function checkForMajorEvent() {
+    /*
+    0: normal game
+    1: you died
+    2: opponent died
+    3: opponent forfeit
+    */
+    const dbrefyou = refPlayer('', 0);
+    const dbrefopponent = refPlayer('', 1);
+    let result = 0;
+    onValue(dbrefyou, (data) => {
+        if(data.val().health <= 0){
+            result = 1;
+        }
+    }, {
+        onlyOnce: true
+    });
+    onValue(dbrefopponent, (data) => {
+        if(data.exists()) {
+            if (data.val().health <= 0) {
+                result = 2;
+            } else if (userID == roomCreatorID) {
+                if (checkForOpponent() == 1) {
+                    result = 3;
+                }
+            }
+        } else if (userID != roomCreatorID && userID != null){
+            result = 3;
+        }
+    }, {
+        onlyOnce: true
+    });
+    return result;
+}
 
 function checkCardStatus() {
     const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
@@ -246,7 +366,7 @@ function checkForCard(){
     }
 
     //hand slots
-    const dbrefhand = refPlayer(`/hand`);
+    const dbrefhand = refPlayer(`/hand`, 0);
     onValue(dbrefhand, (data) => {
         for(let i = 0; i < 7; i++){
             handSlotImg[i].src = `../webpageImageAssets/handSlot.png`;
@@ -292,38 +412,32 @@ function playCard(zone){
     }
 }
 
-function checkForAvailableHandSlot(){//returns id of available hand slot, null if none
-    let dbref = refPlayer(`hand`);
+async function checkForAvailableHandSlot(){//returns id of available hand slot, null if none
+    let dbref = refPlayer(`hand`, 0);
     let availableSlot = null;
     for(let i = 0; i < 7; i++) {
-        onValue(child(dbref, `/${i}`), (data) => {
-            if (data.val() == null) {
-                availableSlot = i;
-            }
-        }, {
-            onlyOnce: true
-        });
+        const data = await get(child(dbref, `/${i}`));
+        if (data.val() == null) {
+            availableSlot = i;
+        }
         if(availableSlot != null) break;
     }
     return availableSlot;
 }
 
-function fetchDeck() { //fetches deck from firebase library
-    const dbref = refPlayer(`/cards`);
+async function fetchDeck() { //fetches deck from firebase library
+    const dbref = refPlayer(`/cards`, 0);
     let deck = new Deck([]);
-    onValue(dbref, (data) => {
-        if(data.val() != null){
-            for(let i = 0; i < data.val().cards.length; i++){
-                let id;
-                id = data.val().cards[i].id;
-                deck.addCardBack(createCard(id));
-            }
-        } else {
-            deck = null;
+    const data = await get(dbref);
+    if(data.val() != null){
+        for(let i = 0; i < data.val().cards.length; i++){
+            let id;
+            id = data.val().cards[i].id;
+            deck.addCardBack(createCard(id));
         }
-    }, {
-        onlyOnce: true
-    });
+    } else {
+        deck = null;
+    }
     return deck;
 }
 
@@ -341,15 +455,20 @@ function fetchCard(zone){
 }
 
 function returnDeck() {
-    const dbref = refPlayer(``);
+    const dbref = refPlayer(``, 0);
     update(dbref, {
        cards: deck
     });
 }
 
+async function getRound(){
+    const data = await get(ref(db, `rooms/${currentRoomCode}`));
+    return data.val().round;
+}
+
 function getYourHealth(read){
     if(read == 0){
-        const dbref = refPlayer(``);
+        const dbref = refPlayer(``, 0);
         let health = null;
         onValue(dbref, (data) => {
             if(data.val() != null){
@@ -360,14 +479,9 @@ function getYourHealth(read){
         });
         return health;
     }else{
-        let player;
-        if(userID == roomCreatorID){
-            player = 2;
-        }else{
-            player = 1;
-        }
+        const dbref = refPlayer('', 1);
         let health = null;
-        onValue(ref(db,`rooms/${currentRoomCode}/currentPlayers/player${player}`), (data) => {
+        onValue(dbref, (data) => {
             if(data.val() != null){
                 health = data.val().health;
             }
@@ -377,69 +491,76 @@ function getYourHealth(read){
         return health;
     }
 }
-function getYourEmeralds(read) {
-    if (read == 0) {
-        const dbref = refPlayer(``);
-        let emeralds = null;
-        onValue(dbref, (data) => {
-            if (data.val() != null) {
-                emeralds = data.val().emeralds;
-            }
-        }, {
-            onlyOnce: true
-        });
-        return emeralds;
-    } else { //I dont want the player to see the enemy's emeralds, I don't think its necessary but just in case:
-        let player;
-        if (userID == roomCreatorID) {
-            player = 2;
-        } else {
-            player = 1;
+
+function getYourEmeralds() {
+    const dbref = refPlayer(``, 0);
+    let emeralds = null;
+    onValue(dbref, (data) => {
+        if (data.val() != null) {
+            emeralds = data.val().emeralds;
         }
-        let emeralds = null;
-        onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player${player}`), (data) => {
-            if (data.val() != null) {
-                emeralds = data.val().emeralds;
+    }, {
+        onlyOnce: true
+    });
+    return emeralds;
+}
+
+async function draw(override){
+    switch(checkForOpponent(override)) {
+        case 0:
+            if(checkTurn() || override) {
+                const dbref = refPlayer(`/hand`, 0);
+                let drawnCard;
+                let availableSlot = await checkForAvailableHandSlot();
+                deck = await fetchDeck();
+                if (deck && availableSlot != null) {
+                    drawnCard = deck.draw();
+                    returnDeck();
+                    update(child(dbref, `/${availableSlot}`), {
+                        card: drawnCard
+                    });
+                } else {
+                    if (deck == null) {
+                        throw new Error("out of cards");
+                    } else {
+                        throw new Error("hand is full");
+                    }
+                }
+            } else {
+                throw new Error("Not your turn");
             }
-        }, {
-            onlyOnce: true
-        });
-        return emeralds;
+            break;
+        case 1:
+            throw new Error("Opponent has forfeit");
+        case 2:
+            throw new Error("Opponent has not yet joined");
     }
 }
 
-function draw(){
-    const dbref = refPlayer(`/hand`);
-    let drawnCard;
-    let availableSlot = checkForAvailableHandSlot();
-    deck = fetchDeck();
-    if(deck && availableSlot != null){
-        drawnCard = deck.draw();
-        returnDeck();
-        update(child(dbref, `/${availableSlot}`), {
-            card: drawnCard
-        });
+function refPlayer(dataPath, plr){ //fetches a datapath based off player 1 or 2
+    if(plr == 0) {
+        if (userID == roomCreatorID && userID != null)
+            return ref(db, `rooms/${currentRoomCode}/currentPlayers/player1/${dataPath}`);
+        else if (userID != null)
+            return ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/${dataPath}`);
+        else {
+            throw new Error("error getting userID");
+        }
+    } else if(plr == 1){
+        if (userID == roomCreatorID && userID != null)
+            return ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/${dataPath}`);
+        else if (userID != null)
+            return ref(db, `rooms/${currentRoomCode}/currentPlayers/player1/${dataPath}`);
+        else {
+            throw new Error("error getting userID");
+        }
     } else {
-        if(deck == null){
-            console.error("out of cards");
-        } else {
-            console.error("hand is full");
-        }
-    }
-}
-
-function refPlayer(dataPath){ //fetches a datapath based off player 1 or 2
-    if(userID == roomCreatorID && userID != null)
-        return ref(db, `rooms/${currentRoomCode}/currentPlayers/player1/${dataPath}`);
-    else if(userID != null)
-        return ref(db, `rooms/${currentRoomCode}/currentPlayers/player2/${dataPath}`);
-    else {
-        throw new Error("error getting userID");
+        throw new Error("Invalid plr input");
     }
 }
 
 function selectCardHand(zone){
-    const dbref = refPlayer(`/hand`);
+    const dbref = refPlayer(`/hand`,0);
     if(selectedCard == null){
         onValue(dbref, (data) => {
             if(data.val() != null) {
@@ -561,31 +682,102 @@ function checkTurn() {
     return currentTurn == userID;
 }
 
-document.addEventListener('keydown', function(event) {
+function passTurn(){
+    const dbref = refPlayer('', 1);
+    switch(checkForOpponent()) {
+        case 0:
+            if(checkTurn()) {
+                if (selectedCard == null) {
+                    let opponentUid = null;
+                    onValue(dbref, (data) => {
+                        opponentUid = data.val().uid;
+                    }, {
+                        onlyOnce: true
+                    });
+                    update(ref(db, `rooms/${currentRoomCode}`), {
+                        turn: opponentUid
+                    });
+                    document.getElementById("passButton").disabled = true;
+                } else {
+                    throw new Error("Please de-select all cards before passing your turn");
+                }
+            } else {
+                throw new Error("Not your turn");
+            }
+            break;
+        case 1:
+            console.log("Opponent has forfeit, majorEvent function should run");
+            break;
+        case 2:
+            throw new Error("Opponent has not joined yet");
+    }
+}
+
+function checkForOpponent(override){
+    let result = null;
+    if(override){return 0;}//override checks
+    const opponentRef = refPlayer('', 1);
+    onValue(opponentRef, (data) => {
+        if(data.val().uid != null && data.val().uid != "quit"){
+            result = 0;
+        } else if (data.val().uid != null){
+            result = 1;
+        } else {
+            result = 2;
+        }
+    }, {
+        onlyOnce: true
+    });
+    return result;
+}
+
+document.addEventListener('keydown', async function (event) {
     if (event.key === '1') {
-        draw();
+        try {
+            await draw();
+        } catch (e) {
+            console.error(e.message);
+            alert(e.message);
+        }
     }
     if (event.key === `a`) {
         initiateAttack();
     }
 });
 
-function attackPlayer() {
-    if (attackingCard != null){
-        const dbref = refPlayer(``);
-        onValue(dbref, (data) => {
-            if(data.val() != null){
-                alert(attackingCard.attack + "Damage done")
-                data.val().health = data.val().health - attackingCard.attack;
-                attackingCard = null; //the card has already attacked so now there is no attacking card.
-
-            }
-        } ,{
-            onlyOnce: true
-        });
+document.getElementById("passButton").addEventListener("click", () => {
+    try{
+        passTurn();
+    } catch(e){
+        console.error(e.message);
+        alert(e.message);
     }
-}
+});
 
-enemyPlayer.addEventListener('click', attackPlayer);
+document.getElementById("badGuy").addEventListener("click", () => {
+    let check = null;
+    if(userID == roomCreatorID){
+        for(let i = 0; i < 5; i++){
+            if(fetchCard(i) != null){check = false;}
+        }
+    } else {
+        for(let i = 0; i < 5; i++){
+            if(fetchCard(i + 5) != null){check = false;}
+        }
+    }
 
-
+    if(!check){
+        if(attackingCard != null){
+            let opponentRef = refPlayer(`/health`, 1);
+            runTransaction(opponentRef, (health) => {
+                return health -= attackingCard.damage;
+            });
+            playerSlotImg[selectedZonePlayer].style.border = '0px';
+            attackingCard = null;
+            selectedCard = null;
+        }
+    } else {
+        console.error("All enemy ducks must be eliminated before attacking opponent health");
+        alert("All enemy ducks must be eliminated before attacking opponent health");
+    }
+});
