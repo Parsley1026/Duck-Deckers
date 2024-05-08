@@ -197,16 +197,14 @@ onAuthStateChanged(auth, (user) => {
             }).then(async () => {
                 const buttons = document.getElementsByTagName("button");
                 if (await getRound().then((result) =>{return result;}) == 1 && await fetchDeck().then((result) => {return result.cards.length;}) == 40) {
-                    setTimeout(async () => {
-                        for (let i = 0; i < 3; i++) {
-                            try {
-                                await draw(true);
-                            } catch (e) {
-                                alert(e.message);
-                                console.error(e.message);
-                            }
+                    for (let i = 0; i < 3; i++) {
+                        try {
+                            await draw(true);
+                        } catch (e) {
+                            alert(e.message);
+                            console.error(e.message);
                         }
-                    }, 250);
+                    }
                 }
                 onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
                     switch (checkForMajorEvent()) {
@@ -406,17 +404,14 @@ function playCard(zone){
     }
 }
 
-function checkForAvailableHandSlot(){//returns id of available hand slot, null if none
+async function checkForAvailableHandSlot(){//returns id of available hand slot, null if none
     let dbref = refPlayer(`hand`, 0);
     let availableSlot = null;
     for(let i = 0; i < 7; i++) {
-        onValue(child(dbref, `/${i}`), (data) => {
-            if (data.val() == null) {
-                availableSlot = i;
-            }
-        }, {
-            onlyOnce: true
-        });
+        const data = await get(child(dbref, `/${i}`));
+        if (data.val() == null) {
+            availableSlot = i;
+        }
         if(availableSlot != null) break;
     }
     return availableSlot;
@@ -507,7 +502,7 @@ async function draw(override){
             if(checkTurn() || override) {
                 const dbref = refPlayer(`/hand`, 0);
                 let drawnCard;
-                let availableSlot = checkForAvailableHandSlot();
+                let availableSlot = await checkForAvailableHandSlot();
                 deck = await fetchDeck();
                 if (deck && availableSlot != null) {
                     drawnCard = deck.draw();
