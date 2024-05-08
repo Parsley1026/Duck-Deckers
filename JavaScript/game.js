@@ -472,14 +472,9 @@ function getYourHealth(read){
         });
         return health;
     }else{
-        let player;
-        if(userID == roomCreatorID){
-            player = 2;
-        }else{
-            player = 1;
-        }
+        const dbref = refPlayer('', 1);
         let health = null;
-        onValue(ref(db,`rooms/${currentRoomCode}/currentPlayers/player${player}`), (data) => {
+        onValue(dbref, (data) => {
             if(data.val() != null){
                 health = data.val().health;
             }
