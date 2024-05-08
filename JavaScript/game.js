@@ -194,18 +194,20 @@ onAuthStateChanged(auth, (user) => {
                 } else {
                     console.error("error getting creator of room");
                 }
-            }).then(() => {
+            }).then(async () => {
                 const buttons = document.getElementsByTagName("button");
-                /*setTimeout(() => {
-                    for (let i = 0; i < 3; i++) {
-                        try {
-                            draw(true);
-                        } catch (e) {
-                            alert(e.message);
-                            console.error(e.message);
+                if (await getRound().then((result) =>{return result;}) == 1 && await fetchDeck().then((result) => {return result.cards.length;}) == 40) {
+                    setTimeout(async () => {
+                        for (let i = 0; i < 3; i++) {
+                            try {
+                                await draw(true);
+                            } catch (e) {
+                                alert(e.message);
+                                console.error(e.message);
+                            }
                         }
-                    }
-                }, 250);*/
+                    }, 250);
+                }
                 onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
                     switch (checkForMajorEvent()) {
                         case 0:
@@ -420,22 +422,19 @@ function checkForAvailableHandSlot(){//returns id of available hand slot, null i
     return availableSlot;
 }
 
-function fetchDeck() { //fetches deck from firebase library
+async function fetchDeck() { //fetches deck from firebase library
     const dbref = refPlayer(`/cards`, 0);
     let deck = new Deck([]);
-    onValue(dbref, (data) => {
-        if(data.val() != null){
-            for(let i = 0; i < data.val().cards.length; i++){
-                let id;
-                id = data.val().cards[i].id;
-                deck.addCardBack(createCard(id));
-            }
-        } else {
-            deck = null;
+    const data = await get(dbref);
+    if(data.val() != null){
+        for(let i = 0; i < data.val().cards.length; i++){
+            let id;
+            id = data.val().cards[i].id;
+            deck.addCardBack(createCard(id));
         }
-    }, {
-        onlyOnce: true
-    });
+    } else {
+        deck = null;
+    }
     return deck;
 }
 
@@ -502,14 +501,14 @@ function getYourEmeralds() {
     return emeralds;
 }
 
-function draw(override){
+async function draw(override){
     switch(checkForOpponent(override)) {
         case 0:
             if(checkTurn() || override) {
                 const dbref = refPlayer(`/hand`, 0);
                 let drawnCard;
                 let availableSlot = checkForAvailableHandSlot();
-                deck = fetchDeck();
+                deck = await fetchDeck();
                 if (deck && availableSlot != null) {
                     drawnCard = deck.draw();
                     returnDeck();
@@ -728,19 +727,19 @@ function checkForOpponent(override){
     return result;
 }
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', async function (event) {
     if (event.key === '1') {
-        try{
-            draw();
+        try {
+            await draw();
         } catch (e) {
             console.error(e.message);
             alert(e.message);
         }
     }
-    if(event.key === 'b'){
-        try{
-            getRound().then(function(result){console.log(result);})
-        }catch (e) {
+    if (event.key === 'b') {
+        try {
+            console.log(getRound());
+        } catch (e) {
             console.error(e.message);
         }
     }
