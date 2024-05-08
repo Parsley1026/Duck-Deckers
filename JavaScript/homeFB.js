@@ -62,6 +62,7 @@ function createRoom(){
                     set(ref(db, 'rooms/' + roomCode), {
                         roomCreator: userID, //define creator of room
                         turn: userID,
+                        round: 1,
                         currentPlayers: {
                             player1: {
                                 uid: userID,

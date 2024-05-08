@@ -196,7 +196,7 @@ onAuthStateChanged(auth, (user) => {
                 }
             }).then(() => {
                 const buttons = document.getElementsByTagName("button");
-                setTimeout(() => {
+                /*setTimeout(() => {
                     for (let i = 0; i < 3; i++) {
                         try {
                             draw(true);
@@ -205,7 +205,7 @@ onAuthStateChanged(auth, (user) => {
                             console.error(e.message);
                         }
                     }
-                }, 250);
+                }, 250);*/
                 onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
                     switch (checkForMajorEvent()) {
                         case 0:
@@ -457,6 +457,11 @@ function returnDeck() {
     update(dbref, {
        cards: deck
     });
+}
+
+async function getRound(){
+    const data = await get(ref(db, `rooms/${currentRoomCode}`));
+    return data.val().round;
 }
 
 function getYourHealth(read){
@@ -730,6 +735,13 @@ document.addEventListener('keydown', function(event) {
         } catch (e) {
             console.error(e.message);
             alert(e.message);
+        }
+    }
+    if(event.key === 'b'){
+        try{
+            getRound().then(function(result){console.log(result);})
+        }catch (e) {
+            console.error(e.message);
         }
     }
     if (event.key === `a`) {
