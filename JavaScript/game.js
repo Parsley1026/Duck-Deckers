@@ -204,6 +204,7 @@ onAuthStateChanged(auth, (user) => {
                             document.getElementById("playerHealth").innerHTML = getYourHealth(0);
                             document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
                             document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
+                            if(data.val().turn == userID){document.getElementById("passButton").disabled = false;}
                             break;
                         case 1:
                             if(repeatPrevent) {
@@ -655,27 +656,21 @@ function checkTurn() {
 }
 
 function passTurn(){
+    const dbref = refPlayer('', 1);
     switch(checkForOpponent()) {
         case 0:
             if(checkTurn()) {
                 if (selectedCard == null) {
                     let opponentUid = null;
-                    if (userID == roomCreatorID) {
-                        onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player2`), (data) => {
-                            opponentUid = data.val().uid;
-                        }, {
-                            onlyOnce: true
-                        });
-                    } else {
-                        onValue(ref(db, `rooms/${currentRoomCode}/currentPlayers/player1`), (data) => {
-                            opponentUid = data.val().uid;
-                        }, {
-                            onlyOnce: true
-                        });
-                    }
+                    onValue(dbref, (data) => {
+                        opponentUid = data.val().uid;
+                    }, {
+                        onlyOnce: true
+                    });
                     update(ref(db, `rooms/${currentRoomCode}`), {
                         turn: opponentUid
                     });
+                    document.getElementById("passButton").disabled = true;
                 } else {
                     throw new Error("Please de-select all cards before passing your turn");
                 }
