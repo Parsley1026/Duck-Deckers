@@ -197,8 +197,8 @@ onAuthStateChanged(auth, (user) => {
             }).then(() => {
                 const buttons = document.getElementsByTagName("button");
                 setTimeout(() => {
-                    for(let i = 0; i < 3; i++){
-                        try{
+                    for (let i = 0; i < 3; i++) {
+                        try {
                             draw(true);
                         } catch (e) {
                             alert(e.message);
@@ -207,17 +207,20 @@ onAuthStateChanged(auth, (user) => {
                     }
                 }, 250);
                 onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
-                    switch(checkForMajorEvent()) {
+                    switch (checkForMajorEvent()) {
                         case 0:
                             checkForCard();
                             checkCardStatus();
                             document.getElementById("playerHealth").innerHTML = getYourHealth(0);
                             document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
+                            document.getElementById("playerEmeralds").innerHTML = getYourEmeralds(0);
                             document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
-                            if(data.val().turn == userID){document.getElementById("passButton").disabled = false;}
+                            if (data.val().turn == userID) {
+                                document.getElementById("passButton").disabled = false;
+                            }
                             break;
                         case 1:
-                            if(repeatPrevent) {
+                            if (repeatPrevent) {
                                 alert("You lose!");
                                 for (const button of buttons) {
                                     button.disabled = true;
@@ -227,7 +230,7 @@ onAuthStateChanged(auth, (user) => {
                             }
                             break;
                         case 2:
-                            if(repeatPrevent) {
+                            if (repeatPrevent) {
                                 alert("You win!");
                                 for (const button of buttons) {
                                     button.disabled = true;
@@ -237,7 +240,7 @@ onAuthStateChanged(auth, (user) => {
                             }
                             break;
                         case 3:
-                            if(repeatPrevent) {
+                            if (repeatPrevent) {
                                 alert("Opponent has forfeit");
                                 for (const button of buttons) {
                                     button.disabled = true;
@@ -248,8 +251,8 @@ onAuthStateChanged(auth, (user) => {
                             break;
                     }
                 });
-            })
-        })
+            });
+        });
     } else {
         throw new Error("error getting user data");
     }
@@ -485,7 +488,18 @@ function getYourHealth(read){
         });
         return health;
     }
-
+}
+function getYourEmeralds() {
+    const dbref = refPlayer(``, 0);
+    let emeralds = null;
+    onValue(dbref, (data) => {
+        if (data.val() != null) {
+            emeralds = data.val().emeralds;
+        }
+    }, {
+        onlyOnce: true
+    });
+    return emeralds;
 }
 
 function draw(override){
