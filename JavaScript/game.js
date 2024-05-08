@@ -736,13 +736,6 @@ document.addEventListener('keydown', async function (event) {
             alert(e.message);
         }
     }
-    if (event.key === 'b') {
-        try {
-            console.log(getRound());
-        } catch (e) {
-            console.error(e.message);
-        }
-    }
     if (event.key === `a`) {
         initiateAttack();
     }
