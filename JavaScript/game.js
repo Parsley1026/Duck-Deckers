@@ -195,8 +195,14 @@ onAuthStateChanged(auth, (user) => {
                     console.error("error getting creator of room");
                 }
             }).then(() => {
+                const buttons = document.getElementsByTagName("button");
+                try{
+                    for(let i = 0; i < 3; i++){draw();}
+                }catch(e){
+                    alert(e.message);
+                    console.error(e.message);
+                }
                 onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
-                    const buttons = document.getElementsByTagName("button");
                     switch(checkForMajorEvent()) {
                         case 0:
                             checkForCard();
