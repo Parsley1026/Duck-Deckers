@@ -196,12 +196,16 @@ onAuthStateChanged(auth, (user) => {
                 }
             }).then(() => {
                 const buttons = document.getElementsByTagName("button");
-                try{
-                    for(let i = 0; i < 3; i++){draw();}
-                }catch(e){
-                    alert(e.message);
-                    console.error(e.message);
-                }
+                setTimeout(() => {
+                    for(let i = 0; i < 3; i++){
+                        try{
+                            draw(true);
+                        } catch (e) {
+                            alert(e.message);
+                            console.error(e.message);
+                        }
+                    }
+                }, 250);
                 onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
                     switch(checkForMajorEvent()) {
                         case 0:
@@ -484,10 +488,10 @@ function getYourHealth(read){
 
 }
 
-function draw(){
-    switch(checkForOpponent()) {
+function draw(override){
+    switch(checkForOpponent(override)) {
         case 0:
-            if(checkTurn()) {
+            if(checkTurn() || override) {
                 const dbref = refPlayer(`/hand`, 0);
                 let drawnCard;
                 let availableSlot = checkForAvailableHandSlot();
@@ -692,8 +696,9 @@ function passTurn(){
     }
 }
 
-function checkForOpponent(){
+function checkForOpponent(override){
     let result = null;
+    if(override){return 0;}//override checks
     const opponentRef = refPlayer('', 1);
     onValue(opponentRef, (data) => {
         if(data.val().uid != null && data.val().uid != "quit"){
