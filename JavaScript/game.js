@@ -67,6 +67,8 @@ let playerSlot =
         document.getElementById('dropZone8'),
         document.getElementById('dropZone9')
     ];
+let enemyPlayer = document.getElementById('badGuyImg')
+
 
 //image zones
 let dropSlotImg =
@@ -304,13 +306,15 @@ function checkCardStatus() {
                 } else if(userID == roomCreatorID){
                     offset = 5;
                 }
+                var audio = document.getElementById("attackSound");
+                audio.play();
                dropSlotImg[parseInt(element.key)+offset].style.border = '7px solid green';
                setTimeout(() => {
                    update(child(dbrefboard, `/${element.key}`), {
                        card: null
                    });
                    dropSlotImg[parseInt(element.key)+offset].style.border = '0px';
-               }, 2500); //2.5 second wait before card removal
+               }, 1000); //I changed it to 1 second, 2.5 seemed too clunky.
            }
         });
     }, {
@@ -319,6 +323,7 @@ function checkCardStatus() {
 }
 
 function checkForCard(){
+
     const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
     if (userID == roomCreatorID) {
         onValue(dbrefboard, (data) => {
@@ -378,10 +383,12 @@ function checkForCard(){
 }
 
 function playCard(zone){
+    var placeSound = document.getElementById("placeSound");
     let updates = {};
     if(userID == roomCreatorID){
         if(fetchCard(zone) == null){
             handSlotImg[selectedZoneHand].style.border = '0px';
+            placeSound.play();
             updates[`rooms/${currentRoomCode}/boardPositions/${zone}/card`] = selectedCard;
             updates[`rooms/${currentRoomCode}/currentPlayers/player1/hand/${selectedZoneHand}`] = null;
             update(ref(db), updates);
@@ -392,6 +399,7 @@ function playCard(zone){
         }
     } else {
         if(fetchCard(zone + 5) == null){
+            placeSound.play();
             handSlotImg[selectedZoneHand].style.border = '0px';
             updates[`rooms/${currentRoomCode}/boardPositions/${zone+5}/card`] = selectedCard;
             updates[`rooms/${currentRoomCode}/currentPlayers/player2/hand/${selectedZoneHand}`] = null;
@@ -483,6 +491,7 @@ function getYourHealth(read){
         return health;
     }
 }
+
 function getYourEmeralds() {
     const dbref = refPlayer(``, 0);
     let emeralds = null;
