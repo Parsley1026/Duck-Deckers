@@ -304,23 +304,28 @@ function checkCardStatus() {
     const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
     onValue(dbrefboard, (data) => {
         data.forEach((element) => {
-            if(element.val().card.type == 0 && element.val().card.health <= 0){
-                let offset = 0;
-                if(userID == roomCreatorID && parseInt(element.key) > 4){
-                    offset = -5;
-                } else if(userID == roomCreatorID){
-                    offset = 5;
+            let offset = 0;
+            if(userID == roomCreatorID && parseInt(element.key) > 4){
+                offset = -5;
+            } else if(userID == roomCreatorID){
+                offset = 5;
+            }
+            if(element.val().card.type == 0){
+                if(element.val().card.health <= 0){
+                    dropSlotImg[parseInt(element.key)+offset].style.border = '7px solid green';
+                    setTimeout(() => {
+                        update(child(dbrefboard, `/${element.key}`), {
+                            card: null
+                        });
+                        dropSlotImg[parseInt(element.key)+offset].style.border = '0px';
+                    }, 1000); //I changed it to 1 second, 2.5 seemed too clunky.
+                } else if (element.val().card.stamina != 0){
+                    dropSlotImg[parseInt((element.key) + offset)].style.opacity = '0.8';
+                    if(element.val().card.stamina == 2){
+                        dropSlotImg[parseInt((element.key) + offset)].style.border = `7px solid yellow`;
+                    }
                 }
-                var audio = document.getElementById("attackSound");
-                audio.play();
-               dropSlotImg[parseInt(element.key)+offset].style.border = '7px solid green';
-               setTimeout(() => {
-                   update(child(dbrefboard, `/${element.key}`), {
-                       card: null
-                   });
-                   dropSlotImg[parseInt(element.key)+offset].style.border = '0px';
-               }, 1000); //I changed it to 1 second, 2.5 seemed too clunky.
-           }
+            }
         });
     }, {
         onlyOnce: true
@@ -634,21 +639,25 @@ function attackCard(zone) { //should only ever be used in attacking mode
 
 function initiateAttack(){
     if(selectedZonePlayer != null) {
-        if(selectedCard.type == 0 || attackingCard != null) {
-            if (attackingCard == null) {
-                playerSlotImg[selectedZonePlayer].style.border = '7px solid red';
-                attackingCard = selectedCard;
-                selectedCard = 0;
+        if(selectedCard.stamina == 0) {
+            if (selectedCard.type == 0 || attackingCard != null) {
+                if (attackingCard == null) {
+                    playerSlotImg[selectedZonePlayer].style.border = '7px solid red';
+                    attackingCard = selectedCard;
+                    selectedCard = 0;
+                } else {
+                    selectedCard = attackingCard;
+                    attackingCard = null;
+                    playerSlotImg[selectedZonePlayer].style.border = '7px solid blue';
+                }
             } else {
-                selectedCard = attackingCard;
-                attackingCard = null;
-                playerSlotImg[selectedZonePlayer].style.border = '7px solid blue';
+                throw new Error("Cannot attack with a spell/land");
             }
         } else {
-            console.log("cannot attack with a spell/land")
+            throw new Error("This duck is tired! Please wait until your next turn before using them to attack");
         }
     } else {
-        console.error("no duck is selected");
+        throw new Error("No duck is selected");
     }
 }
 
@@ -742,7 +751,12 @@ document.addEventListener('keydown', async function (event) {
         }
     }
     if (event.key === `a`) {
-        initiateAttack();
+        try {
+            initiateAttack();
+        }catch (e) {
+            console.error(e);
+            alert(e.message);
+        }
     }
 });
 
