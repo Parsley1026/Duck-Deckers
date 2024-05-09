@@ -13,7 +13,8 @@ export function createCard(id) { //create a card from cardMaster.json based on i
                     data[keys[id]].type,
                     data[keys[id]].effect,
                     data[keys[id]].damage,
-                    data[keys[id]].health
+                    data[keys[id]].health,
+                    2
                 );
                 break;
             case 1: //card type 1 is a spell, so create spell
@@ -51,7 +52,8 @@ export function createCardDB(data){
                 data.type,
                 effect,
                 data.damage,
-                data.health
+                data.health,
+                2
             );
             break;
         case 1:

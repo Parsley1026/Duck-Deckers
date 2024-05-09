@@ -112,12 +112,17 @@ let handSlotImg =
     ];
 
 for(let i = 0; i < playerSlot.length; i++){
-    playerSlot[i].addEventListener('click', () => {
-        switch(checkForOpponent()) {
+    playerSlot[i].addEventListener('click', async () => {
+        switch (checkForOpponent()) {
             case 0:
-                if (checkTurn()) {
+                if (await checkTurn().then((r) => {return r;})) {
                     if (selectedZoneHand != null) {
-                        playCard(i);
+                        try {
+                            await playCard(i);
+                        } catch (e) {
+                            console.error(e);
+                            alert(e.message);
+                        }
                     } else {
                         selectCardPlayer(i);
                     }
@@ -138,10 +143,10 @@ for(let i = 0; i < playerSlot.length; i++){
     });
 }
 for(let i = 0; i < enemySlot.length; i++){
-    enemySlot[i].addEventListener('click', () => {
-        switch(checkForOpponent()){
+    enemySlot[i].addEventListener('click', async () => {
+        switch (checkForOpponent()) {
             case 0:
-                if (checkTurn()) {
+                if (await checkTurn().then((r) => {return r;})) {
                     if (attackingCard != null) {
                         attackCard(i + 5);
                     }
@@ -204,18 +209,18 @@ onAuthStateChanged(auth, (user) => {
                             await draw(true);
                         } catch (e) {
                             alert(e.message);
-                            console.error(e.message);
+                            console.error(e);
                         }
                     }
                 }
-                onValue(ref(db, `rooms/${currentRoomCode}`), (data) => { //live data
+                onValue(ref(db, `rooms/${currentRoomCode}`), async (data) => { //live data
                     switch (checkForMajorEvent()) {
                         case 0:
                             checkForCard();
                             checkCardStatus();
                             document.getElementById("playerHealth").innerHTML = getYourHealth(0);
                             document.getElementById("enemyHealth").innerHTML = getYourHealth(1);
-                            document.getElementById("playerEmeralds").innerHTML = getYourEmeralds(0);
+                            document.getElementById("playerEmeralds").innerHTML = await getYourEmeralds().then((result) =>{return result;});
                             document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
                             if (data.val().turn == userID) {
                                 document.getElementById("passButton").disabled = false;
@@ -299,23 +304,28 @@ function checkCardStatus() {
     const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
     onValue(dbrefboard, (data) => {
         data.forEach((element) => {
-            if(element.val().card.type == 0 && element.val().card.health <= 0){
-                let offset = 0;
-                if(userID == roomCreatorID && parseInt(element.key) > 4){
-                    offset = -5;
-                } else if(userID == roomCreatorID){
-                    offset = 5;
+            let offset = 0;
+            if(userID == roomCreatorID && parseInt(element.key) > 4){
+                offset = -5;
+            } else if(userID == roomCreatorID){
+                offset = 5;
+            }
+            if(element.val().card.type == 0){
+                if(element.val().card.health <= 0){
+                    dropSlotImg[parseInt(element.key)+offset].style.border = '7px solid green';
+                    setTimeout(() => {
+                        update(child(dbrefboard, `/${element.key}`), {
+                            card: null
+                        });
+                        dropSlotImg[parseInt(element.key)+offset].style.border = '0px';
+                    }, 1000); //I changed it to 1 second, 2.5 seemed too clunky.
+                } else if (element.val().card.stamina != 0){
+                    dropSlotImg[parseInt((element.key) + offset)].style.opacity = '0.8';
+                    if(element.val().card.stamina == 2){
+                        dropSlotImg[parseInt((element.key) + offset)].style.border = `7px solid yellow`;
+                    }
                 }
-                var audio = document.getElementById("attackSound");
-                audio.play();
-               dropSlotImg[parseInt(element.key)+offset].style.border = '7px solid green';
-               setTimeout(() => {
-                   update(child(dbrefboard, `/${element.key}`), {
-                       card: null
-                   });
-                   dropSlotImg[parseInt(element.key)+offset].style.border = '0px';
-               }, 1000); //I changed it to 1 second, 2.5 seemed too clunky.
-           }
+            }
         });
     }, {
         onlyOnce: true
@@ -323,7 +333,6 @@ function checkCardStatus() {
 }
 
 function checkForCard(){
-
     const dbrefboard = ref(db, `rooms/${currentRoomCode}/boardPositions`);
     if (userID == roomCreatorID) {
         onValue(dbrefboard, (data) => {
@@ -382,32 +391,35 @@ function checkForCard(){
     });
 }
 
-function playCard(zone){
-    var placeSound = document.getElementById("placeSound");
+async function playCard(zone){
     let updates = {};
+    let emeralds = await getYourEmeralds().then((result) => {return result;});
+    if(selectedCard.cost > emeralds){
+        throw new Error("You do not have enough emeralds to play this card");
+    }
     if(userID == roomCreatorID){
         if(fetchCard(zone) == null){
             handSlotImg[selectedZoneHand].style.border = '0px';
-            placeSound.play();
             updates[`rooms/${currentRoomCode}/boardPositions/${zone}/card`] = selectedCard;
             updates[`rooms/${currentRoomCode}/currentPlayers/player1/hand/${selectedZoneHand}`] = null;
+            updates[`rooms/${currentRoomCode}/currentPlayers/player1/emeralds`] = emeralds - selectedCard.cost;
             update(ref(db), updates);
             selectedCard = null;
             selectedZoneHand = null;
         } else {
-            console.error("there is already a card here");
+            throw new Error("There is already a card here");
         }
     } else {
         if(fetchCard(zone + 5) == null){
-            placeSound.play();
             handSlotImg[selectedZoneHand].style.border = '0px';
             updates[`rooms/${currentRoomCode}/boardPositions/${zone+5}/card`] = selectedCard;
             updates[`rooms/${currentRoomCode}/currentPlayers/player2/hand/${selectedZoneHand}`] = null;
+            updates[`rooms/${currentRoomCode}/currentPlayers/player2/emeralds`] = emeralds - selectedCard.cost;
             update(ref(db), updates);
             selectedCard = null;
             selectedZoneHand = null;
         } else {
-            console.error("there is already a card here");
+            throw new Error("There is already a card here");
         }
     }
 }
@@ -492,23 +504,16 @@ function getYourHealth(read){
     }
 }
 
-function getYourEmeralds() {
+async function getYourEmeralds() {
     const dbref = refPlayer(``, 0);
-    let emeralds = null;
-    onValue(dbref, (data) => {
-        if (data.val() != null) {
-            emeralds = data.val().emeralds;
-        }
-    }, {
-        onlyOnce: true
-    });
-    return emeralds;
+    const data = await get(dbref);
+    return data.val().emeralds;
 }
 
 async function draw(override){
     switch(checkForOpponent(override)) {
         case 0:
-            if(checkTurn() || override) {
+            if(await checkTurn().then((r) => {return r;}) || override) {
                 const dbref = refPlayer(`/hand`, 0);
                 let drawnCard;
                 let availableSlot = await checkForAvailableHandSlot();
@@ -634,21 +639,25 @@ function attackCard(zone) { //should only ever be used in attacking mode
 
 function initiateAttack(){
     if(selectedZonePlayer != null) {
-        if(selectedCard.type == 0 || attackingCard != null) {
-            if (attackingCard == null) {
-                playerSlotImg[selectedZonePlayer].style.border = '7px solid red';
-                attackingCard = selectedCard;
-                selectedCard = 0;
+        if(selectedCard.stamina == 0) {
+            if (selectedCard.type == 0 || attackingCard != null) {
+                if (attackingCard == null) {
+                    playerSlotImg[selectedZonePlayer].style.border = '7px solid red';
+                    attackingCard = selectedCard;
+                    selectedCard = 0;
+                } else {
+                    selectedCard = attackingCard;
+                    attackingCard = null;
+                    playerSlotImg[selectedZonePlayer].style.border = '7px solid blue';
+                }
             } else {
-                selectedCard = attackingCard;
-                attackingCard = null;
-                playerSlotImg[selectedZonePlayer].style.border = '7px solid blue';
+                throw new Error("Cannot attack with a spell/land");
             }
         } else {
-            console.log("cannot attack with a spell/land")
+            throw new Error("This duck is tired! Please wait until your next turn before using them to attack");
         }
     } else {
-        console.error("no duck is selected");
+        throw new Error("No duck is selected");
     }
 }
 
@@ -672,31 +681,37 @@ function getPlayerName(id){
     return name;
 }
 
-function checkTurn() {
-    let currentTurn = null;
-    onValue(ref(db, `rooms/${currentRoomCode}/turn`), (data) => {
-        currentTurn = data.val();
-    }, {
-        onlyOnce: true
-    });
-    return currentTurn == userID;
+async function checkTurn() {
+    let data = await get(ref(db, `rooms/${currentRoomCode}`));
+    return data.val().turn == userID;
 }
 
-function passTurn(){
-    const dbref = refPlayer('', 1);
+async function passTurn(){
     switch(checkForOpponent()) {
         case 0:
-            if(checkTurn()) {
+            if(await checkTurn().then((r) => {return r;})) {
                 if (selectedCard == null) {
-                    let opponentUid = null;
-                    onValue(dbref, (data) => {
-                        opponentUid = data.val().uid;
-                    }, {
-                        onlyOnce: true
+                    let updates = {};
+                    let add = 0;
+                    let round = await getRound().then((r) => {return r;});
+                    const boardData = await get(ref(db, `rooms/${currentRoomCode}/boardPositions`));
+                    const data = await get(refPlayer('', 1));
+                    updates[`rooms/${currentRoomCode}/turn`] = data.val().uid;
+                    boardData.forEach((element) => {
+                        if(element.val().card.type == 0){
+                            updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
+                        }
                     });
-                    update(ref(db, `rooms/${currentRoomCode}`), {
-                        turn: opponentUid
-                    });
+                    if(userID != roomCreatorID){
+                        updates[`rooms/${currentRoomCode}/round`] = round + 1;
+                        if(round <= 9){add = 1};
+                    }
+                    if(round <= 10){
+                        updates[refPlayer('emeralds', 1).toJSON().replace("https://duck-deckers-default-rtdb.firebaseio.com/", "")] = round + add;
+                    } else {
+                        updates[refPlayer('emeralds', 1).toJSON().replace("https://duck-deckers-default-rtdb.firebaseio.com/", "")] = 10;
+                    }
+                    update(ref(db), updates);
                     document.getElementById("passButton").disabled = true;
                 } else {
                     throw new Error("Please de-select all cards before passing your turn");
@@ -736,20 +751,25 @@ document.addEventListener('keydown', async function (event) {
         try {
             await draw();
         } catch (e) {
-            console.error(e.message);
+            console.error(e);
             alert(e.message);
         }
     }
     if (event.key === `a`) {
-        initiateAttack();
+        try {
+            initiateAttack();
+        }catch (e) {
+            console.error(e);
+            alert(e.message);
+        }
     }
 });
 
-document.getElementById("passButton").addEventListener("click", () => {
+document.getElementById("passButton").addEventListener("click", async () => {
     try{
-        passTurn();
+        await passTurn();
     } catch(e){
-        console.error(e.message);
+        console.error(e);
         alert(e.message);
     }
 });
