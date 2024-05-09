@@ -694,9 +694,14 @@ async function passTurn(){
                     let updates = {};
                     let add = 0;
                     let round = await getRound().then((r) => {return r;});
-                    console.log(refPlayer('emeralds', 1).toJSON().replace("https://duck-deckers-default-rtdb.firebaseio.com/", ""));
+                    const boardData = await get(ref(db, `rooms/${currentRoomCode}/boardPositions`));
                     const data = await get(refPlayer('', 1));
                     updates[`rooms/${currentRoomCode}/turn`] = data.val().uid;
+                    boardData.forEach((element) => {
+                        if(element.val().card.type == 0){
+                            updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
+                        }
+                    });
                     if(userID != roomCreatorID){
                         updates[`rooms/${currentRoomCode}/round`] = round + 1;
                         if(round <= 9){add = 1};
