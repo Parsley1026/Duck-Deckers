@@ -705,6 +705,12 @@ async function passTurn(){
                     let round = await getRound().then((r) => {return r;});
                     const boardData = await get(ref(db, `rooms/${currentRoomCode}/boardPositions`));
                     const opponentData = await get(refPlayer('', 1));
+                    try{
+                        await draw(false, 1);
+                    } catch (e){
+                        console.error(e);
+                        alert(e.message);
+                    }
                     updates[`rooms/${currentRoomCode}/turn`] = opponentData.val().uid;
                     boardData.forEach((element) => {
                         if(roomCreatorID == userID){
@@ -762,14 +768,6 @@ function checkForOpponent(override){
 }
 
 document.addEventListener('keydown', async function (event) {
-    if (event.key === '1') {
-        try {
-            await draw(false, 0);
-        } catch (e) {
-            console.error(e);
-            alert(e.message);
-        }
-    }
     if (event.key === `a`) {
         try {
             initiateAttack();
