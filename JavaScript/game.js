@@ -206,7 +206,7 @@ onAuthStateChanged(auth, (user) => {
                 if (await getRound().then((result) =>{return result;}) == 1 && await fetchDeck().then((result) => {return result.cards.length;}) == 40) {
                     for (let i = 0; i < 3; i++) {
                         try {
-                            await draw(true);
+                            await draw(true, 0);
                         } catch (e) {
                             alert(e.message);
                             console.error(e);
@@ -427,8 +427,8 @@ async function playCard(zone){
     }
 }
 
-async function checkForAvailableHandSlot(){//returns id of available hand slot, null if none
-    let dbref = refPlayer(`hand`, 0);
+async function checkForAvailableHandSlot(plr){//returns id of available hand slot, null if none
+    let dbref = refPlayer(`hand`, plr);
     let availableSlot = null;
     for(let i = 0; i < 7; i++) {
         const data = await get(child(dbref, `/${i}`));
@@ -513,13 +513,13 @@ async function getYourEmeralds() {
     return data.val().emeralds;
 }
 
-async function draw(override){
+async function draw(override, plr){
     switch(checkForOpponent(override)) {
         case 0:
             if(await checkTurn().then((r) => {return r;}) || override) {
-                const dbref = refPlayer(`/hand`, 0);
+                const dbref = refPlayer(`/hand`, plr);
                 let drawnCard;
-                let availableSlot = await checkForAvailableHandSlot();
+                let availableSlot = await checkForAvailableHandSlot(plr);
                 deck = await fetchDeck();
                 if (deck && availableSlot != null) {
                     drawnCard = deck.draw();
@@ -764,7 +764,7 @@ function checkForOpponent(override){
 document.addEventListener('keydown', async function (event) {
     if (event.key === '1') {
         try {
-            await draw();
+            await draw(false, 0);
         } catch (e) {
             console.error(e);
             alert(e.message);
