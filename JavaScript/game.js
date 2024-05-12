@@ -324,6 +324,9 @@ function checkCardStatus() {
                     if(element.val().card.stamina == 2){
                         dropSlotImg[parseInt((element.key) + offset)].style.border = `7px solid yellow`;
                     }
+                } else if (element.val().card.stamina == 0){
+                    dropSlotImg[parseInt(element.key) + offset].style.opacity = '1';
+                    dropSlotImg[parseInt(element.key)].style.border = '0px';
                 }
             }
         });
