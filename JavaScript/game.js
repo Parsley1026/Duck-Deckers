@@ -698,16 +698,23 @@ async function passTurn(){
                     let add = 0;
                     let round = await getRound().then((r) => {return r;});
                     const boardData = await get(ref(db, `rooms/${currentRoomCode}/boardPositions`));
-                    const data = await get(refPlayer('', 1));
-                    updates[`rooms/${currentRoomCode}/turn`] = data.val().uid;
+                    const opponentData = await get(refPlayer('', 1));
+                    const currentTurn = await get(ref(db, `rooms/${currentRoomCode}/turn`)).then((r) => {return r.val();});
+                    updates[`rooms/${currentRoomCode}/turn`] = opponentData.val().uid;
                     boardData.forEach((element) => {
-                        if(element.val().card.type == 0){
-                            updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
+                        if(currentTurn == userID){
+                            if(parseInt(element.key) > 4 && element.val().card.type == 0){
+                                updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
+                            }
+                        } else {
+                            if(parseInt(element.key) < 5 && element.val().card.type == 0){
+                                updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
+                            }
                         }
                     });
                     if(userID != roomCreatorID){
                         updates[`rooms/${currentRoomCode}/round`] = round + 1;
-                        if(round <= 9){add = 1};
+                        if(round <= 9){add = 1;}
                     }
                     if(round <= 10){
                         updates[refPlayer('emeralds', 1).toJSON().replace("https://duck-deckers-default-rtdb.firebaseio.com/", "")] = round + add;
