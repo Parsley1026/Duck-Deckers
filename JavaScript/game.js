@@ -320,13 +320,13 @@ function checkCardStatus() {
                         dropSlotImg[parseInt(element.key)+offset].style.border = '0px';
                     }, 1000); //I changed it to 1 second, 2.5 seemed too clunky.
                 } else if (element.val().card.stamina != 0){
-                    dropSlotImg[parseInt((element.key) + offset)].style.opacity = '0.8';
+                    dropSlotImg[parseInt(element.key) + offset].style.opacity = '0.8';
                     if(element.val().card.stamina == 2){
-                        dropSlotImg[parseInt((element.key) + offset)].style.border = `7px solid yellow`;
+                        dropSlotImg[parseInt(element.key) + offset].style.border = `7px solid yellow`;
                     }
                 } else if (element.val().card.stamina == 0){
                     dropSlotImg[parseInt(element.key) + offset].style.opacity = '1';
-                    dropSlotImg[parseInt(element.key)].style.border = '0px';
+                    dropSlotImg[parseInt(element.key) + offset].style.border = '0px';
                 }
             }
         });
@@ -600,15 +600,20 @@ function selectCardPlayer(zone){
     if(selectedCard == null && attackingCard == null){
         if(fetchCard(zone + offset) != null) {
             selectedCard = fetchCard(zone + offset);
+            console.log(selectedCard.toString());
             selectedZonePlayer = zone;
             playerSlotImg[zone].style.border = '7px solid blue';
         } else {
             console.error("no card in selected spot");
         }
     } else if(zone == selectedZonePlayer && attackingCard == null) {
+        if(selectedCard.stamina == 2){
+            playerSlotImg[zone].style.border = '7px solid yellow';
+        } else {
+            playerSlotImg[zone].style.border = '0px';
+        }
         selectedCard = null;
         selectedZonePlayer = null;
-        playerSlotImg[zone].style.border = '0px';
     } else {
         console.error("a card is already selected");
     }
@@ -619,12 +624,13 @@ function attackCard(zone) { //should only ever be used in attacking mode
     if(userID != roomCreatorID){offset = -5;}
     if(selectedZoneHand == null){
         if(fetchCard(zone + offset) != null && fetchCard(zone + offset).type == 0) {
+            let updates = {};
             selectedCard = fetchCard(zone + offset);
             selectedZoneEnemy = zone;
             attackingCard.attack(selectedCard);
-            update(ref(db, `rooms/${currentRoomCode}/boardPositions/${zone + offset}`), {
-                card: selectedCard
-            });
+            updates[`rooms/${currentRoomCode}/boardPositions/${zone + offset}/card`] = selectedCard;
+            updates[`rooms/${currentRoomCode}/boardPositions/${selectedZonePlayer}/card`] = attackingCard;
+            update(ref(db), updates);
             playerSlotImg[selectedZonePlayer].style.border = '0px';
             selectedCard = null;
             attackingCard = null;
@@ -699,10 +705,9 @@ async function passTurn(){
                     let round = await getRound().then((r) => {return r;});
                     const boardData = await get(ref(db, `rooms/${currentRoomCode}/boardPositions`));
                     const opponentData = await get(refPlayer('', 1));
-                    const currentTurn = await get(ref(db, `rooms/${currentRoomCode}/turn`)).then((r) => {return r.val();});
                     updates[`rooms/${currentRoomCode}/turn`] = opponentData.val().uid;
                     boardData.forEach((element) => {
-                        if(currentTurn == userID){
+                        if(roomCreatorID == userID){
                             if(parseInt(element.key) > 4 && element.val().card.type == 0){
                                 updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
                             }
