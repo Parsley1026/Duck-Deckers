@@ -12,7 +12,7 @@ export class Card {
 }
 
 export class Duck extends Card { //identified as card type 0
-    constructor(id, name, cost, type, effect, damage, health) {
+    constructor(id, name, cost, type, effect, damage, health, stamina) {
         super(id, name, cost, type);
         this.effect = effect; //format for effect is an array, [effect #, effect strength]
         /*
@@ -49,20 +49,26 @@ export class Duck extends Card { //identified as card type 0
          */
         this.damage = damage;
         this.health = health;
+        this.stamina = stamina;
+        /*
+            2: summoning sickness
+            1: tapped
+            0: un-exhausted
+         */
     }
 
     toString(){
         if(this.effect == null) {
-            return `${super.toString()}\neffect: null\nstrength: null\ndamage: ${this.damage}\nhealth: ${this.health}`;
+            return `${super.toString()}\neffect: null\nstrength: null\ndamage: ${this.damage}\nhealth: ${this.health}\nstamina: ${this.stamina}`;
         } else if(this.effect.every(entry => !Array.isArray(entry))) {
-            return `${super.toString()}\neffect: ${this.effect[0]}\nstrength: ${this.effect[1]}\ndamage: ${this.damage}\nhealth: ${this.health}`;
+            return `${super.toString()}\neffect: ${this.effect[0]}\nstrength: ${this.effect[1]}\ndamage: ${this.damage}\nhealth: ${this.health}\nstamina: ${this.stamina}`;
         } else {
             const arrLen = this.effect.length;
             let retString = super.toString();
             for(let i = 0; i < arrLen; i++) {
                 retString += `\neffect ${i + 1}: ${this.effect[i][0]}\nstrength ${i + 1}: ${this.effect[i][1]}`;
             }
-            retString += `\ndamage: ${this.damage}\nhealth: ${this.health}`;
+            retString += `\ndamage: ${this.damage}\nhealth: ${this.health}\nstamina: ${this.stamina}`;
             return retString;
         }
     }
@@ -97,9 +103,8 @@ export class Duck extends Card { //identified as card type 0
 
     attack(enemyCard){
         enemyCard.health -= this.damage;
+        this.stamina = 1;
     }
-
-
 }
 
 export class Spell extends Card { //identified as card type 1

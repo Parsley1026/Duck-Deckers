@@ -70,9 +70,9 @@
   "10": {
     "name": "Ranger",
     "type": 0,
-    "cost": 2,
+    "cost": 1,
     "effect": [2, 1],
-    "damage": 3,
+    "damage": 1,
     "health": 1
   },
   "11": {

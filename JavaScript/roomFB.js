@@ -48,7 +48,7 @@ let getDataInfo = () =>{
                 currentRoomCode = snapshot.val().currentRoom; //get current room code
 
 
-                currentRoomTag.innerText = currentRoomCode; //send data to h2 tag
+                currentRoomTag.innerText = `Room Code: ${currentRoomCode}`; //send data to h2 tag
 
 
                 if(currentRoomCode != null) {
@@ -90,13 +90,21 @@ let quitButtonEvent = () => { //function that handles user wanting to leave room
                     window.location.href = 'home.html';
                 });
         } else {
-            update(child(dbroomref, 'currentPlayers/player2'), {
-                uid: null,
-                name: null
-            })
-                .then(() => {
+            onValue(dbroomref, (data) => {
+                if(data.val() == null){//occurs when room creator has already left
                     window.location.href = 'home.html';
-                });
+                } else {
+                    update(child(dbroomref, 'currentPlayers/player2'), {
+                        uid: "quit",
+                        name: null
+                    })
+                        .then(() => {
+                            window.location.href = 'home.html';
+                        });
+                }
+            }, {
+                onlyOnce: true
+            });
         }
     }
 }

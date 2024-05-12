@@ -2,13 +2,15 @@
     position: absolute;
     width: 450px;
     height: auto;
-    margin-left: 745px;
+    margin-left: 50vw;
+    transform: translate(-50%, 0%);
     margin-top: 50px;
     z-index: 1;
 }
 .enterEmail{
     position: absolute;
-    margin-left:860px;
+    margin-left: 50vw;
+    transform: translate(-50%, 0%);
     margin-top:330px;
     width: 200px;
     height: auto;
@@ -16,7 +18,8 @@
 }
 .enterPassword{
     position: absolute;
-    margin-left:860px;
+    margin-left: 50vw;
+    transform: translate(-50%, 0%);
     margin-top:370px;
     width: 200px;
     height: auto;
@@ -24,7 +27,8 @@
 }
 .enterFName{
     position: absolute;
-    margin-left:860px;
+    margin-left: 50vw;
+    transform: translate(-50%, 0%);
     margin-top:410px;
     width: 200px;
     height: auto;
@@ -32,7 +36,8 @@
 }
 .enterLName{
     position: absolute;
-    margin-left:860px;
+    margin-left: 50vw;
+    transform: translate(-50%, 0%);
     margin-top:450px;
     width: 200px;
     height: auto;
@@ -40,7 +45,8 @@
 }
 .loginButton{
     position: absolute;
-    margin-left:860px;
+    margin-left: 50vw;
+    transform: translate(-50%, 0%);
     margin-top:490px;
     width: 200px;
     height: auto;
@@ -48,7 +54,8 @@
 }
 .signUpButton{
     position: absolute;
-    margin-left:860px;
+    margin-left: 50vw;
+    transform: translate(-50%, 0%);
     margin-top:530px;
     width: 200px;
     height: auto;
