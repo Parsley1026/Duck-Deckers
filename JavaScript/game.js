@@ -203,7 +203,7 @@ onAuthStateChanged(auth, (user) => {
                 }
             }).then(async () => {
                 const buttons = document.getElementsByTagName("button");
-                if (await getRound().then((result) =>{return result;}) == 1 && await fetchDeck().then((result) => {return result.cards.length;}) == 40) {
+                if (await getRound().then((result) =>{return result;}) == 1 && await fetchDeck(0).then((result) => {return result.cards.length;}) == 40) {
                     for (let i = 0; i < 3; i++) {
                         try {
                             await draw(true, 0);
@@ -440,8 +440,8 @@ async function checkForAvailableHandSlot(plr){//returns id of available hand slo
     return availableSlot;
 }
 
-async function fetchDeck() { //fetches deck from firebase library
-    const dbref = refPlayer(`/cards`, 0);
+async function fetchDeck(plr) { //fetches deck from firebase library
+    const dbref = refPlayer(`/cards`, plr);
     let deck = new Deck([]);
     const data = await get(dbref);
     if(data.val() != null){
@@ -520,7 +520,7 @@ async function draw(override, plr){
                 const dbref = refPlayer(`/hand`, plr);
                 let drawnCard;
                 let availableSlot = await checkForAvailableHandSlot(plr);
-                deck = await fetchDeck();
+                deck = await fetchDeck(plr);
                 if (deck && availableSlot != null) {
                     drawnCard = deck.draw();
                     returnDeck();
