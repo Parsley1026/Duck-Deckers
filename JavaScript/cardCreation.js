@@ -53,7 +53,7 @@ export function createCardDB(data){
                 effect,
                 data.damage,
                 data.health,
-                2
+                data.stamina
             );
             break;
         case 1:
