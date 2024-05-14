@@ -223,7 +223,7 @@ onAuthStateChanged(auth, (user) => {
                             document.getElementById("playerEmeralds").innerHTML = await getYourEmeralds().then((result) =>{return result;});
                             document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
                             if (data.val().turn == userID) {
-                                //document.getElementById("passButton").disabled = false;
+                                document.getElementById("passButton").disabled = false;
                             }
                             break;
                         case 1:
@@ -628,7 +628,7 @@ function attackCard(zone) { //should only ever be used in attacking mode
             selectedZoneEnemy = zone;
             attackingCard.attack(selectedCard);
             updates[`rooms/${currentRoomCode}/boardPositions/${zone + offset}/card`] = selectedCard;
-            updates[`rooms/${currentRoomCode}/boardPositions/${selectedZonePlayer}/card`] = attackingCard;
+            updates[`rooms/${currentRoomCode}/boardPositions/${selectedZonePlayer - offset}/card`] = attackingCard;
             update(ref(db), updates);
             playerSlotImg[selectedZonePlayer].style.border = '0px';
             selectedCard = null;
@@ -661,8 +661,7 @@ function initiateAttack(){
             } else {
                 throw new Error("Cannot attack with a spell/land");
             }
-        } else if(selectedZonePlayer != null){
-            selectedCard = attackingCard;
+        } else if(attackingCard != null){
             attackingCard = null;
             playerSlotImg[selectedZonePlayer].style.border = '7px solid blue';
         } else {
@@ -735,7 +734,7 @@ async function passTurn(){
                     } else {
                         updates[refPlayer('emeralds', 1).toJSON().replace("https://duck-deckers-default-rtdb.firebaseio.com/", "")] = 10;
                     }
-                    update(ref(db), updates);
+                    await update(ref(db), updates);
                     document.getElementById("passButton").disabled = true;
                 } else {
                     throw new Error("Please de-select all cards before passing your turn");
@@ -794,11 +793,11 @@ document.getElementById("badGuy").addEventListener("click", () => {
     let check = true;
     if(userID == roomCreatorID){
         for(let i = 0; i < 5; i++){
-            if(fetchCard(i) != null){check = false;}
+            if(fetchCard(i + 5) != null){check = false;}
         }
     } else {
         for(let i = 0; i < 5; i++){
-            if(fetchCard(i + 5) != null){check = false;}
+            if(fetchCard(i) != null){check = false;}
         }
     }
 
