@@ -472,7 +472,7 @@ function fetchCard(zone){
 function returnDeck() {
     const dbref = refPlayer(``, 0);
     update(dbref, {
-       cards: deck
+        cards: deck
     });
 }
 
@@ -600,7 +600,6 @@ function selectCardPlayer(zone){
     if(selectedCard == null && attackingCard == null){
         if(fetchCard(zone + offset) != null) {
             selectedCard = fetchCard(zone + offset);
-            console.log(selectedCard.toString());
             selectedZonePlayer = zone;
             playerSlotImg[zone].style.border = '7px solid blue';
         } else {
@@ -629,7 +628,7 @@ function attackCard(zone) { //should only ever be used in attacking mode
             selectedZoneEnemy = zone;
             attackingCard.attack(selectedCard);
             updates[`rooms/${currentRoomCode}/boardPositions/${zone + offset}/card`] = selectedCard;
-            updates[`rooms/${currentRoomCode}/boardPositions/${selectedZonePlayer}/card`] = attackingCard;
+            updates[`rooms/${currentRoomCode}/boardPositions/${selectedZonePlayer - offset}/card`] = attackingCard;
             update(ref(db), updates);
             playerSlotImg[selectedZonePlayer].style.border = '0px';
             selectedCard = null;
@@ -662,6 +661,9 @@ function initiateAttack(){
             } else {
                 throw new Error("Cannot attack with a spell/land");
             }
+        } else if(attackingCard != null){
+            attackingCard = null;
+            playerSlotImg[selectedZonePlayer].style.border = '7px solid blue';
         } else {
             throw new Error("This duck is tired! Please wait until your next turn before using them to attack");
         }
@@ -732,7 +734,7 @@ async function passTurn(){
                     } else {
                         updates[refPlayer('emeralds', 1).toJSON().replace("https://duck-deckers-default-rtdb.firebaseio.com/", "")] = 10;
                     }
-                    update(ref(db), updates);
+                    await update(ref(db), updates);
                     document.getElementById("passButton").disabled = true;
                 } else {
                     throw new Error("Please de-select all cards before passing your turn");
@@ -788,20 +790,25 @@ document.getElementById("passButton").addEventListener("click", async () => {
 });
 
 document.getElementById("badGuy").addEventListener("click", () => {
-    let check = null;
+    let check = true;
     if(userID == roomCreatorID){
-        for(let i = 0; i < 5; i++){
-            if(fetchCard(i) != null){check = false;}
-        }
-    } else {
         for(let i = 0; i < 5; i++){
             if(fetchCard(i + 5) != null){check = false;}
         }
+    } else {
+        for(let i = 0; i < 5; i++){
+            if(fetchCard(i) != null){check = false;}
+        }
     }
 
-    if(!check){
+    if(check){
         if(attackingCard != null){
+            let offset = 0;
+            if(userID != roomCreatorID){offset = 5;}
             let opponentRef = refPlayer(`/health`, 1);
+            update(ref(db, `rooms/${currentRoomCode}/boardPositions/${selectedZonePlayer + offset}/card`), {
+                stamina: 1
+            });
             runTransaction(opponentRef, (health) => {
                 return health -= attackingCard.damage;
             });
