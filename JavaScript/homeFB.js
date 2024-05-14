@@ -49,10 +49,25 @@ function createRoom(){
                 let deck = new Deck([]);
                 get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
                     if (snapshot.exists()) {
-                        for (let i = 0; i < snapshot.val().cards.length; i++) {
+                        for(let i = 0; i < 10; i++) {
                             let id;
                             id = snapshot.val().cards[i].id;
-                            deck.addCardBack(createCard(0));
+                            deck.addCardBack(createCard(0)); //adds 10 ducks
+                        }
+                        for(let i = 0; i < 10; i++) {
+                            let id;
+                            id = snapshot.val().cards[i].id;
+                            deck.addCardBack(createCard(6)); ///adds 10 duckrades
+                        }
+                        for(let i = 0; i < 10; i++) {
+                            let id;
+                            id = snapshot.val().cards[i].id;
+                            deck.addCardBack(createCard(14)); //adds 10 duckskateers
+                        }
+                        for(let i = 0; i < 10; i++) {
+                            let id;
+                            id = snapshot.val().cards[i].id;
+                            deck.addCardBack(createCard(15)); //adds 10 gym bros
                         }
                     } else {
                         console.log("error getting deck");
@@ -173,10 +188,25 @@ let joinRoom = evt => {
                             let deck = new Deck([]);
                             get(ref(db, `users/${userID}/cards`)).then((snapshot) => {
                                 if(snapshot.exists()){
-                                    for(let i = 0; i < snapshot.val().cards.length; i++) {
+                                    for(let i = 0; i < 10; i++) {
                                         let id;
                                         id = snapshot.val().cards[i].id;
-                                        deck.addCardBack(createCard(10));
+                                        deck.addCardBack(createCard(0)); //adds 10 ducks
+                                    }
+                                    for(let i = 0; i < 10; i++) {
+                                        let id;
+                                        id = snapshot.val().cards[i].id;
+                                        deck.addCardBack(createCard(6)); ///adds 10 duckrades
+                                    }
+                                    for(let i = 0; i < 10; i++) {
+                                        let id;
+                                        id = snapshot.val().cards[i].id;
+                                        deck.addCardBack(createCard(14)); //adds 10 duckskateers
+                                    }
+                                    for(let i = 0; i < 10; i++) {
+                                        let id;
+                                        id = snapshot.val().cards[i].id;
+                                        deck.addCardBack(createCard(15)); //adds 10 gym bros
                                     }
                                 } else {
                                     console.log("error getting deck");
