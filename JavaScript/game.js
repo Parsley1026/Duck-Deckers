@@ -223,7 +223,7 @@ onAuthStateChanged(auth, (user) => {
                             document.getElementById("playerEmeralds").innerHTML = await getYourEmeralds().then((result) =>{return result;});
                             document.getElementById("currentTurn").innerHTML = `${getPlayerName(data.val().turn)}'s Turn`;
                             if (data.val().turn == userID) {
-                                document.getElementById("passButton").disabled = false;
+                                //document.getElementById("passButton").disabled = false;
                             }
                             break;
                         case 1:
