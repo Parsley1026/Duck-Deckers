@@ -711,7 +711,6 @@ async function passTurn(){
                         await draw(false, 1);
                     } catch (e){
                         console.error(e);
-                        alert(e.message);
                     }
                     updates[`rooms/${currentRoomCode}/turn`] = opponentData.val().uid;
                     boardData.forEach((element) => {
