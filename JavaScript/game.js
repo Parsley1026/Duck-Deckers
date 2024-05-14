@@ -510,14 +510,14 @@ async function getYourEmeralds() {
     return data.val().emeralds;
 }
 
-async function draw(override){
+async function draw(override, plr){
     switch(checkForOpponent(override)) {
         case 0:
             if(await checkTurn().then((r) => {return r;}) || override) {
-                const dbref = refPlayer(`/hand`, 0);
+                const dbref = refPlayer(`/hand`, plr);
                 let drawnCard;
-                let availableSlot = await checkForAvailableHandSlot();
-                deck = await fetchDeck();
+                let availableSlot = await checkForAvailableHandSlot(plr);
+                deck = await fetchDeck(plr);
                 if (deck && availableSlot != null) {
                     drawnCard = deck.draw();
                     returnDeck();
@@ -541,6 +541,7 @@ async function draw(override){
             throw new Error("Opponent has not yet joined");
     }
 }
+
 
 function refPlayer(dataPath, plr){ //fetches a datapath based off player 1 or 2
     if(plr == 0) {
@@ -653,6 +654,10 @@ function initiateAttack(){
             } else {
                 throw new Error("Cannot attack with a spell/land");
             }
+        } else if(selectedZonePlayer != null){
+            selectedCard = attackingCard;
+            attackingCard = null;
+            playerSlotImg[selectedZonePlayer].style.border = '7px solid blue';
         } else {
             throw new Error("This duck is tired! Please wait until your next turn before using them to attack");
         }
@@ -695,16 +700,28 @@ async function passTurn(){
                     let add = 0;
                     let round = await getRound().then((r) => {return r;});
                     const boardData = await get(ref(db, `rooms/${currentRoomCode}/boardPositions`));
-                    const data = await get(refPlayer('', 1));
-                    updates[`rooms/${currentRoomCode}/turn`] = data.val().uid;
+                    const opponentData = await get(refPlayer('', 1));
+                    try{
+                        await draw(false, 1);
+                    } catch (e){
+                        console.error(e);
+                        alert(e.message);
+                    }
+                    updates[`rooms/${currentRoomCode}/turn`] = opponentData.val().uid;
                     boardData.forEach((element) => {
-                        if(element.val().card.type == 0){
-                            updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
+                        if(roomCreatorID == userID){
+                            if(parseInt(element.key) > 4 && element.val().card.type == 0){
+                                updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
+                            }
+                        } else {
+                            if(parseInt(element.key) < 5 && element.val().card.type == 0){
+                                updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
+                            }
                         }
                     });
                     if(userID != roomCreatorID){
                         updates[`rooms/${currentRoomCode}/round`] = round + 1;
-                        if(round <= 9){add = 1};
+                        if(round <= 9){add = 1;}
                     }
                     if(round <= 10){
                         updates[refPlayer('emeralds', 1).toJSON().replace("https://duck-deckers-default-rtdb.firebaseio.com/", "")] = round + add;
@@ -789,9 +806,9 @@ document.getElementById("badGuy").addEventListener("click", () => {
     if(!check){
         if(attackingCard != null){
             let offset = 0;
-            if(userID != roomCreatorID){offset = -5;}
+            if(userID != roomCreatorID){offset = 5;}
             let opponentRef = refPlayer(`/health`, 1);
-            update(ref(db, `rooms/${currentRoomCode}/boardPositions/${zone + offset}/card`), {
+            update(ref(db, `rooms/${currentRoomCode}/boardPositions/${selectedZonePlayer + offset}/card`), {
                 stamina: 1
             });
             runTransaction(opponentRef, (health) => {
