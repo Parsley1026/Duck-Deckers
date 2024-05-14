@@ -203,10 +203,10 @@ onAuthStateChanged(auth, (user) => {
                 }
             }).then(async () => {
                 const buttons = document.getElementsByTagName("button");
-                if (await getRound().then((result) =>{return result;}) == 1 && await fetchDeck(0).then((result) => {return result.cards.length;}) == 40) {
+                if (await getRound().then((result) =>{return result;}) == 1 && await fetchDeck().then((result) => {return result.cards.length;}) == 40) {
                     for (let i = 0; i < 3; i++) {
                         try {
-                            await draw(true, 0);
+                            await draw(true);
                         } catch (e) {
                             alert(e.message);
                             console.error(e);
@@ -320,13 +320,10 @@ function checkCardStatus() {
                         dropSlotImg[parseInt(element.key)+offset].style.border = '0px';
                     }, 1000); //I changed it to 1 second, 2.5 seemed too clunky.
                 } else if (element.val().card.stamina != 0){
-                    dropSlotImg[parseInt(element.key) + offset].style.opacity = '0.8';
+                    dropSlotImg[parseInt((element.key) + offset)].style.opacity = '0.8';
                     if(element.val().card.stamina == 2){
-                        dropSlotImg[parseInt(element.key) + offset].style.border = `7px solid yellow`;
+                        dropSlotImg[parseInt((element.key) + offset)].style.border = `7px solid yellow`;
                     }
-                } else if (element.val().card.stamina == 0){
-                    dropSlotImg[parseInt(element.key) + offset].style.opacity = '1';
-                    dropSlotImg[parseInt(element.key) + offset].style.border = '0px';
                 }
             }
         });
@@ -427,8 +424,8 @@ async function playCard(zone){
     }
 }
 
-async function checkForAvailableHandSlot(plr){//returns id of available hand slot, null if none
-    let dbref = refPlayer(`hand`, plr);
+async function checkForAvailableHandSlot(){//returns id of available hand slot, null if none
+    let dbref = refPlayer(`hand`, 0);
     let availableSlot = null;
     for(let i = 0; i < 7; i++) {
         const data = await get(child(dbref, `/${i}`));
@@ -440,8 +437,8 @@ async function checkForAvailableHandSlot(plr){//returns id of available hand slo
     return availableSlot;
 }
 
-async function fetchDeck(plr) { //fetches deck from firebase library
-    const dbref = refPlayer(`/cards`, plr);
+async function fetchDeck() { //fetches deck from firebase library
+    const dbref = refPlayer(`/cards`, 0);
     let deck = new Deck([]);
     const data = await get(dbref);
     if(data.val() != null){
@@ -513,14 +510,14 @@ async function getYourEmeralds() {
     return data.val().emeralds;
 }
 
-async function draw(override, plr){
+async function draw(override){
     switch(checkForOpponent(override)) {
         case 0:
             if(await checkTurn().then((r) => {return r;}) || override) {
-                const dbref = refPlayer(`/hand`, plr);
+                const dbref = refPlayer(`/hand`, 0);
                 let drawnCard;
-                let availableSlot = await checkForAvailableHandSlot(plr);
-                deck = await fetchDeck(plr);
+                let availableSlot = await checkForAvailableHandSlot();
+                deck = await fetchDeck();
                 if (deck && availableSlot != null) {
                     drawnCard = deck.draw();
                     returnDeck();
@@ -600,20 +597,15 @@ function selectCardPlayer(zone){
     if(selectedCard == null && attackingCard == null){
         if(fetchCard(zone + offset) != null) {
             selectedCard = fetchCard(zone + offset);
-            console.log(selectedCard.toString());
             selectedZonePlayer = zone;
             playerSlotImg[zone].style.border = '7px solid blue';
         } else {
             console.error("no card in selected spot");
         }
     } else if(zone == selectedZonePlayer && attackingCard == null) {
-        if(selectedCard.stamina == 2){
-            playerSlotImg[zone].style.border = '7px solid yellow';
-        } else {
-            playerSlotImg[zone].style.border = '0px';
-        }
         selectedCard = null;
         selectedZonePlayer = null;
+        playerSlotImg[zone].style.border = '0px';
     } else {
         console.error("a card is already selected");
     }
@@ -624,13 +616,12 @@ function attackCard(zone) { //should only ever be used in attacking mode
     if(userID != roomCreatorID){offset = -5;}
     if(selectedZoneHand == null){
         if(fetchCard(zone + offset) != null && fetchCard(zone + offset).type == 0) {
-            let updates = {};
             selectedCard = fetchCard(zone + offset);
             selectedZoneEnemy = zone;
             attackingCard.attack(selectedCard);
-            updates[`rooms/${currentRoomCode}/boardPositions/${zone + offset}/card`] = selectedCard;
-            updates[`rooms/${currentRoomCode}/boardPositions/${selectedZonePlayer}/card`] = attackingCard;
-            update(ref(db), updates);
+            update(ref(db, `rooms/${currentRoomCode}/boardPositions/${zone + offset}`), {
+                card: selectedCard
+            });
             playerSlotImg[selectedZonePlayer].style.border = '0px';
             selectedCard = null;
             attackingCard = null;
@@ -704,28 +695,16 @@ async function passTurn(){
                     let add = 0;
                     let round = await getRound().then((r) => {return r;});
                     const boardData = await get(ref(db, `rooms/${currentRoomCode}/boardPositions`));
-                    const opponentData = await get(refPlayer('', 1));
-                    try{
-                        await draw(false, 1);
-                    } catch (e){
-                        console.error(e);
-                        alert(e.message);
-                    }
-                    updates[`rooms/${currentRoomCode}/turn`] = opponentData.val().uid;
+                    const data = await get(refPlayer('', 1));
+                    updates[`rooms/${currentRoomCode}/turn`] = data.val().uid;
                     boardData.forEach((element) => {
-                        if(roomCreatorID == userID){
-                            if(parseInt(element.key) > 4 && element.val().card.type == 0){
-                                updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
-                            }
-                        } else {
-                            if(parseInt(element.key) < 5 && element.val().card.type == 0){
-                                updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
-                            }
+                        if(element.val().card.type == 0){
+                            updates[`rooms/${currentRoomCode}/boardPositions/${parseInt(element.key)}/card/stamina`] = 0;
                         }
                     });
                     if(userID != roomCreatorID){
                         updates[`rooms/${currentRoomCode}/round`] = round + 1;
-                        if(round <= 9){add = 1;}
+                        if(round <= 9){add = 1};
                     }
                     if(round <= 10){
                         updates[refPlayer('emeralds', 1).toJSON().replace("https://duck-deckers-default-rtdb.firebaseio.com/", "")] = round + add;
@@ -768,6 +747,14 @@ function checkForOpponent(override){
 }
 
 document.addEventListener('keydown', async function (event) {
+    if (event.key === '1') {
+        try {
+            await draw();
+        } catch (e) {
+            console.error(e);
+            alert(e.message);
+        }
+    }
     if (event.key === `a`) {
         try {
             initiateAttack();
@@ -801,7 +788,12 @@ document.getElementById("badGuy").addEventListener("click", () => {
 
     if(!check){
         if(attackingCard != null){
+            let offset = 0;
+            if(userID != roomCreatorID){offset = -5;}
             let opponentRef = refPlayer(`/health`, 1);
+            update(ref(db, `rooms/${currentRoomCode}/boardPositions/${zone + offset}/card`), {
+                stamina: 1
+            });
             runTransaction(opponentRef, (health) => {
                 return health -= attackingCard.damage;
             });
