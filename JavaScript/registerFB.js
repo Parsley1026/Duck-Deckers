@@ -32,35 +32,40 @@ let LNameInput = document.getElementById('lNameInput');
 let MainForm = document.getElementById('MainForm');
 
 //create our registerUser function to hit Firebase
-let RegisterUser = evt =>{
-    evt.preventDefault(); //takes care of our promise
-    createUserWithEmailAndPassword(auth, EmailInput.value, PasswordInput.value)
-        .then((credentials)=>{
-            if(FNameInput.value == null){
-                throw new Error("Please enter a first name");
-            } else if (LNameInput.value == null){
-                throw new Error("Please enter a last name");
-            }
-            let deck = new Deck([]);
-            deck.populate();
-            set(ref(db, 'users/'+credentials.user.uid), {
-                firstName: FNameInput.value,
-                lastName: LNameInput.value,
-                currentRoom: null, //not in a room when account is created
-                cash: 2000, //starting user cash
-                ducks: 0, //starting user ducks
-                cards: deck
+let registerUser = evt => {
+    evt.preventDefault();
+    let check = true;
+    if(FNameInput.value == ""){
+        alert("Please enter a first name");
+        check = false;
+    } else if (LNameInput.value == ""){
+        alert("Please enter a last name");
+        check = false;
+    }
+    if(check) {
+        createUserWithEmailAndPassword(auth, EmailInput.value, PasswordInput.value)
+            .then((credentials) => {
+                let deck = new Deck([]);
+                deck.populate();
+                set(ref(db, 'users/' + credentials.user.uid), {
+                    firstName: FNameInput.value,
+                    lastName: LNameInput.value,
+                    currentRoom: null, //not in a room when account is created
+                    cash: 2000, //starting user cash
+                    ducks: 0, //starting user ducks
+                    cards: deck
+                })
+                updateProfile(auth.currentUser, {
+                    displayName: `${FNameInput.value} ${LNameInput.value}`
+                })
+                setTimeout(()=> {window.location.href='home.html'}, 250); //250ms wait, so we can write data before switching pages
             })
-            updateProfile(auth.currentUser, {
-                displayName: `${FNameInput.value} ${LNameInput.value}`
+            .catch((error) => {
+                alert(error.message); //pop up on the webpage
+                console.log(error.code); //log the error code number
+                console.log(error.message); //logs the error message
             })
-            setTimeout(()=> {window.location.href='home.html'}, 250); //250ms wait, so we can write data before switching pages
-        })
-        .catch((error)=>{
-            alert(error.message); //pop up on the webpage
-            console.log(error.code); //log the error code number
-            console.log(error.message); //logs the error message
-        })
+    }
 }
 
-MainForm.addEventListener('submit', RegisterUser); //when the CreateUser button is clicked, run our function
+MainForm.addEventListener('submit', registerUser); //when the CreateUser button is clicked, run our function
