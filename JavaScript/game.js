@@ -37,7 +37,7 @@ let selectedZoneHand = null;
 let selectedZonePlayer = null;
 let selectedZoneEnemy = null;
 let repeatPrevent = true;
-
+let first = true;
 //slot zones
 let handSlot =
     [
@@ -110,6 +110,7 @@ let handSlotImg =
         document.getElementById('handSlot5img'),
         document.getElementById('handSlot6img')
     ];
+let spellZoneImg = document.getElementById('spellZoneImg');
 
 for(let i = 0; i < playerSlot.length; i++){
     playerSlot[i].addEventListener('click', async () => {
@@ -400,12 +401,19 @@ async function playCard(zone){
     if(selectedCard.cost > emeralds){
         throw new Error("You do not have enough emeralds to play this card");
     }
-    if(userID == roomCreatorID){
+    if(userID == roomCreatorID){ //if player 1
         if(fetchCard(zone) == null){
             handSlotImg[selectedZoneHand].style.border = '0px';
             updates[`rooms/${currentRoomCode}/boardPositions/${zone}/card`] = selectedCard;
             updates[`rooms/${currentRoomCode}/currentPlayers/player1/hand/${selectedZoneHand}`] = null;
             updates[`rooms/${currentRoomCode}/currentPlayers/player1/emeralds`] = emeralds - selectedCard.cost;
+            //if(selectedCard.id ==3){ //SOUP
+                //updates[`rooms/${currentRoomCode}/currentPlayers/player1/health`] +=4;
+               // if(  updates[`rooms/${currentRoomCode}/currentPlayers/player1/health`]>20){
+                    //updates[`rooms/${currentRoomCode}/currentPlayers/player1/health`] = 20;
+              //  }
+               // selectedCard.health = 0;
+           // }
             update(ref(db), updates);
             selectedCard = null;
             selectedZoneHand = null;
@@ -418,6 +426,17 @@ async function playCard(zone){
             updates[`rooms/${currentRoomCode}/boardPositions/${zone+5}/card`] = selectedCard;
             updates[`rooms/${currentRoomCode}/currentPlayers/player2/hand/${selectedZoneHand}`] = null;
             updates[`rooms/${currentRoomCode}/currentPlayers/player2/emeralds`] = emeralds - selectedCard.cost;
+            if(selectedCard.id ==41){//CONSOLATION PRIZE
+                updates[`rooms/${currentRoomCode}/currentPlayers/player2/emeralds`] = emeralds +=1;
+                selectedCard.health = 0;
+            }
+            //if(selectedCard.id ==3){ //SOUP
+               // updates[`rooms/${currentRoomCode}/currentPlayers/player2/health`] = health + 4;
+                //if(updates[`rooms/${currentRoomCode}/currentPlayers/player2/health`]>20){
+               //     updates[`rooms/${currentRoomCode}/currentPlayers/player2/health`] = 20;
+              //  }
+              //  selectedCard.health = 0;
+          //  }
             update(ref(db), updates);
             selectedCard = null;
             selectedZoneHand = null;
@@ -698,6 +717,7 @@ async function checkTurn() {
 }
 
 async function passTurn(){
+
     switch(checkForOpponent()) {
         case 0:
             if(await checkTurn().then((r) => {return r;})) {
@@ -707,6 +727,7 @@ async function passTurn(){
                     let round = await getRound().then((r) => {return r;});
                     const boardData = await get(ref(db, `rooms/${currentRoomCode}/boardPositions`));
                     const opponentData = await get(refPlayer('', 1));
+
                     try{
                         await draw(false, 1);
                     } catch (e){
@@ -799,11 +820,12 @@ document.getElementById("badGuy").addEventListener("click", () => {
             if(fetchCard(i) != null){check = false;}
         }
     }
-
-    if(check){
+    if(check){ //if the attacking card is not null
         if(attackingCard != null){
             let offset = 0;
-            if(userID != roomCreatorID){offset = 5;}
+            if(userID != roomCreatorID){ //if player 2
+                offset = 5;
+            }
             let opponentRef = refPlayer(`/health`, 1);
             update(ref(db, `rooms/${currentRoomCode}/boardPositions/${selectedZonePlayer + offset}/card`), {
                 stamina: 1

@@ -13,6 +13,9 @@ export class Deck{
         }
         return retString;
     }
+    removeBottom(){
+        this.cards.pop()
+    }
 
     shuffle(){
         for(let i = 0; i < 5; i++) {
