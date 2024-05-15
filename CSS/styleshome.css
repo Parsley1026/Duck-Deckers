@@ -1,6 +1,18 @@
 
+.btn{
 
+}
+#MainForm{
+    margin-left: 50vw;
+    transform:translate(-50%, 0%);
+}
 
 .createRoom{
     padding-top: 50px;
+}
+
+.otherThreeButtons{
+    margin-left: 50vw;
+    transform:translate(-50%, 0%);
+    margin-top: 50px;
 }

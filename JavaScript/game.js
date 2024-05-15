@@ -769,7 +769,7 @@ function checkForOpponent(override){
 }
 
 document.addEventListener('keydown', async function (event) {
-    if (event.key === `a`) {
+    if (event.key === ` `) {
         try {
             initiateAttack();
         }catch (e) {

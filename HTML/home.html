@@ -7,12 +7,14 @@
     <link rel="stylesheet" href="../CSS/styleshome.css">
 </head>
 
+<header style="text-align: center;">
+
+
+</header>
 <link rel="stylesheet" href="../CSS/styleshome.css">
-<body style = "background-color: lightskyblue; text-align: center">
-
-
-    <form id="MainForm" class="w-25 pt-4 px-4">
-        <h2 class="mb-3">User Profile</h2>
+<body style = "background-color: lightskyblue; text-align: center ">
+    <form id="MainForm" class="w-25 pt-4 px-4" style=" text-align: center; ">
+        <h2 class="mb-3" style="text-align: center;">User Profile</h2>
         <h2 id="firstName"></h2>
         <h2 id="lastName"></h2>
         <form id="roomForm" class="w-25 m-4">
@@ -23,7 +25,7 @@
                             <label for = "codeJoinInput">Join Room</label>
                         </div>
                         <div class="codeJoinSubmit">
-                            <button id="codeJoinButton" type="button" class="btn btn-primary" style="float: right">Join Room</button>
+                            <button id="codeJoinButton" type="button" class="btn btn-primary" style="width: 150px; height: auto" >Join Room</button>
                         </div>
                     </div>
 
@@ -33,7 +35,7 @@
                             <label for = "codeCreateInput">Create Room</label>
                         </div>
                         <div class="codeCreateSubmit"> <!-- Room join button; Home -> Room -->
-                            <button id="codeCreateButton" type="button" class="btn btn-primary" style="float: right">Create Room</button>
+                            <button id="codeCreateButton" type="button" class="btn btn-primary" style="width: 150px; height: auto">Create Room</button>
                         </div>
                     </div>
                 </div> <!-- End of handling the room functionality -->
@@ -45,17 +47,18 @@
             </div>
             Temporarily deactivated
         -->
-        <div class="howToPlay"> <!-- Shop button; Home -> Shop -->
+        <div class="howToPlay otherThreeButtons"  > <!-- Shop button; Home -> Shop -->
             <a href="howToPlay.html">
-                <button id="howToPlayButton" type="button" class="btn btn-primary" style="float: right">HOW TO PLAY</button></a> <!--THIS TAKES YOU TO THE SHOP PAGE.-->
-        </div>
-        <div class="credits"> <!-- Shop button; Home -> Shop -->
-            <a href="credits.html">
-                <button id="creditsButton" type="button" class="btn btn-primary" style="float: right">Credits</button></a> <!--THIS TAKES YOU TO THE SHOP PAGE.-->
+                <button id="howToPlayButton" type="button" class="btn btn-primary" style="background-color: palevioletred; width: 200px; height: 75px; font-size: x-large">HOW TO PLAY</button></a> <!--THIS TAKES YOU TO THE SHOP PAGE.-->
         </div>
 
-        <div class = "loginScreen"> <!-- Sign Out button; Home -> Login -->
-            <button id="signOutButton" type="button" class="btn btn-primary" style="float: right">Sign Out</button>
+        <div class="credits otherThreeButtons"> <!-- Shop button; Home -> Shop -->
+            <a href="credits.html">
+                <button id="creditsButton" type="button" class="btn btn-primary" style = "background-color: darkcyan; width: 200px; height: 75px;font-size: xx-large" >Credits</button></a> <!--THIS TAKES YOU TO THE SHOP PAGE.-->
+        </div>
+
+        <div class = "loginScreen otherThreeButtons"> <!-- Sign Out button; Home -> Login -->
+            <button id="signOutButton" type="button" class="btn btn-primary" style = "width: 200px; height: 75px; font-size: xx-large; background-color: mediumpurple; " >Sign Out</button>
         </div>
 
     </form>
