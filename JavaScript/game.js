@@ -407,13 +407,14 @@ async function playCard(zone){
             updates[`rooms/${currentRoomCode}/boardPositions/${zone}/card`] = selectedCard;
             updates[`rooms/${currentRoomCode}/currentPlayers/player1/hand/${selectedZoneHand}`] = null;
             updates[`rooms/${currentRoomCode}/currentPlayers/player1/emeralds`] = emeralds - selectedCard.cost;
-            //if(selectedCard.id ==3){ //SOUP
-                //updates[`rooms/${currentRoomCode}/currentPlayers/player1/health`] +=4;
-               // if(  updates[`rooms/${currentRoomCode}/currentPlayers/player1/health`]>20){
-                    //updates[`rooms/${currentRoomCode}/currentPlayers/player1/health`] = 20;
-              //  }
-               // selectedCard.health = 0;
-           // }
+            if(selectedCard.id ==3){ //SOUP
+                updates[`rooms/${currentRoomCode}/currentPlayers/player1/health`] = await getPlayer1Health().then((result) => {return result;}) + 4;
+                if(  updates[`rooms/${currentRoomCode}/currentPlayers/player1/health`]>20){
+                    updates[`rooms/${currentRoomCode}/currentPlayers/player1/health`] = 20;
+                }
+               selectedCard.health = 0;
+            } //HEALING WORKS AS INTENDED FOR PLAYER 1
+            //PLAYER 2 NO
             update(ref(db), updates);
             selectedCard = null;
             selectedZoneHand = null;
@@ -430,13 +431,13 @@ async function playCard(zone){
                 updates[`rooms/${currentRoomCode}/currentPlayers/player2/emeralds`] = emeralds +=1;
                 selectedCard.health = 0;
             }
-            //if(selectedCard.id ==3){ //SOUP
-               // updates[`rooms/${currentRoomCode}/currentPlayers/player2/health`] = health + 4;
-                //if(updates[`rooms/${currentRoomCode}/currentPlayers/player2/health`]>20){
-               //     updates[`rooms/${currentRoomCode}/currentPlayers/player2/health`] = 20;
-              //  }
-              //  selectedCard.health = 0;
-          //  }
+            if(selectedCard.id ==3){ //SOUP
+               updates[`rooms/${currentRoomCode}/currentPlayers/player2/health`] =await getPlayer2Health().then((result) => {return result;}) + 4;
+                if(updates[`rooms/${currentRoomCode}/currentPlayers/player2/health`]>20){
+                    updates[`rooms/${currentRoomCode}/currentPlayers/player2/health`] = 20;
+                }
+               selectedCard.health = 0;
+            }
             update(ref(db), updates);
             selectedCard = null;
             selectedZoneHand = null;
@@ -500,7 +501,35 @@ async function getRound(){
     return data.val().round;
 }
 
-function getYourHealth(read){
+async function getPlayer1Health(){
+    const dbref = refPlayer(``, 0);
+    let health = null;
+    onValue(dbref, (data) => {
+        if(data.val() != null){
+            health = data.val().health;
+        }
+    }, {
+        onlyOnce: true
+    });
+    return health;
+}
+async function getPlayer2Health(){
+    const dbref = refPlayer('', 1);
+    let health = null;
+    onValue(dbref, (data) => {
+        if(data.val() != null){
+            health = data.val().health;
+        }
+    }, {
+        onlyOnce: true
+    });
+    return health;
+}
+
+
+
+
+   function getYourHealth(read){
     if(read == 0){
         const dbref = refPlayer(``, 0);
         let health = null;
@@ -718,6 +747,8 @@ async function checkTurn() {
 
 async function passTurn(){
 
+
+
     switch(checkForOpponent()) {
         case 0:
             if(await checkTurn().then((r) => {return r;})) {
@@ -803,6 +834,7 @@ document.addEventListener('keydown', async function (event) {
 document.getElementById("passButton").addEventListener("click", async () => {
     try{
         await passTurn();
+
     } catch(e){
         console.error(e);
         alert(e.message);

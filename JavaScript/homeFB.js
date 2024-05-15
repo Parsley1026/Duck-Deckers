@@ -67,7 +67,7 @@ function createRoom(){
                         for(let i = 0; i < 10; i++) {
                             let id;
                             id = snapshot.val().cards[i].id;
-                            deck.addCardBack(createCard(15)); //adds 5 gym bros
+                            deck.addCardBack(createCard(3)); //adds 5 gym bros
                         }
                     } else {
                         console.log("error getting deck");
@@ -206,8 +206,9 @@ let joinRoom = evt => {
                                     for(let i = 0; i < 10; i++) {
                                         let id;
                                         id = snapshot.val().cards[i].id;
-                                        deck.addCardBack(createCard(15)); //adds 5 gym bros
+                                        deck.addCardBack(createCard(3)); //adds 5 gym bros
                                     }
+
                                 } else {
                                     console.log("error getting deck");
                                 }
