@@ -67,7 +67,7 @@ function createRoom(){
                         for(let i = 0; i < 10; i++) {
                             let id;
                             id = snapshot.val().cards[i].id;
-                            deck.addCardBack(createCard(15)); //adds 10 gym bros
+                            deck.addCardBack(createCard(15)); //adds 5 gym bros
                         }
                     } else {
                         console.log("error getting deck");
@@ -101,7 +101,7 @@ function createRoom(){
                                 health: 20,
                                 emeralds: 1,
                                 hand: {
-                                    0: null,
+                                    0: null, //WIENER
                                     1: null,
                                     2: null,
                                     3: null,
@@ -206,12 +206,14 @@ let joinRoom = evt => {
                                     for(let i = 0; i < 10; i++) {
                                         let id;
                                         id = snapshot.val().cards[i].id;
-                                        deck.addCardBack(createCard(15)); //adds 10 gym bros
+                                        deck.addCardBack(createCard(15)); //adds 5 gym bros
                                     }
                                 } else {
                                     console.log("error getting deck");
                                 }
                                 deck.shuffle();
+                                deck.removeBottom();
+                                deck.addCardFront(createCard(41));
                             }).then(() => {
                                 update(ref(db, 'rooms/' + roomCode + '/currentPlayers/player2'), {
                                     uid: userID,

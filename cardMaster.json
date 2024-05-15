@@ -21,9 +21,11 @@
   },
   "3" : {
     "name": "Soup",
-    "type": 1,
+    "type": 0,
     "cost": 1,
-    "effect": [[1, 4], [2, 1]]
+    "effect": null,
+    "damage": 0,
+    "health": 1
   },
   "4": {
     "name": "Money Duck",
@@ -291,8 +293,10 @@
   },
   "41": {
     "name": "Consolation",
-    "type": 1,
+    "type": 0,
     "cost": 0,
-    "effect": [12, 1]
+    "effect": null,
+    "damage": 0,
+    "health": 1
   }
 }
