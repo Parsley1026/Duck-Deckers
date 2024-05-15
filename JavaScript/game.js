@@ -319,6 +319,7 @@ function checkCardStatus() {
                             card: null
                         });
                         dropSlotImg[parseInt(element.key)+offset].style.border = '0px';
+                        dropSlotImg[parseInt(element.key)+offset].style.opacity = '1';
                     }, 1000); //I changed it to 1 second, 2.5 seemed too clunky.
                 } else if (element.val().card.stamina != 0){
                     dropSlotImg[parseInt(element.key) + offset].style.opacity = '0.8';
